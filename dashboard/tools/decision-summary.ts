@@ -5,7 +5,7 @@ export type JobMeasure = { id: string; gpu_hours: number; outcome: string | null
 export type FindingMeasure = { id: string; rule: string; job_id: string | null; scope: string | null; synthetic: number };
 
 // Observed exposure only. Never sum finding impact, estimate recovery, or price a fix.
-// This dev-only aggregation stays outside the live production bundle.
+// Shared read-only server aggregation; stays outside the browser bundle.
 export function buildDecisionTable(jobs: JobMeasure[], findings: FindingMeasure[], version: string, selected: string[], synthetic = false): DecisionTable {
   const byId = new Map(jobs.map(j => [j.id,j]));
   if (byId.size !== jobs.length || jobs.some(j => !Number.isFinite(j.gpu_hours) || j.gpu_hours < 0)) throw new Error("Invalid unique-job accounting");

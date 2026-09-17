@@ -319,12 +319,14 @@ function ExplorerTable({
     initialId ? { collection, id: initialId, label: initialId } : null,
   );
   useEffect(() => {
+    // Initial/unchanged search must not reset a quick pagination click.
+    if (query.trim() === search) return;
     const timer = setTimeout(() => {
       setSearch(query.trim());
       setOffset(0);
     }, 250);
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, search]);
   useEffect(() => {
     let alive = true;
     if (!catalog || !api.datasets) return;

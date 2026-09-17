@@ -2,6 +2,8 @@
 
 ## Current mode
 
+A+B INTEGRATION CANDIDATE. This session is authorized to finish and publish A/B integration, including the existing read-only Data explorer and Decisions in the production dashboard. Preserve B history and keep multi-fix backend modeling deferred. C stays disabled. See docs/AB_INTEGRATION_HANDOFF.md and eval/integration/RESULTS.md for current checks and remaining release gates. Earlier narrower assignments below are historical.
+
 INTEGRATION EXECUTION AUTHORIZED. Winston approved this session to review/publish the shared A+B baseline, finish B's v0.4 CPU-pilot UI and Compose integration, validate C separately, and prepare the final release for review. Preserve B's explorer history; defer the proposed multi-fix modeling backend. A is merged into integration at db6f418. Final main publication remains subject to the concrete release review. This authorization supersedes historical no-implementation/no-merge notes within this bounded scope.
 
 WORKSTREAM A ACTIVE in this isolated checkout, explicitly assigned by Winston. Implement and publish A1 then A2 on codex/analysis-service targeting codex/integration; never merge or push to main. BASE gates passed. Winston confirmed B agreement to exact ce6a44e proposal; A accepted and recorded adoption in PR #2 before implementation. Active API is now v0.4 on this branch; B must regenerate its strict client before switching. Preserve B/C ownership. See eval/analysis/RESULTS.md for actual checks, not historical readiness wording.

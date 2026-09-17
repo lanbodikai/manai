@@ -6,6 +6,7 @@ data
 **/node_modules
 **/__pycache__
 private-eval
+claims.json
 work
 
 **/.env

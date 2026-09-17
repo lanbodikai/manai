@@ -9,7 +9,7 @@ import { CpuPilotPlanner } from "./CpuPilotPlanner";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
-export function CostOptimization({ api }: { api: DashboardApi }) {
+export function CostOptimization({ api, modelAvailable = true }: { api: DashboardApi; modelAvailable?: boolean }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const [table, setTable] = useState<DecisionTable | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -129,8 +129,8 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
       <section className="panel optimization-action" aria-labelledby="selection-heading">
         <div className="optimization-selection"><span className="tile-icon blue"><SlidersHorizontal size={22} /></span><div><h2 id="selection-heading">{selected.length ? `${selected.length} ${selected.length === 1 ? "fix" : "fixes"} selected` : "Choose a fix to model"}</h2><p>{selectedRows.length ? selectedRows.map(r => r.title).join(" · ") : "Start with the CPU placement pilot, then compare other opportunities."}</p>
           {current && selected.length > 1 && <p className="overlap-note">{number(visible.selection.overlapping_gpu_hours)} duplicated GPU-hours removed from the combined exposure.</p>}</div></div>
-        <div className="optimization-buttons"><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" onClick={optimize} disabled={!selected.length || !current || sending || !!receipt}>{sending ? "Sending request…" : receipt ? "Request accepted" : actionError ? "Retry optimization request" : "Model selected changes"}<ArrowRight size={16} /></button></div>
-        <p className="optimization-action-note">Requests the separate backend model using selected fix IDs only. Local CPU planner assumptions are not submitted by this button. It does not approve or execute a pilot. Canonical financial results remain unavailable until the analysis service provides them.</p>
+        <div className="optimization-buttons"><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" onClick={optimize} disabled={!modelAvailable || !selected.length || !current || sending || !!receipt}>{!modelAvailable ? "Multi-fix modeling not yet available" : sending ? "Sending request…" : receipt ? "Request accepted" : actionError ? "Retry optimization request" : "Model selected changes"}<ArrowRight size={16} /></button></div>
+        <p className="optimization-action-note">{modelAvailable ? "Requests the separate backend model using selected fix IDs only." : "This table supports read-only investigation. Multi-fix calculation is not connected; use Scenario for the audited CPU pilot."} Local CPU planner assumptions are not submitted by this button. It does not approve or execute a pilot. Canonical financial results remain unavailable until the analysis service provides them.</p>
         {actionError && <div className="optimization-error" role="alert"><TriangleAlert size={18} /><div><strong>Optimization was not confirmed</strong><p>{actionError}</p><p>You can still inspect evidence and adjust your selection.</p><button className="text-button" onClick={reload}>Reload dataset</button></div></div>}
         {receipt && <div className="optimization-receipt" role="status"><CheckCircle2 size={19} /><div><strong>{receipt.synthetic ? "Synthetic example — request accepted" : "Backend accepted your modeling request"}</strong><p>Request {receipt.optimization_id}. Acceptance is not a completed optimization or verified savings.</p></div></div>}
       </section>

@@ -43,16 +43,17 @@ def dump(value):
     return json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(',', ':'))
 
 
-def build(official):
+def build(official, cache=CACHE):
     official = official.resolve()
-    CACHE.mkdir(exist_ok=True)
+    cache = cache.resolve()
+    cache.mkdir(parents=True, exist_ok=True)
     old_cwd = Path.cwd()
     try:
         # The unmodified supplied module creates data/prepped relative to cwd.
-        os.chdir(CACHE)
+        os.chdir(cache)
         prep = module(official / 'scripts/prep_data.py', 'official_preview_prep')
         prep.RAW = official / 'data/raw'
-        prep.OUT = CACHE / 'data/prepped'
+        prep.OUT = cache / 'data/prepped'
         jobs, cards = prep.build()
     finally:
         os.chdir(old_cwd)
@@ -64,7 +65,7 @@ def build(official):
             expected[name] = digest
     fingerprints = []
     for name in ['prepped/jobs.parquet', 'prepped/gpus.parquet']:
-        digest = checks.digest(CACHE / 'data' / name)
+        digest = checks.digest(cache / 'data' / name)
         if digest != expected[name]:
             raise RuntimeError(f'Canonical checksum mismatch for {name}; preview was not published.')
         fingerprints.append(digest)
@@ -74,7 +75,7 @@ def build(official):
     cards['duration_exceeds_final_walltime'] = cards.totalexecutiontime_sec > cards.walltime_sec
     cards['bounded_gpu_hours'] = cards[['totalexecutiontime_sec', 'walltime_sec']].min(axis=1).clip(lower=0) / 3600
     nodes = sorted(cards.Node.dropna().unique().tolist())
-    output = CACHE / 'preview.build.sqlite'
+    output = cache / 'preview.build.sqlite'
     if output.exists():
         output.unlink()  # Fixed known cache file, never source data.
     db = sqlite3.connect(output)
@@ -186,7 +187,7 @@ def build(official):
     assert np.isclose(cards.gpu_hours.sum(), jobs.gpu_hours.sum())
     assert ((cards.bounded_gpu_hours >= 0) & (cards.bounded_gpu_hours <= cards.gpu_hours + 1e-9)).all()
     db.close()
-    output.replace(CACHE / 'preview.sqlite')
+    output.replace(cache / 'preview.sqlite')
     print(f'Local preview ready: {len(jobs)} jobs, {gpu_count} cards, {len(nodes)} machines. Findings: {finding_count if finding_count is not None else "not loaded"}.')
     print('No savings, billing or MCP claims computed. Cache is ignored by Git.')
 
@@ -194,4 +195,6 @@ def build(official):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--official-root', type=Path, required=True, help='Existing official Track 2 directory containing scripts/ and data/raw/.')
-    build(parser.parse_args().official_root)
+    parser.add_argument('--output-dir', type=Path, default=CACHE, help='Private browsing cache directory.')
+    args = parser.parse_args()
+    build(args.official_root, args.output_dir)

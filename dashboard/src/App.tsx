@@ -285,7 +285,7 @@ export function App({ runtime }: { runtime: Runtime }) {
           </div>
         )}
         {hash === "#optimization" ? (
-          <CostOptimization api={api} />
+          <CostOptimization api={api} modelAvailable={runtime.mode !== "http"} />
         ) : dataOpen ? (
           <DataExplorer api={api} hash={hash} />
         ) : local ? (
