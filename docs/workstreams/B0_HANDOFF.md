@@ -1,5 +1,13 @@
 # B0 handoff — fixture UI, bootstrap pending
 
+## Latest update — task table as the main Decisions view
+
+User supplied a screenshot of the existing detailed table and requested it as the main decision UI, then clarified that the CFO should be able to optimize without first specifying a percentage cut. On baseline 1ac9071, B promoted all eight rows into the primary view, removed duplicate task cards/show-more navigation, and retained checkbox selection, source percentages/meters, owner, potential fix, expandable risk and evidence links. Reference cost remains beside each task, explicitly not savings. Selection percentages describe affected recorded GPU time, not achievable cuts.
+
+The 20% hackathon goal and outcome breakdown now sit behind View spending goal and GPU-time breakdown. The explanation is spend $80 for every $100 previously spent, with acceptable research performance; it is not removal of 20% of GPUs. The main task journey needs no target input. Compare CPU pilot explicitly opens the planner; selecting a checkbox alone does not reveal a technical form. Engineering inputs and detailed scenario costs start collapsed. A plain-language recommendation/benefit/risk summary explains that estimates are pending; underlying math and backend behavior are unchanged.
+
+Actual checks: npm test **51/51 PASS**; npm run build **PASS** including TypeScript/mock exclusion (existing chunk warning); focused local optimization and pilot browser tests **4/4 PASS (5.4s)** at desktop/mobile. Tests verify nine table rows visible on entry, optional target/chart disclosure, keyboard selection, deduplication, evidence navigation, missing backend behavior, hidden technical inputs and immutable plan export. Desktop and mobile screenshots inspected; no horizontal page overflow. Full unrelated browser suite not rerun for this layout change. Builder self-review only. Backend financial integration, actual pilot execution and cash savings remain **NOT RUN**. Changes remain dashboard plus this handoff.
+
 ## Latest update — CFO CPU pilot decision planner
 
 User explicitly authorized implementing the decision-planner proposal on baseline **bde7e7b**. The Decisions page retains the allocation bar and source evidence, prioritizes the CPU pilot first and idle-session investigation second (testability, not a savings ranking), and shows a 20% comparison against the same historical sample reference-cost baseline. It explicitly shows that the entire CPU cohort cannot supply a 20% cut on its own. Six other investigations and the full table remain expandable.

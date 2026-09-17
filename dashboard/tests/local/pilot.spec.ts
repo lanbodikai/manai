@@ -5,6 +5,8 @@ for(const mobile of [false,true]) test(`CPU pilot comparison, downside and immut
   await page.goto("/#optimization");
   await page.getByRole("button",{name:"Compare CPU pilot",exact:true}).click();
   await expect(page.getByRole("region",{name:"Should we run the CPU pilot?"})).toBeFocused();
+  await expect(page.getByLabel("CPU price ($/core-hour)",{exact:true})).toBeHidden();
+  await page.getByText("Engineering assumptions and pilot limits",{exact:true}).click();
   await page.getByRole("button",{name:"Compare pilot scenarios",exact:true}).click();
   await expect(page.getByRole("alert")).toContainText("Complete every numeric assumption");
   const fields:{[key:string]:string}={"CPU price ($/core-hour)":"0.05","CPU core-hours — low":"100","CPU core-hours — base":"200","CPU core-hours — high":"400","Implementation cost ($)":"50","Extra retry / rollback reserve ($)":"25","Worst modeled slowdown (%)":"50","Assumption source / evidence":"Illustrative browser scenario, not measured CPU performance."};

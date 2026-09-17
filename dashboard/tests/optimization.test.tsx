@@ -75,14 +75,17 @@ describe("decision table interactions", () => {
     api.optimization!.submit=submit;
     render(<CostOptimization api={api} />);
     await screen.findByRole("checkbox",{name:"Select CPU placement pilot"});
-    const cpuCard=screen.getByRole("article",{name:"CPU placement pilot"});
-    expect(within(cpuCard).getByText("$75")).toBeVisible();
-    expect(within(cpuCard).getByText("Reference cost · not savings")).toBeVisible();
+    const cpuCard=screen.getByRole("checkbox",{name:"Select CPU placement pilot"}).closest("tr")!;
+    expect(cpuCard).toHaveTextContent("$75");
+    expect(within(cpuCard).getByText("reference cost · not savings")).toBeVisible();
+    expect(screen.getAllByRole("row")).toHaveLength(9);
     expect(screen.queryByLabelText("Recovery high (%)")).not.toBeInTheDocument();
     expect(screen.getByRole("button",{name:"Model selected changes"})).toBeDisabled();
     await user.click(screen.getByRole("checkbox",{name:"Select CPU placement pilot"}));
     await user.click(screen.getByRole("checkbox",{name:"Select Idle interactive sessions"}));
     await waitFor(() => expect(within(screen.getByRole("region",{name:"Optimization context"})).getByText("5.0%")).toBeVisible());
+    expect(screen.queryByRole("heading",{name:"Should we run the CPU pilot?"})).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button",{name:"Compare CPU pilot"}));
     expect(screen.getByRole("heading",{name:"Should we run the CPU pilot?"})).toBeVisible();
     await user.click(screen.getByRole("button",{name:"Model selected changes"}));
     expect(await screen.findByRole("alert")).toHaveTextContent("Backend unavailable");
@@ -91,7 +94,7 @@ describe("decision table interactions", () => {
     await screen.findByText("Synthetic example — request accepted");
     expect(submit.mock.calls[0][0]).toEqual(submit.mock.calls[1][0]);
     expect(submit.mock.calls[0][0].fix_ids).toEqual(["cpu-placement","idle-sessions"]);
-    expect(screen.getByText("Not modeled")).toBeVisible();
+    expect(screen.getByText("Estimate needed")).toBeVisible();
   });
   it("ignores an earlier selection summary arriving after the current summary", async () => {
     const user=userEvent.setup(), api=createMockApi({delay:0}), original=api.optimization!.decisions;

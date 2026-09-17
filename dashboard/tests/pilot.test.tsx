@@ -28,6 +28,8 @@ describe("bounded CPU pilot planning",() => {
   });
   it("keeps last calculated results separate from edited assumptions and shows breached safeguards",async () => {
     const user=userEvent.setup();render(<CpuPilotPlanner source={source}/>);
+    expect(screen.getByLabelText("CPU price ($/core-hour)")).not.toBeVisible();
+    await user.click(screen.getByText("Engineering assumptions and pilot limits",{exact:true}));
     await user.click(screen.getByRole("button",{name:"Compare pilot scenarios"}));
     expect(screen.getByRole("alert")).toHaveTextContent("Complete every numeric assumption");
     for(const [label,value] of [["Pilot size (% of eligible GPU-hours)","10"],["CPU price ($/core-hour)","0.1"],["CPU core-hours — low","10"],["CPU core-hours — base","20"],["CPU core-hours — high","30"],["Implementation cost ($)","2"],["Extra retry / rollback reserve ($)","1"],["Worst modeled slowdown (%)","50"],["Maximum extra pilot spend ($)","5"],["Assumption source / evidence","Synthetic test assumptions"]]) {

@@ -1,4 +1,9 @@
 .pilot-planner { padding:26px; margin-bottom:24px; scroll-margin-top:20px; }
+.cfo-pilot-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; margin:20px 0; }
+.cfo-pilot-summary>div { padding:18px; background:#f6f8fc; border-radius:10px; }
+.cfo-pilot-summary h3 { font-size:15px; margin:0; }
+.engineering-details { margin:20px 0; padding:16px; border:1px solid #e1e8f3; border-radius:10px; }
+.engineering-details>.pilot-scenario-grid { margin-top:20px; }
 .pilot-title { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
 .pilot-title h2 { font-size:24px; margin:12px 0; }
 .pilot-planner p { font-size:13px; line-height:1.75; color:#657996; }
@@ -43,3 +48,4 @@
 .pilot-open { margin-right:15px; margin-bottom:10px; }
 @media(max-width:900px) { .pilot-fields { grid-template-columns:repeat(2,minmax(0,1fr)); } .pilot-scenario-grid { grid-template-columns:1fr; } }
 @media(max-width:650px) { .pilot-planner { padding:18px; } .pilot-title { flex-direction:column; } .pilot-fields,.pilot-comparison { grid-template-columns:1fr; } .pilot-planner fieldset { padding:14px; } .pilot-comparison strong { font-size:23px; } }
+@media(max-width:650px) { .cfo-pilot-summary { grid-template-columns:1fr; } }
