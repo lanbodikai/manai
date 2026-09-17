@@ -955,10 +955,6 @@ textarea {
   margin-top: 17px;
   font-size: 12px;
   border-radius: 0 7px 7px 0;
-  overflow-wrap: anywhere;
-}
-.answer > p {
-  white-space: pre-line;
 }
 .answer .eyebrow {
   font-size: 8px;
