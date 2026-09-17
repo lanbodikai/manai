@@ -1,15 +1,8 @@
 .optimization-page { min-width: 0; }
-.savings-assumptions { padding:22px 26px; margin-bottom:20px; }
-.savings-assumptions h2 { font-size:20px; margin:0 0 8px; }
-.savings-assumptions p { font-size:12px; color:#687a96; line-height:1.7; }
-.savings-inputs { display:flex; flex-wrap:wrap; gap:16px; margin:18px 0; }
-.savings-inputs label { display:grid; gap:8px; font-size:12px; color:#526b92; flex:1 1 160px; min-width:0; }
-.savings-inputs input { width:100%; min-width:0; padding:10px 12px; border:1px solid #ccd8ed; border-radius:8px; background:#fff; color:#233959; }
-.task-savings { margin:14px 0; padding:12px 16px; border-radius:8px; background:#edf6f3; color:#296854; }
-.task-savings span { display:block; font-size:11px; line-height:1.7; }
-.task-savings strong { display:block; font-size:23px; margin:4px 0; overflow-wrap:anywhere; }
-.decision-table .task-savings { padding:10px; }
-.decision-table .task-savings strong { font-size:16px; }
+.task-metrics { display:flex; align-items:flex-start; gap:26px; flex-shrink:0; }
+.task-reference-cost { text-align:right; }
+.task-reference-cost strong { font-size:23px; color:#304875; }
+.task-reference-cost span { display:block; font-size:10px; color:#71809a; margin-top:3px; }
 .allocation-panel { padding:26px; margin-bottom:20px; }
 .allocation-heading { display:flex; justify-content:space-between; gap:20px; align-items:center; }
 .allocation-heading h2 { margin:10px 0; font-size:23px; }
@@ -97,6 +90,8 @@
 .optimization-error p,.optimization-receipt p { margin:4px 0 0; }
 @media(max-width:1000px) { .optimization-stats { gap:10px; } .optimization-stats .panel { padding:18px; } }
 @media(max-width:650px) {
+  .task-metrics { flex-wrap:wrap; gap:10px 22px; margin-bottom:12px; }
+  .task-reference-cost { text-align:left; }
   .allocation-panel { padding:18px; }
   .allocation-heading { display:block; }
   .allocation-heading>div:last-child { text-align:left; margin-top:16px; }

@@ -2,9 +2,9 @@
 
 This is a **B-owned frontend proposal**, requested by the user. It does not change or claim adoption of team API v0.3 or the accepted v0.4 CPU-extension design. A's inspected branch `05c7fa0` implements deterministic audits, but exposes no multi-fix optimization route. A must agree and implement the action before live modeling can succeed. B has not modified the backend or shared contracts.
 
-## User-requested local dollar preview
+## Current dollar display
 
-Tasks now show user-editable what-if gross reference-dollar ranges using source hours × price × recovery. Defaults ($2.50, 0–25%) are explicitly illustrative, not estimated recovery. Selected totals use unique-job hours. Outcomes show allocation reference cost only. CPU/replacement/implementation costs and performance harm are not included; actual net savings may be zero or negative. This local preview does not modify claims, the canonical API or the optimization request. Its assumptions are not submitted to A. The existing backend net-savings result remains unmodeled.
+Only task headers show dollar amounts: eligible source GPU-hours × $2.50/GPU-hour, labeled Reference cost, not savings. The reference rate was verified from the running supplied /v1/price-book, version 2026-Q3, on 2026-09-17; it is a pinned reference assumption, not an actual bill or live price feed. The earlier 0–25% what-if recovery range and controls were removed at the user's request. No recoverability or net/cash savings are inferred. Dollar displays do not modify claims or backend requests. Validated pilot costs and actual billing evidence are still needed.
 
 ## User experience
 

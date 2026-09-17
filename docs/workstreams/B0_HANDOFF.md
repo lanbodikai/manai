@@ -1,5 +1,11 @@
 # B0 handoff — fixture UI, bootstrap pending
 
+## Latest update — reference cost beside tasks; unverified savings removed
+
+User asked whether the amounts were legitimate and requested placement only beside tasks. B clarified that the recovery range was illustrative, not measured savings. Verified the running supplied API GET /v1/price-book returns version 2026-Q3, usd_per_gpu_hour 2.5. The task header now shows source eligible hours × that pinned reference rate, labeled **Reference cost · not savings**. This is not actual billing. Removed recovery controls, invented ranges, outcome-dollar displays, combined-dollar summary and duplicate table-dollar displays; deleted the unused what-if helper/tests. Backend net savings remain unmodeled. Historical change records below are superseded.
+
+Actual checks: npm test **47/47 PASS**, npm run build **PASS** including typecheck/mock exclusion, focused local optimization browser tests **2/2 PASS** at desktop/mobile. Existing build chunk warning remains. No backend/shared contract changes. Verified cash savings require equivalent-work pilot measurements, actual marginal/billing rates, incremental costs and subsequent billing evidence; freed capacity on fixed-cost hardware is not automatically cash saved. Live financial modeling and operational effect remain **NOT RUN**.
+
 ## Latest update — per-task what-if dollar ranges
 
 User explicitly requested dollar savings under each task immediately. On baseline cfddfa9, B added a local, user-editable what-if preview: recorded eligible GPU-hours × reference USD/GPU-hour × assumed recovery. Defaults are explicitly illustrative ($2.50 and 0–25%), not calibrated recovery estimates. Every task and detailed table row shows its gross reference-dollar range; the selected total uses deduplicated hours. Outcome tabs show allocation reference cost, never savings inferred solely from status. All amounts apply to the sample window, not a month. Actual net savings may be zero or negative; CPU, implementation and performance costs are unmeasured. These local preview assumptions are not submitted to the pending canonical backend model. Backend net savings remains Not modeled; no claims export was changed.
