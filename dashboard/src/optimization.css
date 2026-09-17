@@ -1,4 +1,46 @@
 .optimization-page { min-width: 0; }
+.decision-caption { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:16px 26px; font-size:12px; color:#71809a; }
+.row-source-details { font-weight:400; }
+.decision-table .row-source-details p { margin:6px 0; }
+.optimize-risk-list details,.optimize-method { font-size:12px; color:#657996; }
+.optimize-risk-list summary,.optimize-method summary { cursor:pointer; padding:5px 0; }
+.optimize-method p { font-size:12px; line-height:1.7; }
+.decision-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 26px; border-top:1px solid #edf1f8; background:#fafcff; }
+.decision-toolbar>span { font-size:13px; color:#687c9b; }
+.decision-toolbar>div { display:flex; align-items:center; gap:20px; }
+.optimize-dialog { width:min(680px,calc(100vw - 40px)); max-height:calc(100dvh - 48px); padding:0; border:1px solid #dfe7f4; border-radius:18px; color:#263d60; box-shadow:0 24px 90px #132e5840; }
+.optimize-dialog::backdrop { background:#182b4b70; backdrop-filter:blur(3px); }
+.optimize-dialog>header { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; padding:24px; border-bottom:1px solid #e8edf6; }
+.optimize-dialog h2 { font-size:23px; margin:10px 0 0; }
+.optimize-dialog-body { padding:20px 24px; }
+.optimize-dialog-body>p { font-size:13px; line-height:1.75; color:#647999; margin-top:0; }
+.optimize-scope { padding:14px; background:#f4f7ff; border-radius:9px; }
+.optimize-risk-list article { padding:18px 0; border-top:1px solid #e8edf6; }
+.optimize-risk-list h3 { font-size:16px; margin:0 0 10px; }
+.optimize-risk-list p { font-size:13px; line-height:1.7; margin:7px 0; }
+.optimize-risk { display:flex; gap:12px; padding:14px; background:#fff5e9; border-radius:9px; color:#7c5735; margin:13px 0; }
+.optimize-risk svg { flex-shrink:0; margin-top:2px; }
+.optimize-risk h4 { font-size:12px; margin:0; }
+.optimize-dialog>footer { display:flex; justify-content:flex-end; gap:12px; padding:18px 24px; background:#fff; border-top:1px solid #e8edf6; position:sticky; bottom:0; }
+@media(max-width:650px) { .decision-toolbar { padding:14px 16px; align-items:flex-start; flex-direction:column; } .decision-toolbar>div { width:100%; justify-content:space-between; } .optimize-dialog { width:100vw; max-width:100vw; max-height:100dvh; height:100dvh; margin:0; border-radius:0; } .optimize-dialog-body,.optimize-dialog>header { padding:20px; } }
+.decision-row-cost { display:block; color:#526b92; font-size:12px; margin-top:8px; font-weight:500; }
+.decision-row-cost small { display:block; font-size:10px; color:#7c8aa2; font-weight:400; margin-top:3px; }
+.optional-goal { padding:0 26px 16px; }
+.optional-goal h2 { font-size:18px; }
+.optional-goal p { font-size:13px; color:#657996; line-height:1.7; }
+.compact-selection .panel { padding:18px 24px; }
+.compact-selection strong { font-size:28px; margin:10px 0; }
+.decision-table .pilot-open { font-size:11px; margin:10px 0 0; }
+.simple-goal { display:flex; align-items:center; flex-wrap:wrap; gap:12px 30px; padding:24px 26px; margin-bottom:20px; }
+.simple-goal>div:first-child { flex:1 1 300px; }
+.simple-goal h2 { margin:10px 0; font-size:24px; }
+.simple-goal p { color:#657996; font-size:13px; line-height:1.7; }
+.simple-goal>p { flex-basis:100%; margin:0; font-size:11px; }
+.goal-example { display:flex; align-items:center; gap:24px; }
+.goal-example span { color:#2856e8; font-size:32px; font-weight:600; }
+.goal-example small { display:block; font-size:11px; color:#71809a; font-weight:400; }
+.simple-method { font-size:12px; margin-top:12px; }
+.simple-method summary,.decision-footnote summary { cursor:pointer; color:#526b92; }
 .task-metrics { display:flex; align-items:flex-start; gap:26px; flex-shrink:0; }
 .task-reference-cost { text-align:right; }
 .task-reference-cost strong { font-size:23px; color:#304875; }
