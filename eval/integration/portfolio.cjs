@@ -1,0 +1,70 @@
+// Private production UI witness: shared result, all actions, edits, failures and exports.
+const {chromium,expect}=require('../../dashboard/node_modules/@playwright/test');
+const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
+(async()=>{
+ const url=process.argv[2]||'http://127.0.0.1:13111',out=path.resolve(process.argv[3]||'private-eval/portfolio/browser-01');
+ await fs.mkdir(out);const receipt={url,checks:[],started:new Date().toISOString()};
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:2}).format(v);
+ const range=b=>`${money(b.low)}–${money(b.high)}`;
+ const pass=s=>{receipt.checks.push(s);console.log('PASS',s);};
+ try{
+  const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(45000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const calculated=page.waitForResponse(r=>r.url().endsWith('/api/portfolio-simulations')&&r.request().method()==='POST');
+  await page.goto(url);const response=await calculated;assert.equal(response.status(),201);const original=await response.json();
+  receipt.simulation_id=original.simulation_id;assert.equal(original.actions.length,8);
+  const summary=page.getByRole('region',{name:'Combined cost simulation'});
+  await expect(summary).toContainText(range(original.bounds.net_reference_usd));
+  await page.screenshot({path:path.join(out,'overview.png'),fullPage:true});
+  await page.getByRole('link',{name:'Model a scenario →',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Cost-reduction simulation'})).toBeVisible();
+  await expect(page.getByRole('checkbox')).toHaveCount(8);
+  pass('Overview opens the shared eight-action Model with the same cost range');
+  await page.getByLabel('CPU placement setup_usd',{exact:true}).fill('100');
+  await page.getByRole('link',{name:'Overview',exact:true}).click();
+  await expect(summary).toContainText('showing previous calculation');
+  await expect(summary).toContainText(range(original.bounds.net_reference_usd));
+  await page.getByRole('link',{name:'Decisions',exact:true}).click();
+  await expect(summary).toContainText(range(original.bounds.net_reference_usd));
+  await expect(page.getByRole('link',{name:/^Model /})).toHaveCount(9); // eight rows plus shared summary CTA
+  await expect(page.getByText(/Standalone:/)).toHaveCount(8);
+  await page.getByRole('link',{name:'Model Jobs stopped by time limits',exact:true}).click();
+  await expect(page.locator('#model-timeouts')).toBeFocused();
+  await expect(page.getByLabel('CPU placement setup_usd',{exact:true})).toHaveValue('100');
+  pass('All Decisions rows display costs and focus their shared assumptions; drafts persist across pages');
+  const updatedEvent=page.waitForResponse(r=>r.url().endsWith('/api/portfolio-simulations')&&r.request().method()==='POST');
+  await page.getByRole('button',{name:'Recalculate',exact:true}).click();
+  const updated=await(await updatedEvent).json();assert.equal(updated.cases[1].net_reference_usd,original.cases[1].net_reference_usd-100);
+  await expect(summary).toContainText(range(updated.bounds.net_reference_usd));
+  await expect(summary).not.toContainText('showing previous calculation');
+  await page.getByRole('link',{name:'Overview',exact:true}).click();
+  await expect(summary).toContainText(range(updated.bounds.net_reference_usd));
+  pass('Explicit recalculation updates the shared front-page cost and target result');
+  await page.getByRole('link',{name:'Model a scenario →',exact:true}).click();
+  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Download simulation report'}).click();
+  const report=JSON.parse(await fs.readFile(await(await download).path(),'utf8'));assert.equal(report.simulation_id,updated.simulation_id);assert.equal(report.export_kind,'portfolio-simulation-not-official-claims');
+  await page.getByText('Inspect assigned jobs and exclusions',{exact:true}).click();
+  await expect(page.getByRole('link',{name:/^Job /}).first()).toBeVisible();
+  await page.getByLabel('Portfolio evidence group').selectOption('excluded');
+  await expect(page.getByText(`${updated.coverage.unassigned_jobs} jobs.`,{exact:true})).toBeVisible();
+  pass('Export and source-linked assignment/exclusion evidence match the immutable result');
+  await page.getByRole('checkbox',{name:'Checkpoint / restart',exact:true}).uncheck();
+  const deselectEvent=page.waitForResponse(r=>r.url().endsWith('/api/portfolio-simulations')&&r.request().method()==='POST');
+  await page.getByRole('button',{name:'Recalculate',exact:true}).click();const deselected=await(await deselectEvent).json();assert.equal(deselected.actions.length,7);assert.ok(!deselected.actions.some(a=>a.id==='timeouts'));
+  await expect(summary).toContainText('7 actions');pass('Action deselection recalculates exclusive assignments');
+  await page.getByLabel('lower: Checkpoint interval (minutes)',{exact:true}).fill('0');
+  await page.getByRole('button',{name:'Recalculate',exact:true}).click();await expect(summary).toContainText('Enter finite assumptions');
+  await page.getByRole('button',{name:'Reset illustrative assumptions'}).click();
+  await page.route('**/api/portfolio-simulations',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.getByRole('button',{name:'Recalculate',exact:true}).click();await expect(summary).toContainText('Simulation unavailable');
+  await expect(summary).toContainText(range(deselected.bounds.net_reference_usd));await page.unroute('**/api/portfolio-simulations');
+  await page.getByRole('button',{name:'Recalculate',exact:true}).click();await expect(summary).toContainText(range(original.bounds.net_reference_usd));
+  pass('Invalid assumptions and service failures preserve the labeled previous result; retry restores it');
+  await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:path.join(out,'model-desktop.png')});
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>window.scrollTo(0,0));
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,'model-mobile.png')});
+  assert.deepEqual(errors,[]);pass('Desktop/mobile render without overflow or browser errors');receipt.status='PASS';
+ }catch(e){receipt.status='FAIL';receipt.error=e.stack;throw e;}
+ finally{receipt.finished=new Date().toISOString();await fs.writeFile(path.join(out,'receipt.json'),JSON.stringify(receipt,null,2));await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

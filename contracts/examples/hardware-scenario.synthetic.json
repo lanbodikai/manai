@@ -1,0 +1,180 @@
+{
+  "contract_version": "cpu-hardware-1",
+  "dataset_version": "invented-browser",
+  "data_fingerprint": "synthetic-unit-v1",
+  "synthetic": true,
+  "kind": "scenario_estimate",
+  "hardware": {
+    "name": "MIT Xeon Platinum 8260 CPU partition",
+    "partition": "xeon-p8",
+    "physical_cores": 48,
+    "memory_mb": 192000,
+    "memory_mb_per_core": 4000,
+    "sources": [
+      "https://mit-supercloud.github.io/supercloud-docs/systems-and-software/",
+      "https://mit-supercloud.github.io/supercloud-docs/submitting-jobs/"
+    ]
+  },
+  "assumptions": {
+    "runtime_ratio": 1,
+    "extra_queue_hours": 0,
+    "cpu_price_ratios": [
+      0.005,
+      0.02
+    ],
+    "baseline_host_costs_included": true,
+    "allocation_unit": "physical_core",
+    "scope": "all_resource_fitting_jobs_not_a_small_pilot",
+    "range_kind": "cpu_price_sensitivity_not_confidence_interval"
+  },
+  "gpu_reference_usd_per_hour": 2.5,
+  "price_book_version": "invented-pricebook",
+  "baseline_reference_usd": 80.0,
+  "target_reference_usd": 16.0,
+  "coverage": {
+    "eligible_jobs": 3,
+    "eligible_gpu_hours": 24.0,
+    "fitting_jobs": 1,
+    "non_fitting_jobs": 1,
+    "unresolved_jobs": 1,
+    "fitting_gpu_hours": 8.0,
+    "memory_resized_jobs": 1
+  },
+  "allocations": [
+    {
+      "id": "memory_adjusted",
+      "cases": [
+        {
+          "cpu_price_ratio": 0.005,
+          "cpu_reference_usd_per_core_hour": 0.0125,
+          "cpu_core_hours": 6.0,
+          "cpu_cost_reference_usd": 0.07500000000000001,
+          "released_gpu_hours_if_success": 8.0,
+          "success_net_reference_usd": 19.925,
+          "failure_net_reference_usd": -0.07500000000000001,
+          "failure_extra_reference_usd": 0.07500000000000001,
+          "validation_net_reference_usd": -0.07500000000000001,
+          "success_completion_change_hours": 0,
+          "failure_runtime_ratio": 2,
+          "validation_completion_change_hours": null,
+          "positive_no_slower_jobs": 1,
+          "baseline_reduction_pct": 24.90625,
+          "target_contribution_pct": 124.53125,
+          "remaining_target_reference_usd": 0
+        },
+        {
+          "cpu_price_ratio": 0.02,
+          "cpu_reference_usd_per_core_hour": 0.05,
+          "cpu_core_hours": 6.0,
+          "cpu_cost_reference_usd": 0.30000000000000004,
+          "released_gpu_hours_if_success": 8.0,
+          "success_net_reference_usd": 19.7,
+          "failure_net_reference_usd": -0.30000000000000004,
+          "failure_extra_reference_usd": 0.30000000000000004,
+          "validation_net_reference_usd": -0.30000000000000004,
+          "success_completion_change_hours": 0,
+          "failure_runtime_ratio": 2,
+          "validation_completion_change_hours": null,
+          "positive_no_slower_jobs": 1,
+          "baseline_reduction_pct": 24.625,
+          "target_contribution_pct": 123.125,
+          "remaining_target_reference_usd": 0
+        }
+      ],
+      "success_net_reference_usd": {
+        "low": 19.7,
+        "high": 19.925
+      },
+      "failure_extra_reference_usd": {
+        "low": 0.07500000000000001,
+        "high": 0.30000000000000004
+      },
+      "baseline_reduction_pct": {
+        "low": 24.625,
+        "high": 24.90625
+      },
+      "target_contribution_pct": {
+        "low": 123.125,
+        "high": 124.53125
+      },
+      "remaining_target_reference_usd": {
+        "low": 0,
+        "high": 0
+      }
+    },
+    {
+      "id": "whole_node",
+      "cases": [
+        {
+          "cpu_price_ratio": 0.005,
+          "cpu_reference_usd_per_core_hour": 0.0125,
+          "cpu_core_hours": 96.0,
+          "cpu_cost_reference_usd": 1.2000000000000002,
+          "released_gpu_hours_if_success": 8.0,
+          "success_net_reference_usd": 18.8,
+          "failure_net_reference_usd": -1.2000000000000002,
+          "failure_extra_reference_usd": 1.2000000000000002,
+          "validation_net_reference_usd": -1.2000000000000002,
+          "success_completion_change_hours": 0,
+          "failure_runtime_ratio": 2,
+          "validation_completion_change_hours": null,
+          "positive_no_slower_jobs": 1,
+          "baseline_reduction_pct": 23.5,
+          "target_contribution_pct": 117.5,
+          "remaining_target_reference_usd": 0
+        },
+        {
+          "cpu_price_ratio": 0.02,
+          "cpu_reference_usd_per_core_hour": 0.05,
+          "cpu_core_hours": 96.0,
+          "cpu_cost_reference_usd": 4.800000000000001,
+          "released_gpu_hours_if_success": 8.0,
+          "success_net_reference_usd": 15.2,
+          "failure_net_reference_usd": -4.800000000000001,
+          "failure_extra_reference_usd": 4.800000000000001,
+          "validation_net_reference_usd": -4.800000000000001,
+          "success_completion_change_hours": 0,
+          "failure_runtime_ratio": 2,
+          "validation_completion_change_hours": null,
+          "positive_no_slower_jobs": 1,
+          "baseline_reduction_pct": 19.0,
+          "target_contribution_pct": 95.0,
+          "remaining_target_reference_usd": 0.8000000000000007
+        }
+      ],
+      "success_net_reference_usd": {
+        "low": 15.2,
+        "high": 18.8
+      },
+      "failure_extra_reference_usd": {
+        "low": 1.2000000000000002,
+        "high": 4.800000000000001
+      },
+      "baseline_reduction_pct": {
+        "low": 19.0,
+        "high": 23.5
+      },
+      "target_contribution_pct": {
+        "low": 95.0,
+        "high": 117.5
+      },
+      "remaining_target_reference_usd": {
+        "low": 0,
+        "high": 0.8000000000000007
+      }
+    }
+  ],
+  "limitations": [
+    "Successful CPU execution, unchanged runtime and zero added queue are assumptions, not observations.",
+    "CPU reference rates are sensitivity assumptions, not verified MIT prices; values are not cash savings.",
+    "Requested memory is not measured peak use. Decimal 192000 MB/node and 4000 MB/core are conservative sizing conventions.",
+    "CPU slots model physical cores; additional cores provide memory capacity, not an assumed speedup.",
+    "Spare CPU capacity, compatibility and output correctness are unverified. Multi-node placement is unresolved.",
+    "Setup, migration, storage, contention and business-delay costs are omitted; further retries may cost more.",
+    "The range covers only successful replacement under two CPU prices; failure is modeled separately.",
+    "Whole historical sample window, not a next-quarter forecast. Official recovery/claims remain unchanged."
+  ],
+  "compatibility_verified": false,
+  "cash_savings_verified": false,
+  "scenario_id": "baad6ff35699ed6fca88f233a71f584c169eedf21f8dd4d9c9cd1e94e4abc71e"
+}
