@@ -1,4 +1,22 @@
 .optimization-page { min-width: 0; }
+.decision-row-cost { display:block; color:#526b92; font-size:12px; margin-top:8px; font-weight:500; }
+.decision-row-cost small { display:block; font-size:10px; color:#7c8aa2; font-weight:400; margin-top:3px; }
+.optional-goal { padding:0 26px 16px; }
+.optional-goal h2 { font-size:18px; }
+.optional-goal p { font-size:13px; color:#657996; line-height:1.7; }
+.compact-selection .panel { padding:18px 24px; }
+.compact-selection strong { font-size:28px; margin:10px 0; }
+.decision-table .pilot-open { font-size:11px; margin:10px 0 0; }
+.simple-goal { display:flex; align-items:center; flex-wrap:wrap; gap:12px 30px; padding:24px 26px; margin-bottom:20px; }
+.simple-goal>div:first-child { flex:1 1 300px; }
+.simple-goal h2 { margin:10px 0; font-size:24px; }
+.simple-goal p { color:#657996; font-size:13px; line-height:1.7; }
+.simple-goal>p { flex-basis:100%; margin:0; font-size:11px; }
+.goal-example { display:flex; align-items:center; gap:24px; }
+.goal-example span { color:#2856e8; font-size:32px; font-weight:600; }
+.goal-example small { display:block; font-size:11px; color:#71809a; font-weight:400; }
+.simple-method { font-size:12px; margin-top:12px; }
+.simple-method summary,.decision-footnote summary { cursor:pointer; color:#526b92; }
 .task-metrics { display:flex; align-items:flex-start; gap:26px; flex-shrink:0; }
 .task-reference-cost { text-align:right; }
 .task-reference-cost strong { font-size:23px; color:#304875; }
