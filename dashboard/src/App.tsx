@@ -7,6 +7,7 @@ import {
   Boxes,
   CircleHelp,
   Database,
+  FileSearch,
   FlaskConical,
   LayoutDashboard,
   MessageSquare,
@@ -32,6 +33,7 @@ import { CpuPilot } from "./components/CpuPilot";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
 import { CostOptimization } from "./components/CostOptimization";
+import { CpuPilotSummary } from "./components/CpuPilotSummary";
 import {
   DataExplorer,
   DatasetHome,
@@ -66,6 +68,8 @@ export function App({ runtime }: { runtime: Runtime }) {
   const currentAuditId = useRef<string | null>(null);
   currentAuditId.current = audit?.audit_id ?? null;
   const mock = runtime.mode === "mock";
+  const datasetAvailable =
+    local || mock || import.meta.env.VITE_DATASET_API_ENABLED === "true";
   useEffect(() => {
     const change = () => {
       const h = window.location.hash;
@@ -204,7 +208,7 @@ export function App({ runtime }: { runtime: Runtime }) {
     { id: "optimization", label: "Decisions", icon: Wallet },
     { id: "data", label: "Data explorer", icon: Database },
     { id: "scenario", label: "Scenario", icon: SlidersHorizontal },
-    { id: "evidence", label: "Evidence", icon: Database },
+    { id: "evidence", label: "Evidence", icon: FileSearch },
     { id: "ask", label: "Ask about this pilot", icon: MessageSquare },
   ];
   return (
@@ -222,7 +226,11 @@ export function App({ runtime }: { runtime: Runtime }) {
         <p className="nav-label">WORKSPACE</p>
         <nav aria-label="Main navigation">
           {nav
-            .filter((n) => !local || ["overview", "optimization", "data"].includes(n.id))
+            .filter(
+              (n) =>
+                (!local || ["overview", "optimization", "data"].includes(n.id)) &&
+                (n.id !== "optimization" && n.id !== "data" || datasetAvailable),
+            )
             .map(({ id, label, icon: Icon }) => (
               <a
                 href={`#${id}`}
@@ -284,10 +292,27 @@ export function App({ runtime }: { runtime: Runtime }) {
             <span>No live monitoring, savings audit or MCP</span>
           </div>
         )}
-        {hash === "#optimization" ? (
+        {hash === "#optimization" && datasetAvailable ? (
           <CostOptimization api={api} modelAvailable={runtime.mode !== "http"} />
-        ) : dataOpen ? (
+        ) : hash === "#optimization" ? (
+          <section className="panel unavailable-state" aria-labelledby="decisions-unavailable-title">
+            <span className="eyebrow">DECISION REVIEW UNAVAILABLE</span>
+            <h1 id="decisions-unavailable-title">Connect the evidence workspace first</h1>
+            <p>
+              This review needs the versioned dataset endpoint. Your v0.4 audit,
+              evidence trail, and claims export remain available on the overview.
+            </p>
+            <a className="primary" href="#overview">Return to overview <ArrowRight size={16} /></a>
+          </section>
+        ) : dataOpen && datasetAvailable ? (
           <DataExplorer api={api} hash={hash} />
+        ) : dataOpen ? (
+          <section className="panel unavailable-state" aria-labelledby="data-unavailable-title">
+            <span className="eyebrow">DATA EXPLORER UNAVAILABLE</span>
+            <h1 id="data-unavailable-title">Connect the evidence workspace first</h1>
+            <p>The live audit is still available without the optional dataset browser.</p>
+            <a className="primary" href="#overview">Return to overview <ArrowRight size={16} /></a>
+          </section>
         ) : local ? (
           <DatasetHome api={api} />
         ) : (
@@ -752,6 +777,12 @@ export function App({ runtime }: { runtime: Runtime }) {
                   </section>
                 </div>
                 {audit && (
+                  <CpuPilotSummary
+                    audit={audit}
+                    onEvidence={(id) => setDrawer({ evidence: id })}
+                  />
+                )}
+                {audit && (
                   <>
                     <CpuPilot key={`pilot-${audit.audit_id}`} api={api} audit={audit} busy={calculating}
                       onSubmit={(s) => void model(s)} onEvidence={(id) => setDrawer({ evidence: id })} />
@@ -782,7 +813,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                       </label>
                       <button
                         className="secondary"
-                        disabled={exporting}
+                        disabled={exporting || !team.trim()}
                         onClick={() => void download()}
                       >
                         <ArrowDownToLine size={17} />

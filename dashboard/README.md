@@ -37,7 +37,7 @@ npm run build
 
 Both default to the **HTTP** entry point. Calls use same-origin `/api/*`. No proxy or backend is supplied in B0, so an unconfigured launch visibly fails instead of substituting fixtures. Bootstrap/B1 must route `/api` to A and serve the dashboard. The live form has no invented recovery defaults. A owns production calculations; the target contribution/gap is unavailable until agreed canonical fields exist.
 
-`src/api/types.ts` defines one `DashboardApi`. `src/api/http.ts` validates v0.3 payloads and request/audit/evidence identities. Base chat times out after 12 seconds, optional review after 35 seconds, other requests after 15 seconds. All errors are explicit. Vite chooses `src/mock/runtime.ts` only with `--mode mock`; a normal production build rejects mock/fixture modules and scans emitted assets for fixture markers.
+`src/api/types.ts` defines one `DashboardApi`. `src/api/http.ts` validates the v0.4 payloads and request/audit/evidence identities. It refuses a stale v0.3 health response with a visible compatibility error rather than rendering partial data. Base chat times out after 12 seconds, optional review after 35 seconds, other requests after 15 seconds. All errors are explicit. Vite chooses `src/mock/runtime.ts` only with `--mode mock`; a normal production build rejects mock/fixture modules and scans emitted assets for fixture markers.
 
 Generate types from the existing, unchanged contract:
 
@@ -45,7 +45,7 @@ Generate types from the existing, unchanged contract:
 npm run types:generate
 ```
 
-Types are committed under `src/api/generated.ts`. Runtime Ajv validators read the same shared OpenAPI document. Shared original examples are read-only seeds; additional invented overview/recommendation/pagination/health states and simulation code are confined to `src/mock/`. No organizer records are imported.
+Types are committed under `src/api/generated.ts`. Runtime Ajv validators read the accepted v0.4 OpenAPI document. The development proxy targets `http://127.0.0.1:8001` by default; set `MANAI_V04_URL` to the port where A exposes its v0.4 service. For a browser-reachable deployed origin, set `VITE_MANAI_API_URL` (see `.env.example`). Shared original examples are read-only seeds; additional invented overview/recommendation/pagination/health states and simulation code are confined to `src/mock/`. No organizer records are imported.
 
 ## Inspect failure states
 

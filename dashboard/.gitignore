@@ -4,6 +4,7 @@ test-results/
 playwright-report/
 .work/
 .env*
+!.env.example
 .local-data/
 .local-python/
 .venv/
