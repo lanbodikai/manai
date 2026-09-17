@@ -1,0 +1,8 @@
+# Track 2 data checksums -- check yours with `make check-data` (see README.md).
+# findings.json: SHA-256 of the file. The .parquet files: SHA-256 of the values
+# inside them (scripts/checksum_data.py), because their bytes differ by machine.
+752ca50ea6925654a74d7955c704779e78c3d6332b2a3f7a00517d8f2f05178d  prepped/jobs.parquet
+3415bab98699caaa10db787baa81bf3b6e9ef702b80eb786ac60fdd91b37507e  prepped/gpus.parquet
+d9417c36d1d165a506c660cb150af3dcc756edae559f198ccd14d16072e77a89  synthetic/resources.parquet
+dfa530557bc6a87987fe30260e00c80e700c5d51f7fe7ec9386e2735d7538d04  synthetic/edges.parquet
+bd2d911f63fe8facd4f96eb80293c44632354dc410b6b25c7e9fe5edb9d87ded  synthetic/findings.json

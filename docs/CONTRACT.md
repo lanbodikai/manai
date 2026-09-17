@@ -40,7 +40,7 @@ The first completed-job cohort fixes `cancelled_policy=exclude`; changing that r
 
 ## Freeze gate
 
-Stack and cohort are approved. Before branching: verify precise column mappings against actual data, review the v0.3 OpenAPI schema and synthetic fixtures, agree rounding/display rules and have all three sessions acknowledge the same commit. The schema/examples exist and can be validated; the API server and generated TypeScript client do not yet exist.
+Stack and cohort are approved. Before branching: verify precise column mappings against actual data, review the v0.3 OpenAPI schema and synthetic fixtures, agree rounding/display rules and have all three sessions acknowledge the same commit. The schema/examples exist and can be validated; the bootstrap health/overview service exists; full audit/chat APIs and generated TypeScript client remain workstream work.
 
 ## Base versus enhancement
 

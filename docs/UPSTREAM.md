@@ -1,5 +1,6 @@
 # Official starter import manifest — proposed
 
+Current execution status overrides historical discussion below: see [BOOTSTRAP_STATUS.md](BOOTSTRAP_STATUS.md) and [BOOTSTRAP_BOUNDARY.md](BOOTSTRAP_BOUNDARY.md). Shared bootstrap is authorized and implemented; only recorded passing gates count.
 Import only after execution is activated. Pin official commit `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`; inspect later upstream changes before adopting them. Do not blindly pull main during the build.
 
 ## Layout

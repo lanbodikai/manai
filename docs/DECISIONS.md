@@ -66,3 +66,7 @@ User authorized publishing the plan/setup branch. See [TEAM_START_HERE.md](../TE
 ## D13 — B0 early frontend work (DECIDED, v0.9)
 
 User authorized B to start before bootstrap and fit back in afterward. Scope: isolated dashboard with original fixtures and typed mock/HTTP adapters; no shared import/backend/root Compose edits during B0. Separate bootstrap session establishes integration baseline, which B merges into its existing branch. B0 has its own completion checks and cannot substitute for real-data/MCP/packaging checks. See [B_PREBOOTSTRAP.md](workstreams/B_PREBOOTSTRAP.md).
+
+## D14 — Common-base execution (DECIDED)
+
+Winston authorized executing the common bootstrap in goal mode through the split completion contract, with frozen code boundaries and minimal manual work. Work happens in an isolated codex/integration worktree; B0 remains independent, C begins after the shared base. Provider configuration does not gate bootstrap. Ignore rules and Docker-context exclusions cover local credentials and datasets. User requested a hackathon time budget; a 15-minute remaining-work target was announced at 18:05:44 UTC. Actual gate evidence is in BOOTSTRAP_STATUS.md.

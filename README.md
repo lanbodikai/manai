@@ -1,53 +1,52 @@
-# manai — team handoff v0.9
+# manai — verified common-base bootstrap
 
-Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
+Track 2: audit a completed zero-GPU-compute cohort for a bounded CPU-placement pilot. Our contribution is the accounting, assumptions, downside and evidence story; CPU placement is already suggested upstream. Real intervention savings remain unproven.
 
-Build a complete GPU-efficiency decision dashboard around one verified recommendation: audit proposed savings, expose supporting evidence, and show the downside of acting on uncertain assumptions.
+**This branch is the common foundation, not a finished hackathon submission.** The page on :3000 is a labeled integration probe. See [actual gate results](docs/BOOTSTRAP_STATUS.md) and [frozen boundaries](docs/BOOTSTRAP_BOUNDARY.md).
 
-## Team setup and assignments
+## Setup
 
-**[Start here: clone, bootstrap, exact A/B/C split and copy-paste prompts](TEAM_START_HERE.md).** Published planning branch: `codex/planning`. B creates `codex/integration` for shared bootstrap; all three workstreams branch from its verified baseline. The application is not built yet.
+Requires Git and Docker Desktop/Engine with Linux containers. No model key or host Python/Node installation is required for this bootstrap.
 
-**B can start now:** [early frontend assignment and prompt](docs/workstreams/B_PREBOOTSTRAP.md). Build against fixtures while a separate bootstrap session prepares real data/services; merge the verified baseline into B's branch later.
+```sh
+git clone --branch codex/integration https://github.com/lanbodikai/manai.git
+cd manai
+```
 
-## Planning reference
+Windows PowerShell: run `powershell -ExecutionPolicy Bypass -File tools/bootstrap/setup.ps1`. It verifies generator hashes, downloads missing raw data, prepares/generates the five files and checks their canonical contents. It does not modify machine execution policy. Read [data setup](data/README.md) for equivalent non-Windows steps and source terms.
 
-1. [Decisions and confirmed requirements](docs/DECISIONS.md)
-2. [Short thesis](docs/THESIS.md)
-3. [Questions for the next discussion](docs/QUESTIONS.md)
-4. [Engineering roadmap and split gate](docs/ROADMAP.md)
-5. [Official starter import plan](docs/UPSTREAM.md)
-6. [Shared function/data contract](docs/CONTRACT.md), [frontend/backend API](docs/API_SPEC.md), and [OpenAPI schema](contracts/openapi.json)
-7. [Tests and evaluations](docs/EVALUATION.md)
-8. [Workstream A — analysis and audit service](docs/workstreams/A_ANALYSIS_SERVICE.md)
-9. [Workstream B — dashboard and integration](docs/workstreams/B_PRODUCT_INTEGRATION.md)
-10. [Workstream C — MCP evidence-review service](docs/workstreams/C_EVIDENCE_REVIEW_SERVICE.md)
-11. [Codex handoff](docs/CODEX_HANDOFF.md)
+After data provisioning, the judged startup shape is one unattended command:
 
-Read [AGENTS.md](AGENTS.md) before editing. Every builder starts from the same approved plan version and contract version. Plans, interfaces, fixtures and thresholds below are proposals unless marked CONFIRMED or DECIDED.
+```sh
+docker compose up
+```
 
-## Present state
+Open http://localhost:3000 for the temporary page and http://localhost:8000/docs for the official API. Only api, analysis and the temporary dashboard start by default. Notebook uses the optional notebook profile; reviewer does not exist yet. Stop this checkout with `docker compose down` (no global cleanup commands).
 
-- Existing empty local clone: `C:\Users\05mus\manai`; origin `https://github.com/lanbodikai/manai.git`.
-- Planning documents only. No starter imported, dependencies installed, dataset downloaded, implementation tested, or measured savings established in this repository.
-- No application run command exists yet. Proposed final command: `docker compose up`; dashboard on port 3000.
-- Three builder sessions are intended: A analysis, B product/integration, C evidence-review service. Do not start them until the split gate is satisfied.
-- Public source snapshot reviewed: official commit `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`.
+If another local checkout already uses our subnet, set MANAI_SUBNET to a verified unused subnet before starting (PowerShell example: `$env:MANAI_SUBNET='10.254.198.0/24'`). Ports 3000/8000 must be free; stop only your previous manai stack when moving checkouts.
 
-## Versioning
+## Reproduce bootstrap checks
 
-v0.1 records Round 1; v0.2 records Round 2 and the explicit starter/notice checklist; v0.3 records B as merge coordinator and environment readiness limits; v0.4 defines the reviewable frontend/backend API and synthetic examples; v0.6 adds the third participant and separates the explanation service. Each discussion revision updates [CHANGELOG.md](CHANGELOG.md), decision IDs and the handoff version. Commit each coherent revision locally. Publishing or opening PRs is a separate step from this initial planning draft.
+```sh
+docker compose run --rm prep python scripts/checksum_data.py
+docker compose exec -T analysis python -m unittest discover -s tests/bootstrap -v
+docker compose exec -T analysis python -m tools.bootstrap.cohort_check
+docker compose exec -T analysis python -m tools.bootstrap.mcp_probe
+docker compose exec -T analysis python -m tools.bootstrap.verify_live
+```
 
-The 3 PM PDT September 17 deadline is fixed. Recalculate time remaining before execution; do not reuse a stale clock-based schedule from the briefing.
+The MCP probe makes actual local tool calls; it is not a model-backed chatbot. The claims schema check uses an explicitly synthetic example and does not generate submission claims.
 
-## Base guarantee
+## Team split
 
-The A+B product must work without C. The reviewer is an optional, profile-isolated enhancement. Default startup needs no LLM key and must not build C. Dashboard, audit, downside, deterministic evidence summary, drill-down claims export and a minimal live MCP chatbot remain available when C is disabled or fails.
+- **A:** analysis, audit/evidence/claims APIs and REQUIRED minimum MCP chatbot; inherit service skeleton and MCP utility.
+- **B:** dashboard, routing, Compose, report/demo and integration. Keep your existing B0 branch; merge the verified baseline and replace the temporary page.
+- **C:** optional richer model-backed reviewer, isolated from base startup. Featherless belongs only here.
 
-## Slide alignment
+Read [current handoffs](docs/CODEX_HANDOFF.md), [team guide](TEAM_START_HERE.md), [B early-work contract](docs/workstreams/B_PREBOOTSTRAP.md), [API v0.3](docs/API_SPEC.md), [evaluation conditions](docs/EVALUATION.md) and [Git/secrets policy](docs/GIT_AND_SECRETS.md). No full workstream is completed by this bootstrap.
 
-See [requirement-to-deliverable matrix](docs/REQUIREMENTS.md). Plan v0.6 makes the minimum MCP chatbot part of A+B; C adds richer review. A static summary alone does not meet our slide-aligned completion gate. Contract v0.3 adds the independent `/api/audits/{audit_id}/chat` endpoint. No implementation has started.
+## Sources and disclosure
 
-## Official Track 2 cross-check
+Imported official commit: `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`; [manifest and modifications](UPSTREAM_PROVENANCE.md). Preserve [license](docs/upstream/LICENSE), [attribution](docs/upstream/ATTRIBUTION.md) and [participant agreement](docs/upstream/PARTICIPANT_AGREEMENT.md). Source/prepared/generated data are local and excluded from Git and image contexts.
 
-[Review and corrections](docs/TRACK2_REVIEW.md): exact cohort confirmed; split gate includes live API/MCP verification; final range basis is a required check; base chat versus optional reviewer wording reconciled. Plan v0.7; API contract stays v0.3. Documentation only, runtime checks remain NOT RUN.
+AI assistance: OpenAI Codex (GPT-6, as identified in this session) generated planning documents, the bootstrap service/probe/page and verification code, and performed recorded tool-based checks. The team supplied product choices and scope constraints. Official API/data tooling and MCP server are organizer-provided. No provider model has yet powered the product. Update this disclosure with actual A/B/C models/frameworks and human modifications before final submission.

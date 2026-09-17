@@ -1,0 +1,2 @@
+* text=auto eol=lf
+bin/mantisgrid-generate-* -text

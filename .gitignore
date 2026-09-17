@@ -19,3 +19,21 @@ data/*
 *.parquet
 private-eval/
 work/
+
+# Bootstrap local artifacts and test output
+*.log
+*.pid
+.cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+test-results/
+playwright-report/
+artifacts/
+# Never commit credentials or local certificates
+*.pem
+*.key
+# B frontend build cache
+*.tsbuildinfo

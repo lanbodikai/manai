@@ -1,4 +1,12 @@
-# Plan changelog
+# Project changelog
+
+## Common-base bootstrap — 2026-09-17
+
+- Imported pinned Track 2 API/data tooling/MCP/notices with per-file provenance.
+- Added canonical-data validation, minimal health/overview service, real stdio MCP utility/probe and temporary :3000 verification page.
+- Preserved B dashboard and API v0.3 files; full audit/chat/reviewer implementation remains outside this baseline.
+- Added resolved team lock, ignored data/secrets/build outputs, setup script, boundary and actual completion evidence.
+
 
 ## v0.9 — 2026-09-17
 

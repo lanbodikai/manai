@@ -1,6 +1,6 @@
 # Frontend/backend API — draft v0.3
 
-Review artifact, not an implemented server. Canonical machine-readable shapes: [OpenAPI](../contracts/openapi.json). [Examples](../contracts/examples/manifest.json) are original synthetic fixtures, not organizer data or measured results. This contract revises the earlier route sketch in CONTRACT.md.
+Contract v0.3 is frozen for the split. Bootstrap implements real health/overview and explicit failure states only; audit/claims/chat/reviewer routes remain workstream deliverables. Canonical machine-readable shapes: [OpenAPI](../contracts/openapi.json). [Examples](../contracts/examples/manifest.json) are original synthetic fixtures, not organizer data or measured results. This contract revises the earlier route sketch in CONTRACT.md.
 
 ## Architecture and ownership
 

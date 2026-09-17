@@ -1,5 +1,6 @@
 # Discussion queue — v0.8
 
+Current execution status overrides historical discussion below: see [BOOTSTRAP_STATUS.md](BOOTSTRAP_STATUS.md) and [BOOTSTRAP_BOUNDARY.md](BOOTSTRAP_BOUNDARY.md). Shared bootstrap is authorized and implemented; only recorded passing gates count.
 Answer decision questions before starting the dependent work. Data questions are answered by inspection, not by asking the user to guess.
 
 ## Round 1 — answered

@@ -1,0 +1,171 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "MantisGrid Hackathon \u2014 Track 2 claims.json",
+ "description": "Your numbers, machine-readable. The dashboard is for the CFO; this file is for the judges. Every field is optional except recoverable_gpu_hours. Omit what you did not investigate \u2014 an omitted field costs you nothing, a confidently wrong one costs you a lot.",
+ "type": "object",
+ "required": [
+  "recoverable_gpu_hours"
+ ],
+ "additionalProperties": true,
+ "$defs": {
+  "estimate": {
+   "type": "object",
+   "required": [
+    "point"
+   ],
+   "properties": {
+    "point": {
+     "type": "number",
+     "description": "Your best single estimate."
+    },
+    "low": {
+     "type": "number",
+     "description": "Low end of your interval."
+    },
+    "high": {
+     "type": "number",
+     "description": "High end of your interval."
+    },
+    "confidence": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1,
+     "description": "How likely you think it is that the truth falls in [low, high]. Scored: a wide honest interval beats a narrow one that misses."
+    },
+    "basis": {
+     "type": "string",
+     "description": "How you got here. Judges read this."
+    },
+    "interval_kind": {
+     "type": "string",
+     "enum": [
+      "uncertainty",
+      "scenario"
+     ],
+     "description": "What low/high mean. 'uncertainty' = statistical spread around one estimator. 'scenario' = the number under a different but defensible assumption (e.g. CANCELLED counted as waste or not). Both are valid; say which so calibration is read correctly. Defaults to 'uncertainty'."
+    }
+   }
+  },
+  "conf": {
+   "type": "number",
+   "minimum": 0,
+   "maximum": 1
+  }
+ },
+ "properties": {
+  "team": {
+   "type": "string"
+  },
+  "recoverable_gpu_hours": {
+   "$ref": "#/$defs/estimate",
+   "description": "GPU-hours you believe are genuinely recoverable. There is no single correct answer to this and it is NOT scored for correctness \u2014 the reasoning and the honesty of the interval are what count."
+  },
+  "recoverable_usd": {
+   "$ref": "#/$defs/estimate"
+  },
+  "cancelled_is_waste": {
+   "type": "boolean",
+   "description": "Do you count CANCELLED GPU-hours as waste? Defensible either way; it swings the headline about 2x. Scored on the rationale, not the answer."
+  },
+  "cancelled_rationale": {
+   "type": "string"
+  },
+  "incident_root_cause": {
+   "type": "string",
+   "description": "The single resource responsible for the correlated multi-node degradation, if you found it."
+  },
+  "incident_action_scope": {
+   "type": "string",
+   "enum": [
+    "single_resource",
+    "per_node",
+    "none"
+   ],
+   "description": "Does fixing it mean one remediation, or an action on every affected node?"
+  },
+  "incident_nodes_to_drain": {
+   "type": "integer",
+   "minimum": 0,
+   "description": "How many nodes you would drain in response."
+  },
+  "incident_degraded_gpu_hours": {
+   "$ref": "#/$defs/estimate"
+  },
+  "incident_confidence": {
+   "$ref": "#/$defs/conf"
+  },
+  "hardware_attributable_failures": {
+   "type": "integer",
+   "minimum": 0,
+   "description": "Failed jobs genuinely caused by faulty hardware -- your best estimate. There is more than one defensible answer: the scheduler recorded some node failures itself, and not every hardware fault gets recorded. Say which you are counting in hardware_attributable_rationale; that is what is judged. See docs/submission.md."
+  },
+  "hardware_attributable_confidence": {
+   "$ref": "#/$defs/conf"
+  },
+  "hardware_attributable_rationale": {
+   "type": "string",
+   "description": "What you counted and what you left out. Scored on this, not on the number."
+  },
+  "notes": {
+   "type": "string"
+  },
+  "node_triage": {
+   "type": "array",
+   "description": "One entry per flagged node-window you analysed. The detector rules::node-elevated-failure-rate fires 113 times across 87 machines -- there is NO hidden list, every one is in the findings. The question is WHY each fired. 'cannot_determine' is a correct answer, not a cop-out: it is the right call on about a quarter of them. What is scored is the reasoning.",
+   "items": {
+    "type": "object",
+    "required": [
+     "node",
+     "cause",
+     "reasoning"
+    ],
+    "properties": {
+     "node": {
+      "type": "string"
+     },
+     "window": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Window index from the finding metadata. Omit only if your answer holds for every window that node was flagged in."
+     },
+     "cause": {
+      "type": "string",
+      "enum": [
+       "hardware",
+       "user_code",
+       "workload_mix",
+       "cannot_determine"
+      ]
+     },
+     "reasoning": {
+      "type": "string",
+      "description": "What you computed and what it showed. THIS IS THE MARK. Name the columns you joined and the numbers you got."
+     },
+     "verdict": {
+      "type": "string",
+      "enum": [
+       "act",
+       "monitor",
+       "no_action"
+      ],
+      "description": "What you would actually do about it."
+     }
+    }
+   }
+  },
+  "card_imbalance_gpu_hours": {
+   "description": "GPU-hours lost to cards that a job held but never drove. There is no single correct number -- the threshold is yours to defend.",
+   "$ref": "#/$defs/estimate"
+  },
+  "card_imbalance_rationale": {
+   "type": "string",
+   "description": "How you found them and where you put the threshold. Say which table you used and at what grain."
+  },
+  "card_imbalance_index_reasoning": {
+   "type": "string",
+   "description": "Optional. If you looked at WHICH card sits idle, say what you concluded and how far the evidence actually goes."
+  }
+ }
+}

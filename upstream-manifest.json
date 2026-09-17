@@ -1,0 +1,215 @@
+{
+  "commit": "314cca0bba49e1bb137aa9094d1dac4cdf7e4490",
+  "files": [
+    {
+      "upstream": "track-2/api/__init__.py",
+      "destination": "api/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/api/data_loader.py",
+      "destination": "api/data_loader.py",
+      "sha256": "863c001892637aaad28e7bedd27a6f75fc841296251c02a1b1d6eecd0542d96e",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/api/Dockerfile.local",
+      "destination": "api/Dockerfile.local",
+      "sha256": "fc4c1433d4ca42abecb572cd484928ab66b6c55ecb97810f63387acf8774e01f",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/api/main.py",
+      "destination": "api/main.py",
+      "sha256": "b2cf1d89bc7024a84f12cfc0f79de8cd8df8f22640d82617497c05e2d6e3a9ed",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/api/models.py",
+      "destination": "api/models.py",
+      "sha256": "b00ba5e3955a85eeda0bd819917d344af174c88f3a772febacc01da09ad31770",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/api/README.md",
+      "destination": "api/README.md",
+      "sha256": "770072bbefb48f3c1927b9ab314b5a0447faa9b706e96a33a9a0f26ec262d802",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/bin/mantisgrid-generate-linux-amd64",
+      "destination": "bin/mantisgrid-generate-linux-amd64",
+      "sha256": "60732bade9aad9f63363478b3f5f30ed9f44a122f424c8a577d1e110315db0a4",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/bin/mantisgrid-generate-linux-arm64",
+      "destination": "bin/mantisgrid-generate-linux-arm64",
+      "sha256": "6ef939ad42bb8753f1edb89dc953c5906116c8383fba55a59674c5691876c929",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/bin/SHA256SUMS",
+      "destination": "bin/SHA256SUMS",
+      "sha256": "4ab18e1f9553c5c5fabf7282988062c86406ec7b69c0fe44dcef59f9ec2ea5b1",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/mcp_layer/__init__.py",
+      "destination": "mcp_layer/__init__.py",
+      "sha256": "d3cee077e3326f0ca94e4ea5df34d5d77c8235fb8446d037e35d0ecfd2aa071b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/mcp_layer/README.md",
+      "destination": "mcp_layer/README.md",
+      "sha256": "0901d112d9313d7105cf094b46ca7b4feeb1e02a3eb0a91c5c6391dbb90f1687",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/mcp_layer/server.py",
+      "destination": "mcp_layer/server.py",
+      "sha256": "96efe20e91712355dac27883fe88271ea0513055c80492d80a184aacdc3e6a93",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/scripts/checksum_data.py",
+      "destination": "scripts/checksum_data.py",
+      "sha256": "ce03764dd49b00773d32656c6b982ade39b16c8d6d70acfa18769ec847f84fb0",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/scripts/prep_data.py",
+      "destination": "scripts/prep_data.py",
+      "sha256": "40c5495eb43a650971d56465898b0902fa9745446322ce79ecf93181686ea20c",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/scripts/validate_submission.py",
+      "destination": "scripts/validate_submission.py",
+      "sha256": "e41bd4301e863b9f2889e36b191264340c3c91c6ac40123129409fef3df35763",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/starter/claims.example.json",
+      "destination": "starter/claims.example.json",
+      "sha256": "5c48a4e937686e4fb058787822300c3c26a3589977f81cf46256645e8a9e46bd",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/starter/claims.schema.json",
+      "destination": "starter/claims.schema.json",
+      "sha256": "f074a61d8385963f7c647c824ad9c0372f5ee80991a929d17b14838bfcd02da0",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/starter/Dockerfile",
+      "destination": "starter/Dockerfile",
+      "sha256": "aca439b90092228aaa329eb93df7af231feda8fd60e9837192cf28ab42f6ae42",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/starter/mgai_client.py",
+      "destination": "starter/mgai_client.py",
+      "sha256": "fe40e9df177d8ecf5d5e7214d84c542b69f87aa88af5e86427fb697d894a36a4",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/starter/notebook.ipynb",
+      "destination": "starter/notebook.ipynb",
+      "sha256": "9ff9c4e2f55b0ca5623c29b5da9f6e2c7855166df254c18b39e52ce80113482b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/requirements.txt",
+      "destination": "requirements.txt",
+      "sha256": "26e0af59e138975d4e6455bbeb9f4b72c46adae878ffa594913fa5a870f70822",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/requirements.lock.txt",
+      "destination": "requirements.lock.txt",
+      "sha256": "ad15616616435aae4a6c81a2894bf4e9c516d1e8767213ec379cf0338c5f8c49",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/Makefile",
+      "destination": "Makefile",
+      "sha256": "50d3b9a289f044f29bb10f85c86698a0a8ee1fdf9148f5b406580510f603e16b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docker-compose.yml",
+      "destination": "docker-compose.yml",
+      "sha256": "1d9a04654812d3d13b8cf36901e68c58c438176eb8c2194d3498a0499155baac",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/data/README.md",
+      "destination": "data/README.md",
+      "sha256": "a0f41b019d647d08f780fa5940da3e2ae67fe93965d47c26db3a1562c4e3513f",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/data/checksums.txt",
+      "destination": "data/checksums.txt",
+      "sha256": "58dd2f74d872dba5e1d47b12ffda4eb7d309183905cd86595fbc13c9af524845",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docs/api.md",
+      "destination": "docs/upstream/track-2/api.md",
+      "sha256": "897de7be8d2cbf5b4d9c11725b1ab213fa7d7633e2afa70ad5dbbc979c8e694b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docs/data.md",
+      "destination": "docs/upstream/track-2/data.md",
+      "sha256": "1edecf8eb11fb125b7beab86bddba7d065e32d87adf9c6c0ece9167ae9195f3b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docs/rules.md",
+      "destination": "docs/upstream/track-2/rules.md",
+      "sha256": "7f5a49ab56bb32d74802bb1662e201b114b74a05253dbfce93afa24014da2f68",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docs/submission.md",
+      "destination": "docs/upstream/track-2/submission.md",
+      "sha256": "9ebdbfd867f1f4e4f5da4ce6215cde9af7b50e135b4e6d2cda1b542fc79d6434",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/docs/traps.md",
+      "destination": "docs/upstream/track-2/traps.md",
+      "sha256": "a68ba39da015d951932470baa01dd5e32a82afd7df8e63124d567cd5c71289c3",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "track-2/README.md",
+      "destination": "docs/upstream/TRACK2_README.md",
+      "sha256": "c681142d222e7c42d71a3576cf127a0074a880249770bb718e5d7317afa91ad1",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "ATTRIBUTION.md",
+      "destination": "docs/upstream/ATTRIBUTION.md",
+      "sha256": "77b9b6649d41ed633fdafc562a8d0c89a12df7e23fbb2e10386852782c4a3ab8",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "LICENSE",
+      "destination": "docs/upstream/LICENSE",
+      "sha256": "0afc04c4d0063fb07abd2b716c3a7a09307bad2c81669125e9ecff801803b53b",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    },
+    {
+      "upstream": "PARTICIPANT_AGREEMENT.md",
+      "destination": "docs/upstream/PARTICIPANT_AGREEMENT.md",
+      "sha256": "8ec60b032c6dd453c8f668da0b28b14addeb017c2d0fdd4f48732d6c2111fed4",
+      "hash_basis": "upstream Git blob; text canonical LF"
+    }
+  ]
+}
