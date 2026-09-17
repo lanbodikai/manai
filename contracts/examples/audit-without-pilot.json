@@ -1,7 +1,7 @@
 {
   "contract_version": "0.4",
-  "audit_id": "synthetic-pilot-audit-001",
-  "client_request_id": "synthetic-pilot-request-001",
+  "audit_id": "synthetic-audit-001",
+  "client_request_id": "fixture-request-001",
   "recommendation_id": "cpu-placement-pilot",
   "source_recommendation_ids": [],
   "provenance": {
@@ -23,18 +23,7 @@
     "usd_per_gpu_hour": 2.5,
     "cancelled_policy": "exclude",
     "interval_kind": "scenario",
-    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate.",
-    "cpu_pilot": {
-      "mode": "replacement_success",
-      "baseline_evidence_id": "job:J2",
-      "cpu_vcpus": 4,
-      "cpu_hours": 12,
-      "cpu_vcpu_hour_usd": 0.1,
-      "extra_queue_hours": 0,
-      "trial_cap_hours": null,
-      "baseline_host_costs_included": true,
-      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
-    }
+    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate."
   },
   "eligibility": {
     "definition": "COMPLETED; sm_util_avg == 0; sm_util_max == 0; gpu_hours > 1; required values present",
@@ -42,22 +31,7 @@
     "eligible_gpu_hours": 30,
     "excluded_jobs": 1,
     "overlapping_finding_references": 1,
-    "coverage_note": "Synthetic complete measurement coverage.",
-    "memory_partition": {
-      "zero_memory": {
-        "unique_jobs": 1,
-        "recorded_gpu_hours": 20
-      },
-      "positive_memory": {
-        "unique_jobs": 1,
-        "recorded_gpu_hours": 10
-      },
-      "unknown_memory": {
-        "unique_jobs": 0,
-        "recorded_gpu_hours": 0
-      },
-      "basis": "Original synthetic J2 zero memory; J1 positive memory. Broad cohort unchanged."
-    }
+    "coverage_note": "Synthetic complete measurement coverage."
   },
   "recovery": {
     "gpu_hours": {
@@ -85,13 +59,12 @@
     "compatibility_verified": false
   },
   "downside": {
-    "status": "scenario",
+    "status": "unmeasured",
     "mechanisms": [
       "CPU-only execution may fail or run more slowly."
     ],
     "assumptions": [
-      "CPU compatibility and performance have not been tested.",
-      "Single-job cost/delay scenario, not a cohort savings forecast. Legacy downside money remains null; use named CPU-pilot metrics."
+      "CPU compatibility and performance have not been tested."
     ],
     "guardrails": [
       "Pilot on consenting workloads; retain rollback to original placement."
@@ -103,33 +76,7 @@
     ],
     "money": null,
     "money_unit": null,
-    "cpu_pilot": {
-      "scope": "single_job",
-      "mode": "replacement_success",
-      "evidence_kind": "scenario_estimate",
-      "baseline": {
-        "evidence_id": "job:J2",
-        "gpu_count": 2,
-        "elapsed_hours": 10,
-        "recorded_gpu_hours": 20,
-        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
-      },
-      "scenario_gpu_hours": 0,
-      "released_gpu_hours": 20,
-      "added_cpu_vcpu_hours": 48,
-      "released_gpu_reference_usd": 50,
-      "added_cpu_reference_usd": 4.8,
-      "net_reference_value_usd": 45.2,
-      "run_time_change_hours_excluding_queue": 2,
-      "completion_change_hours_including_extra_queue": 2,
-      "compatibility_verified": false,
-      "cash_savings_verified": false,
-      "trial_stop_enforcement_tested": false,
-      "limitations": [
-        "Original synthetic single-job scenario; not the cohort recovery estimate.",
-        "Migration, storage, setup, contention and business-delay costs excluded."
-      ]
-    }
+    "cpu_pilot": null
   },
   "evidence_preview": [
     {

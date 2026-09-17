@@ -1,0 +1,338 @@
+[
+  {
+    "name": "successful-replacement",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": 4.8,
+      "net_reference_value_usd": 45.2,
+      "run_time_change_hours_excluding_queue": 2,
+      "completion_change_hours_including_extra_queue": 2,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "failed-trial",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_failure",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 3,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": 3,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_failure",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 20,
+      "released_gpu_hours": 0,
+      "added_cpu_vcpu_hours": 12,
+      "released_gpu_reference_usd": 0,
+      "added_cpu_reference_usd": 1.2,
+      "net_reference_value_usd": -1.2,
+      "run_time_change_hours_excluding_queue": 3,
+      "completion_change_hours_including_extra_queue": 3,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "additional-validation",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "additional_validation",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "additional_validation",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 20,
+      "released_gpu_hours": 0,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 0,
+      "added_cpu_reference_usd": 4.8,
+      "net_reference_value_usd": -4.8,
+      "run_time_change_hours_excluding_queue": null,
+      "completion_change_hours_including_extra_queue": null,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "expensive-replacement",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 2,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": 96,
+      "net_reference_value_usd": -46,
+      "run_time_change_hours_excluding_queue": 2,
+      "completion_change_hours_including_extra_queue": 2,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "unknown-cpu-price",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": null,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": null,
+      "net_reference_value_usd": null,
+      "run_time_change_hours_excluding_queue": 2,
+      "completion_change_hours_including_extra_queue": 2,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "unknown-queue",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": null,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": 4.8,
+      "net_reference_value_usd": 45.2,
+      "run_time_change_hours_excluding_queue": 2,
+      "completion_change_hours_including_extra_queue": null,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "incomplete-price-boundary",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": false,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 48,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": 4.8,
+      "net_reference_value_usd": null,
+      "run_time_change_hours_excluding_queue": 2,
+      "completion_change_hours_including_extra_queue": 2,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  },
+  {
+    "name": "faster-replacement",
+    "gpu_hour_usd": 2.5,
+    "input": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 8,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 1,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    },
+    "result": {
+      "scope": "single_job",
+      "mode": "replacement_success",
+      "evidence_kind": "scenario_estimate",
+      "baseline": {
+        "evidence_id": "job:J2",
+        "gpu_count": 2,
+        "elapsed_hours": 10,
+        "recorded_gpu_hours": 20,
+        "accounting_note": "Invented baseline: 2 GPUs for 10 hours; recorded allocation agrees."
+      },
+      "scenario_gpu_hours": 0,
+      "released_gpu_hours": 20,
+      "added_cpu_vcpu_hours": 32,
+      "released_gpu_reference_usd": 50,
+      "added_cpu_reference_usd": 3.2,
+      "net_reference_value_usd": 46.8,
+      "run_time_change_hours_excluding_queue": -2,
+      "completion_change_hours_including_extra_queue": -1,
+      "compatibility_verified": false,
+      "cash_savings_verified": false,
+      "trial_stop_enforcement_tested": false,
+      "limitations": [
+        "Original synthetic single-job scenario; not the cohort recovery estimate.",
+        "Migration, storage, setup, contention and business-delay costs excluded."
+      ]
+    }
+  }
+]
