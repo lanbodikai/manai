@@ -10,6 +10,8 @@ import { OptimizeDialog } from "./OptimizeDialog";
 import { DecisionOverview } from "./DecisionOverview";
 import type { PilotReview } from "../pilot-model";
 import { taskSummary } from "../optimization-options";
+import type {HardwareScenario} from "../api/hardware";
+import {HardwareScenarioPanel} from "./HardwareScenarioPanel";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
@@ -26,6 +28,20 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   const [pilotOpen, setPilotOpen] = useState(false);
   const [pilotReview, setPilotReview] = useState<PilotReview|null>(null);
   const [reviewWhenReady, setReviewWhenReady] = useState(false);
+  const [hardware,setHardware] = useState<HardwareScenario|null>(null);
+  const [hardwareError,setHardwareError] = useState("");
+  const [hardwareMode,setHardwareMode] = useState(true);
+  const [hardwareAllocation,setHardwareAllocation] = useState("memory_adjusted");
+  useEffect(()=>{
+    let alive=true;setHardware(null);setHardwareError("");
+    if(catalog && !catalog.synthetic && api.hardware) {
+      void api.hardware.summary(catalog.version).then(value=>{
+        if(value.synthetic!==catalog.synthetic) throw new Error("Hardware scenario provenance does not match the workspace.");
+        if(alive)setHardware(value);
+      }).catch(error=>{if(alive)setHardwareError(errorMessage(error));});
+    }
+    return()=>{alive=false;};
+  },[api,catalog]);
   // Verified against the supplied API /v1/price-book (2026-Q3), 2026-09-17. Reference pricing, not an actual bill.
   const referencePrice = 2.5;
   const pending = useRef<OptimizeRequest | null>(null);
@@ -106,7 +122,9 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   ];
   const outcomes = outcomeGroups.map(group => ({...group,hours:(catalog?.summary?.outcomes ?? []).filter(item => group.states.length ? group.states.includes(item.outcome) : !outcomeGroups.some(g => g.states.includes(item.outcome))).reduce((sum,item) => sum+item.gpu_hours,0)}));
   const cpuRow = visible?.rows.find(row => row.id === "cpu-placement");
-  const review = selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
+  const matchingHardware=hardware?.dataset_version===visible?.dataset_version ? hardware : null;
+  const activeHardware=hardwareMode ? matchingHardware : null;
+  const review = !activeHardware && selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
   function openPilot() {
     if(!selected.includes("cpu-placement")) choose([...selected,"cpu-placement"]);
     setPilotOpen(true);
@@ -149,11 +167,12 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
         </div>
         <ol>
           <li><strong>1. Investigate</strong><span>Confirm the source records and eligible job scope.</span></li>
-          <li><strong>2. Model</strong><span>Price the named pilot and its downside.</span></li>
+          <li><strong>2. Model</strong><span>Compare a hardware scenario or a named pilot and its downside.</span></li>
           <li><strong>3. Authorize</strong><span>Set an owner, stop limits, and a rollback path.</span></li>
         </ol>
       </section>
-      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} onReview={reviewPilot} disabled={sending || loading || !!loadError}/>
+      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={activeHardware ? null : review} hardware={activeHardware} hardwareAllocation={hardwareAllocation} onModel={openPilot} onReview={activeHardware ? openPilot : reviewPilot} disabled={sending || loading || !!loadError}/>
+      {hardwareError && <p className="small muted" role="status">Hardware scenario unavailable: {hardwareError} Manual planning remains available. <button className="text-button" onClick={reload}>Refresh source</button></p>}
       <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
         <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
         {sending && !confirmOpen && <p className="decision-footnote" role="status">Sending your modeling request…</p>}
@@ -177,7 +196,10 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
         <details className="decision-footnote"><summary>About the numbers</summary><p>Percentages use all recorded GPU-hours as the denominator. Task hours exclude cancellation and synthetic findings. Each selected job is counted once. Reference value uses $2.50/GPU-hour for the sample window; it is not a bill or savings estimate.</p></details>
       </section>
       {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
-      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
+      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <>
+        {matchingHardware && <div className="panel hardware-mode" role="group" aria-label="Scenario scope"><button className="secondary" aria-pressed={hardwareMode} onClick={()=>setHardwareMode(true)}>Documented hardware scenario</button><button className="secondary" aria-pressed={!hardwareMode} onClick={()=>setHardwareMode(false)}>Manual small-pilot plan</button></div>}
+        {activeHardware && api.hardware ? <HardwareScenarioPanel key={activeHardware.scenario_id} scenario={activeHardware} api={api.hardware} allocation={hardwareAllocation} onAllocation={setHardwareAllocation}/> : <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
+      </>}
       <details className="panel technical-decisions"><summary>About the optional 20% spending goal</summary><div className="optional-goal"><h2>What does a 20% cut mean?</h2><p>The hackathon brief asks for 20% lower spending: spend $80 for every $100 previously spent, while preserving research performance. This is an example, not the cluster’s bill. You can investigate opportunities without choosing a target first.</p><p>The pilot model compares against 20% of the historical sample’s reference value. It does not forecast next-quarter savings.</p></div></details>
     </>}
   </div>;

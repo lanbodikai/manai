@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cpu-hardware-1",
+  "$defs": {
+    "bounds": {"type":"object","required":["low","high"],"properties":{"low":{"type":"number"},"high":{"type":"number"}}},
+    "case": {"type":"object","required":["cpu_reference_usd_per_core_hour","success_net_reference_usd","failure_extra_reference_usd","cpu_core_hours","cpu_cost_reference_usd","positive_no_slower_jobs"],"properties":{
+      "cpu_reference_usd_per_core_hour":{"type":"number","exclusiveMinimum":0},"success_net_reference_usd":{"type":"number"},"failure_extra_reference_usd":{"type":"number","minimum":0},"cpu_core_hours":{"type":"number","minimum":0},"cpu_cost_reference_usd":{"type":"number","minimum":0},"positive_no_slower_jobs":{"type":"integer","minimum":0}
+    }},
+    "allocation": {"type":"object","required":["id","cases","success_net_reference_usd","failure_extra_reference_usd","baseline_reduction_pct","target_contribution_pct","remaining_target_reference_usd"],"properties":{
+      "id":{"enum":["memory_adjusted","whole_node"]},"cases":{"type":"array","minItems":2,"maxItems":2,"items":{"$ref":"#/$defs/case"}},
+      "success_net_reference_usd":{"$ref":"#/$defs/bounds"},"failure_extra_reference_usd":{"$ref":"#/$defs/bounds"},"baseline_reduction_pct":{"$ref":"#/$defs/bounds"},"target_contribution_pct":{"$ref":"#/$defs/bounds"},"remaining_target_reference_usd":{"$ref":"#/$defs/bounds"}
+    }},
+    "summary": {"type":"object","required":["contract_version","scenario_id","dataset_version","data_fingerprint","synthetic","kind","hardware","assumptions","gpu_reference_usd_per_hour","baseline_reference_usd","target_reference_usd","coverage","allocations","limitations","compatibility_verified","cash_savings_verified"],"properties":{
+      "contract_version":{"const":"cpu-hardware-1"},"scenario_id":{"type":"string","minLength":1},"dataset_version":{"type":"string","minLength":1},"data_fingerprint":{"type":"string","minLength":1},"synthetic":{"type":"boolean"},"kind":{"const":"scenario_estimate"},"compatibility_verified":{"const":false},"cash_savings_verified":{"const":false},
+      "gpu_reference_usd_per_hour":{"type":"number","exclusiveMinimum":0},"baseline_reference_usd":{"type":"number","minimum":0},"target_reference_usd":{"type":"number","minimum":0},
+      "hardware":{"type":"object","required":["name","physical_cores","memory_mb","memory_mb_per_core","sources"],"properties":{"name":{"type":"string"},"physical_cores":{"const":48},"memory_mb":{"const":192000},"memory_mb_per_core":{"const":4000},"sources":{"type":"array","items":{"type":"string"}}}},
+      "assumptions":{"type":"object","required":["runtime_ratio","extra_queue_hours","cpu_price_ratios","baseline_host_costs_included","scope","range_kind"],"properties":{"runtime_ratio":{"const":1},"extra_queue_hours":{"const":0},"cpu_price_ratios":{"const":[0.005,0.02]},"baseline_host_costs_included":{"const":true},"scope":{"const":"all_resource_fitting_jobs_not_a_small_pilot"},"range_kind":{"const":"cpu_price_sensitivity_not_confidence_interval"}}},
+      "coverage":{"type":"object","required":["eligible_jobs","eligible_gpu_hours","fitting_jobs","non_fitting_jobs","unresolved_jobs","fitting_gpu_hours","memory_resized_jobs"],"properties":{"eligible_jobs":{"type":"integer","minimum":0},"eligible_gpu_hours":{"type":"number","minimum":0},"fitting_jobs":{"type":"integer","minimum":0},"non_fitting_jobs":{"type":"integer","minimum":0},"unresolved_jobs":{"type":"integer","minimum":0},"fitting_gpu_hours":{"type":"number","minimum":0},"memory_resized_jobs":{"type":"integer","minimum":0}}},
+      "allocations":{"type":"array","minItems":2,"maxItems":2,"items":{"$ref":"#/$defs/allocation"}},"limitations":{"type":"array","minItems":1,"items":{"type":"string"}}
+    }},
+    "job": {"type":"object","required":["job_id","status","reason","recorded_gpu_hours","scheduler_hours","gpu_memory_category"],"properties":{
+      "job_id":{"type":"string","minLength":1},"status":{"enum":["fits","non_fit","unresolved"]},"reason":{"type":"string"},"recorded_gpu_hours":{"type":"number","minimum":0},"scheduler_hours":{"type":["number","null"]},"gpu_memory_category":{"enum":["zero","positive","unknown"]},"requested_cores":{"type":"integer","minimum":1},"requested_memory_mb":{"type":"number","minimum":0},"memory_adjusted_cores":{"type":"integer","minimum":1}
+    }},
+    "page":{"type":"object","required":["contract_version","scenario_id","dataset_version","synthetic","offset","limit","total","items"],"properties":{
+      "contract_version":{"const":"cpu-hardware-1"},"scenario_id":{"type":"string"},"dataset_version":{"type":"string"},"synthetic":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":100},"total":{"type":"integer","minimum":0},"items":{"type":"array","maxItems":100,"items":{"$ref":"#/$defs/job"}}
+    }}
+  }
+}

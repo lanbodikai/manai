@@ -1,4 +1,5 @@
 import type { DashboardApi, Schemas } from "./types";
+import {createHardwareApi} from "./hardware";
 import {
   ApiError,
   assertAuditId,
@@ -127,6 +128,7 @@ export function createHttpApi(
     return assertRequestId(assertAuditId(result, id), body.client_request_id);
   }
   return {
+    hardware: createHardwareApi(fetcher, base),
     getHealth: async () => assertV04(await request("/api/health", "Health")),
     getOverview: () => request("/api/overview", "Overview"),
     listRecommendations: () =>

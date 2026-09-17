@@ -1,5 +1,13 @@
 # Project changelog
 
+## Bounded hardware scenario — local follow-up to PR #8 — 2026-09-17
+
+- Added a deterministic documented-hardware model using requested CPU/RAM, approved cohort eligibility and the existing CPU calculator. Full fitting-population estimates, failure costs and historical target gap are separate from canonical recovery/claims and the manual small pilot.
+- Added the independent `cpu-hardware-1` feature schema, read-only endpoints, bounded evidence pages and source-linked Model panel. Active v0.4 and C remain unchanged.
+- Kept private source-derived receipts out of Git. Added exhaustive independent arithmetic verification and live browser checks, including explicit feature failure and refresh recovery.
+- Real-data verification caught array-valued prepared metadata reaching scalar normalization. Restricted normalization to model input columns and added an invented regression case. The isolated port conflict and failed attempts are preserved privately.
+- This branch is local and unmerged. Human usability and actual CPU execution remain untested by this follow-up.
+
 ## Validated main baseline — 2026-09-17
 
 - Published frozen A+B snapshot 5c4fd83 through PR #6/integration and PR #7/main (`610f89d`), with exact tree equality verified. Winston explicitly deferred independent cross-review and U05; neither is marked passed.

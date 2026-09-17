@@ -224,3 +224,15 @@
   .decision-table tbody td:nth-child(3)::before { content:'Share of sample GPU time'; display:block; font-size:10px; color:#7c8aa2; margin-bottom:5px; }
   .decision-table tbody td:nth-child(4)::before { content:'Suggested fix'; display:block; font-size:10px; color:#7c8aa2; margin-bottom:5px; }
 }
+
+/* Full-population hardware scenario, separate from the manual pilot. */
+.hardware-mode { display:flex; flex-wrap:wrap; gap:12px; }
+.hardware-mode [aria-pressed="true"] { outline:2px solid #597be8; outline-offset:2px; }
+.hardware-scenario > label { display:grid; gap:8px; max-width:420px; margin:18px 0; }
+.hardware-scenario select { max-width:100%; padding:10px; border:1px solid #cad3e2; border-radius:8px; background:white; }
+.hardware-scenario details { margin:18px 0; }
+.hardware-scenario summary { cursor:pointer; font-weight:600; }
+.hardware-scenario .pilot-version { overflow-wrap:anywhere; }
+.hardware-scenario table { width:100%; border-collapse:collapse; }
+.hardware-scenario th,.hardware-scenario td { padding:10px; text-align:left; border-bottom:1px solid #dfe5ef; }
+.hardware-scenario p { line-height:1.6; }
