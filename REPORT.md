@@ -22,7 +22,7 @@ A controlled future pilot must compare output correctness, success rate, CPU run
 
 The required base chatbot uses actual official MCP calls, bounded templates and audit-scoped citations without a model key. The deterministic evidence summary is separately labeled. C's richer reviewer is optional and currently disabled because compatibility and model grounding remain incomplete. C failures must preserve base results and export.
 
-`docker compose up` starts the base and automatically prepares the private browsing snapshot. See [README](README.md), [actual checks and remaining release gates](eval/integration/RESULTS.md), and [A/B handoff](docs/AB_INTEGRATION_HANDOFF.md). Generate local root claims with `python eval/integration/export_final.py`; the exported audit uses the same default fractions and price as the UI. Generated claims remain ignored pending the lead's resolution of the organizer's root-claims requirement and broad derived-data redistribution wording. This document does not assert final submission readiness.
+`docker compose up` starts the base and automatically prepares the private browsing snapshot. See [README](README.md), [actual checks and remaining release gates](eval/integration/RESULTS.md), and [A/B handoff](docs/AB_INTEGRATION_HANDOFF.md). Generate local root claims with `python eval/integration/export_final.py`; the exported audit uses the same default fractions and price as the UI. The required root claims file publishes only aggregate canonical estimates and their methodology, following the specific submission requirement. No source records or generated working tables are published. Its zero lower/point bounds reflect unmeasured recovery; the upper bound is an eligibility ceiling.
 
 ## Four-minute demo
 
@@ -30,3 +30,26 @@ The required base chatbot uses actual official MCP calls, bounded templates and 
 2. Open evidence and follow an actual source record. Use Data explorer or Decisions to inspect the broader workload and overlapping exposure.
 3. Model one successful CPU trial, then a failed trial or unknown CPU price; show that downside changes without changing cohort claims.
 4. Ask the base chatbot a supported question, follow its citation, and export the displayed audit. State that CPU compatibility and operational savings still require a controlled pilot.
+
+
+## Eight-action simulation and final review repairs
+
+Overview, Decisions and Model share a frozen eight-action simulation. CPU placement,
+idle-session release and checkpoint/restart use detailed mechanisms; startup failures,
+failed arrays, low utilization, GPU imbalance and memory sizing are assumption-only
+screening estimates. Assigned contributions deduplicate jobs. These scenario amounts
+are separate from canonical claims and are not measured savings.
+
+The A-owned review checks all scoped saved records, unique job IDs, per-job arithmetic,
+and reconciliation to action totals including fixed costs. Official MCP `price_book`
+corroborates the reference rate/version; it does not independently verify job telemetry.
+Optional Featherless Qwen selects only allowed fact IDs; every ID is validated before
+applying a display limit. All actions remain visible in the summary table. Default
+startup needs no key, and the required base assistant calls official MCP rule/finding
+tools. No C package or service is needed.
+
+The verified eight-action review has 27 passed checks and nine unresolved checks:
+eight intervention-effectiveness questions and one independent source-proof question.
+These require new evidence, not an optimistic model answer. No workload trial occurred.
+Detailed local release results and commands are in eval/analysis/REVIEW_COVERAGE_RESULTS.md.
+The demo query is: "Trace this cost estimate back to its evidence."

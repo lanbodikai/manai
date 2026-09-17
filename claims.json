@@ -1,0 +1,20 @@
+{
+  "team": "MANAI",
+  "recoverable_gpu_hours": {
+    "low": 0.0,
+    "point": 0.0,
+    "high": 11986.121408333333,
+    "basis": "11986.121408333333 recorded eligible GPU-hours multiplied by explicit fractions 0/0/1. No empirical CPU recoverability: zero low/point; high is the physical eligibility ceiling, not a forecast.",
+    "interval_kind": "scenario"
+  },
+  "recoverable_usd": {
+    "low": 0.0,
+    "point": 0.0,
+    "high": 29965.30352083333,
+    "interval_kind": "scenario",
+    "basis": "Same recovery bounds at 2.5 reference USD/GPU-hour; not cash savings."
+  },
+  "cancelled_is_waste": false,
+  "cancelled_rationale": "Cancelled jobs are outside the completed-job cohort.",
+  "notes": "Audit f1713a441a89438f8b7c0607c182382e; data 62fa722b0909528e0c78fa5300064593d0090c0c0dc44012d11effb4fcbf0e2b; Historical zero SM activity does not prove CPU compatibility or absence of useful work. Recovery fractions are assumptions, not calibrated probabilities or measured savings. Reference dollars are not cash savings; CPU, migration and business-delay costs are not included. This four-month job sample is not the whole fleet. Cancelled jobs are excluded. The organizer rec_lowutil recommendation has a different cohort and action; this is not its corrected estimate."
+}

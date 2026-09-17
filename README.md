@@ -43,7 +43,7 @@ docker compose exec -T analysis python -m unittest discover -s tests/base_chat -
 docker compose exec -T analysis python -m eval.analysis.verify_live
 ```
 
-Frontend checks and real browser commands are in [integration results](eval/integration/RESULTS.md). Local export: `python eval/integration/export_final.py --url http://localhost:3000`. This writes ignored root `claims.json` and a private matching audit using the documented default 0/0/1 fractions. Do not copy example claims. Generated-claims publication and default-branch selection remain explicit release tasks; no final submission is claimed.
+Frontend checks and real browser commands are in [integration results](eval/integration/RESULTS.md). Local export: `python eval/integration/export_final.py --url http://localhost:3000`. The root `claims.json` contains the canonical conservative 0/0/1 recovery scenario, exported from the local source and validated against the official schema. Re-exporting writes the matching private audit under ignored `private-eval/`. Only the required aggregate claim summary is published; source records and generated tables remain private. The eight-action simulation is separate from these canonical claims.
 
 ## Sources and disclosure
 

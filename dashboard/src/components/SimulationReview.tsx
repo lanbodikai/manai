@@ -39,7 +39,25 @@ export function SimulationReview({model}:{model:ModelState}){
    {busy&&<p role="status">Retrieving the frozen calculation and evidence, then reviewing the assumptions…</p>}
    {error&&<div role="alert" className="error"><p>{error}</p><button className="text-button" onClick={()=>void ask(asked)}>Retry simulation review</button></div>}
    {answer&&<div className="simulation-review-answer" role="status"><p className="user-message">{asked}</p><p className="badge">{answer.usage.model?'Featherless-assisted review':'Deterministic review · no model'}</p><p><strong>{answer.checks.filter(c=>c.status==='fail').length} failed checks · {answer.checks.filter(c=>c.status==='unknown').length} unknown checks</strong></p><p>Evidence coverage: {answer.coverage.retrieved} / {answer.coverage.total} records in this scope. {answer.coverage.complete?'All scoped records retrieved.':'Partial retrieval; full cohort totals are not certified.'}</p>
-    <p className="assistant-text">{answer.answer}</p>
+    <h3>{answer.coverage.complete&&answer.checks.some(c=>c.status==='pass')&&!answer.checks.some(c=>c.status==='fail')?'Accounting checks passed':'Accounting review needs attention'}</h3>
+    <p>{answer.checks.filter(c=>c.status==='pass').length} checks passed. Saved job contributions were checked against action totals, including fixed costs. These checks do not establish measured savings.</p>
+    <p><strong>MCP tool called: <code>price_book</code>.</strong> It corroborates the reference rate and version. Job counts, arithmetic and assigned contributions are checked locally against the saved simulation.</p>
+    <h3>Action contributions</h3>
+    <p>Every action in this review scope is shown, independently of the model’s fact selection. Dollar amounts are net reference-value scenarios, not measured cash savings. Assigned contributions avoid adding overlapping standalone estimates.</p>
+    <div style={{overflowX:'auto',maxWidth:'100%'}}><table aria-label="Reviewed action contributions" style={{width:'100%',fontSize:13}}>
+     <thead><tr><th scope="col">Action / evidence</th><th scope="col">Assigned jobs</th><th scope="col">Lower</th><th scope="col">Illustrative</th><th scope="col">Upper</th><th scope="col">Reconciled</th></tr></thead>
+     <tbody>{r.actions.filter(a=>answer.action==='all'||a.id===answer.action).map(a=><tr key={a.id}>
+      <th scope="row">{titles[a.id]}<br/><span className="small muted">{a.model_kind==='detailed_mechanism'?'Detailed mechanism':'Assumption-only screening'}</span></th>
+      <td>{a.assigned_jobs.toLocaleString('en-US')}</td>
+      {['lower','illustrative','upper'].map(id=><td key={id}>{new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(a.cases.find(c=>c.id===id)!.net_reference_usd)}</td>)}
+      <td>{answer.checks.find(c=>c.id===a.id+'.evidence_totals')?.status??'unknown'}</td>
+     </tr>)}</tbody>
+    </table></div>
+    <p className="small">Rounded to whole dollars. Detailed calculations retain precision. Setup, storage and other fixed costs come from your assumptions; a zero value does not prove implementation is free.</p>
+    <h3>Still unverified</h3>
+    <p>{answer.checks.filter(c=>c.status==='unknown').length} unresolved checks are evidence limitations, not a request failure. Detailed mechanisms still require workload trials; screening estimates additionally lack validated intervention models.</p>
+    <ul>{answer.checks.filter(c=>c.status==='unknown').map(c=><li key={c.id}>{c.message}</li>)}</ul>
+    <details><summary>Selected evidence and exact assumptions</summary><p className="assistant-text">{answer.answer}</p></details>
     <details><summary>Inspect retrieved source examples <BookOpen size={14}/></summary>{answer.source_examples.map(row=><details key={row.job_id}><summary>Job {row.job_id} · {row.assigned_action?titles[row.assigned_action as Action]:'Excluded'}</summary><p>Source inputs and per-job calculations from this exact frozen simulation:</p><pre>{JSON.stringify(row,null,2)}</pre></details>)}</details>
     <details><summary>All checks and model details</summary>{answer.checks.map(c=><p key={c.id}><b>{c.status.toUpperCase()}</b>: {c.message}</p>)}<p>Model: {answer.usage.model??'none'} · {answer.usage.tool_calls} MCP operations · {answer.usage.analysis_reads} analysis reads.</p><p>Simulation: {answer.simulation_id}</p></details>
    </div>}

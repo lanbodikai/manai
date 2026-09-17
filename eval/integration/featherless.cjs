@@ -18,6 +18,12 @@ const output=path.resolve('private-eval/featherless-'+Date.now());fs.mkdirSync(o
   if(result.checks.some(c=>c.status==='fail'))throw Error('Failed arithmetic/price check');
   if(!result.checks.some(c=>c.status==='unknown')||result.status!=='insufficient_evidence')throw Error('Uncertainty suppressed');
   await page.getByText('Featherless-assisted review',{exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Accounting checks passed',exact:true}).waitFor();
+  const table=page.getByRole('table',{name:'Reviewed action contributions'});
+  if(await table.locator('tbody tr').count()!==8)throw Error('Review omitted an action');
+  if(await table.getByText('Detailed mechanism',{exact:true}).count()!==3)throw Error('Detailed mechanisms not distinguished');
+  if(await table.getByText('Assumption-only screening',{exact:true}).count()!==5)throw Error('Screening estimates not distinguished');
+  await page.getByText('price_book',{exact:true}).waitFor();
   await page.screenshot({path:path.join(output,'desktop.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Mobile overflow');
