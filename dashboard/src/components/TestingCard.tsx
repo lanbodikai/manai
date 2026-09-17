@@ -17,7 +17,7 @@ export function TestingCard({ model }: { model: ModelState }) {
       {result && <p className="testing-source">20% target: {usd(result.target_reference_usd)} of {usd(result.baseline_reference_usd)} historical reference cost. Remaining gap: {range(result.bounds.remaining_target_reference_usd.low, result.bounds.remaining_target_reference_usd.high)}.</p>}
       <p className="testing-source">Uses the selected actions and assumptions in <a href="#model">Model</a>. Estimates are scenarios, not measured savings; negative reductions mean extra cost.</p>
       <button type="button" className="testing-execute" disabled={!model.enabled || !model.draft || model.busy} onClick={() => void model.calculate()}>
-        <Play size={17} aria-hidden="true" />{model.busy ? "Calculating…" : "Run cost simulation"}
+        <Play size={17} aria-hidden="true" />{model.busy ? "Calculating…" : "Proceed to deploy test"}
       </button>
       <p className="testing-feedback" role="status">{!model.enabled ? "Cost simulation unavailable in this mode." : model.busy ? result ? "Calculating · showing previous result." : "Calculating the selected scenario…" : model.dirty ? "Assumptions changed · showing previous calculation. Run again to update." : result ? "Showing the current calculated scenario. No workloads were run." : "Waiting for simulation inputs. No workloads will run."}</p>
       {model.error && <p role="alert">{model.error} <button type="button" onClick={model.retry}>Reload simulation source</button></p>}
