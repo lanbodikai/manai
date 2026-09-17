@@ -38,3 +38,24 @@ Track 1 and all external starter stacks from the earlier briefing; `.git` from u
 ## Import completion gate
 
 Provenance recorded; expected source files present; correct notices retained; data ignored with two manifest exceptions; generator hashes verified; Compose config valid; canonical five-file check passes; API returns one real response. Record results, not just commands.
+
+## Explicit import checklist
+
+Mark these only after performing them. Reviewed does not mean imported or executed.
+
+- [x] Official Track 2 docs and relevant starter code inspected at the pinned commit.
+- [x] Agreement, attribution/license paths, schema and validator identified.
+- [ ] Activation of starter import recorded in DECISIONS.md.
+- [ ] Import Track 2 code paths from the manifest without copying upstream .git or replacing our planning files.
+- [ ] Retain PARTICIPANT_AGREEMENT.md, LICENSE and ATTRIBUTION.md; link notices from the root README/attribution.
+- [ ] Preserve source notices verbatim and document any team modifications; do not imply that storing an agreement accepts it for the user.
+- [ ] Record upstream commit and imported file hashes in UPSTREAM_PROVENANCE.md.
+- [ ] Preserve claims schema and official validator path relationship.
+- [ ] Preserve data README/checksums while confirming raw/prepped/generated paths are ignored.
+- [ ] Verify generator hashes before execution; use the documented Docker path.
+- [ ] Download data only after activation; run prep, generate and canonical-data check.
+- [ ] Add the dashboard/service to a single root Compose project; keep the official API service.
+- [ ] Test API readiness and a complete fixture-backed page; record actual outcomes.
+- [ ] Freeze shared contract/fixtures and baseline commit before both builders branch.
+
+Copying official files supplies infrastructure and obligations; it does not complete our contribution or its evaluation.

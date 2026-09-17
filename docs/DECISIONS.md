@@ -1,4 +1,4 @@
-# Decision and evidence ledger — v0.1
+# Decision and evidence ledger — v0.2
 
 Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED = editable design; OPEN = unresolved; DEFERRED = outside current scope.
 
@@ -10,10 +10,11 @@ Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED 
 | D02 | DECIDED | Thesis: audit proposed savings and show evidence plus downside. |
 | D03 | DECIDED | Two builders/Codex sessions, one per workstream. |
 | D04 | DECIDED | Several discussion rounds before implementation; create versioned planning documents now. |
-| D05 | PROPOSED | Completed zero-compute jobs as first cohort. |
-| D06 | PROPOSED | Official Python API plus React/TypeScript dashboard. |
-| D07 | PROPOSED | Dashboard first; bounded MCP agent explains/challenges decisions. |
-| D08 | PROPOSED | Builder A: analysis + agent; Builder B: product + packaging/integration. |
+| D05 | DECIDED | Completed zero-compute jobs as first cohort; CPU-placement pilot is the proposed action, compatibility remains unverified. |
+| D06 | DECIDED | Official Python API plus React/TypeScript dashboard. |
+| D07 | DECIDED | Dashboard first; bounded MCP agent explains/challenges evidence. |
+| D08 | PROPOSED | Builder A: analysis + agent; Builder B: product + packaging/integration; merger choice pending Round 3. |
+| D09 | DECIDED | Include a specific checklist for importing official Track 2 code plus agreement/license/attribution. Import execution is not yet activated. |
 
 ## Official requirements
 

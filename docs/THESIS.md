@@ -1,4 +1,4 @@
-# Short thesis — v0.1
+# Short thesis — v0.2
 
 ## Approved direction
 
@@ -20,8 +20,8 @@ A GPU budget recommendation is useful only if an operator can see which workload
 
 Keep all three required views: spending, proposed action, downside. Include one full evidence drill-down and an MCP-backed explanation/challenge path. Use supplied overview/recommendation data with attribution; investigate only one cohort deeply. Surface uninvestigated recommendations as organizer judgments, without counting them in our verified headline.
 
-## Provisional first cohort
+## Approved first cohort; proposed intervention
 
-Completed jobs with zero average AND maximum GPU compute activity, following the official rule and its scope, are candidates for a CPU-placement pilot. Completion and zero measured GPU use are observations; compatibility with a CPU-only environment is unverified. Eligible GPU-hours are an upper bound on recoverable allocation, not a proven cash saving. Round 2 will choose this or an idle-session cohort.
+Completed jobs with zero average AND maximum GPU compute activity and more than one GPU-hour, following `rules::gpu-not-needed`, are the first cohort for a CPU-placement pilot. Completion and zero measured GPU use are observations; compatibility with a CPU-only environment is unverified. Eligible GPU-hours are an upper bound on recoverable allocation, not a proven cash saving. Round 2 approved this cohort. If actual field/coverage inspection makes it infeasible, record the reason and obtain a scope decision before pivoting.
 
-No numerical outcome, novelty claim or guaranteed 20% reduction is asserted. Show the target and supported gap honestly.
+“Verified recommendation” means verified accounting and evidence; the intervention effect remains untested. No numerical outcome, novelty claim or guaranteed 20% reduction is asserted. Show the target and supported gap honestly.

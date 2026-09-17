@@ -1,6 +1,6 @@
-# manai — planning draft v0.1
+# manai — planning draft v0.2
 
-Status: DISCUSSION DRAFT. Track and thesis approved; implementation has not started.
+Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
 
 Build a complete GPU-efficiency decision dashboard around one verified recommendation: audit proposed savings, expose supporting evidence, and show the downside of acting on uncertain assumptions.
 
@@ -29,6 +29,6 @@ Read [AGENTS.md](AGENTS.md) before editing. Every builder starts from the same a
 
 ## Versioning
 
-v0.1 records the first decision round. Each discussion revision updates [CHANGELOG.md](CHANGELOG.md), decision IDs and the handoff version. Commit each coherent revision locally. Publishing or opening PRs is a separate step from this initial planning draft.
+v0.1 records Round 1; v0.2 records Round 2 and the explicit starter/notice checklist. Each discussion revision updates [CHANGELOG.md](CHANGELOG.md), decision IDs and the handoff version. Commit each coherent revision locally. Publishing or opening PRs is a separate step from this initial planning draft.
 
 The 3 PM PDT September 17 deadline is fixed. Recalculate time remaining before execution; do not reuse a stale clock-based schedule from the briefing.

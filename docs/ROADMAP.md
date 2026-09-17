@@ -2,7 +2,7 @@
 
 ## Phase 0 — current: converge and version
 
-Finish Rounds 2 and 3 in QUESTIONS.md. Record explicit answers in DECISIONS.md. Revise thesis/cohort, stack and ownership without deleting earlier decisions. This document is not authorization to start implementation.
+Rounds 1 and 2 are complete. Finish Round 3 in QUESTIONS.md. Record explicit answers in DECISIONS.md. Revise thesis/cohort, stack and ownership without deleting earlier decisions. This document is not authorization to start implementation.
 
 ## Phase 1 — shared bootstrap before splitting
 

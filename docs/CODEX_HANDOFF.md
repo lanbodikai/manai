@@ -1,8 +1,8 @@
-# Codex handoff — v0.1
+# Codex handoff — v0.2
 
 ## Planning continuation (use now)
 
-Work in `C:\Users\05mus\manai`, origin `https://github.com/lanbodikai/manai.git`. Read AGENTS.md and README.md. The user approved Track 2, one verified recommendation, savings/evidence/downside thesis and two builder sessions. Continue Rounds 2/3 from docs/QUESTIONS.md; edit decisions and contracts through new local commits. No implementation/import/publishing has been activated. Do not replace the approved research question. The official source snapshot and known doc/schema conflicts are in docs/DECISIONS.md. Record exact tests as NOT RUN until executed.
+Work in `C:\Users\05mus\manai`, origin `https://github.com/lanbodikai/manai.git`. Read AGENTS.md and README.md. The user approved Track 2, one verified recommendation, savings/evidence/downside thesis, completed zero-compute jobs, official Python API + React/TypeScript, dashboard-first MCP agent and two builder sessions. Continue Round 3 from docs/QUESTIONS.md; edit decisions and contracts through new local commits. No implementation/import/publishing has been activated. Do not replace the approved research question. The official source snapshot and known doc/schema conflicts are in docs/DECISIONS.md. Record exact tests as NOT RUN until executed.
 
 ## Builder A prompt (only after activation and split gate)
 

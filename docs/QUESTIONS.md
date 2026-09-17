@@ -1,4 +1,4 @@
-# Discussion queue — v0.1
+# Discussion queue — v0.2
 
 Answer decision questions before starting the dependent work. Data questions are answered by inspection, not by asking the user to guess.
 
@@ -8,11 +8,11 @@ Answer decision questions before starting the dependent work. Data questions are
 2. Contribution? **Audit savings with evidence and downside.**
 3. Staffing? **Two builders/Codex sessions.**
 
-## Round 2 — pending
+## Round 2 — answered
 
-1. First cohort: completed zero-GPU-compute jobs, idle interactive sessions, or choose after first inspection? Recommended provisional choice: completed zero-compute jobs.
-2. Stack: Python API + React/TypeScript, Python + simple HTML/JS, or existing team stack?
-3. Agent role: dashboard-first explain/challenge flow, chat-first, or fixed tool-backed explanations? Recommended: dashboard-first with a bounded agent.
+1. First cohort: **completed zero-compute jobs, with CPU-placement pilot as the proposed action.**
+2. Stack: **official Python API + React/TypeScript dashboard.**
+3. Agent role: **dashboard-first; MCP agent explains and challenges evidence.**
 
 ## Round 3 — settle before split
 
