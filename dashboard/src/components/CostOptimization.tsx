@@ -13,7 +13,7 @@ import { taskSummary } from "../optimization-options";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
-export function CostOptimization({ api, modelAvailable = true }: { api: DashboardApi; modelAvailable?: boolean }) {
+export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilot }: { api: DashboardApi; modelAvailable?: boolean; onOpenAuditedPilot?: () => void }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const [table, setTable] = useState<DecisionTable | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -108,6 +108,12 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   const cpuRow = visible?.rows.find(row => row.id === "cpu-placement");
   const review = selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
   function openPilot() {
+    // A owns the only adopted v0.4 model: an immutable, evidence-linked,
+    // single-job CPU scenario. Never substitute B's cohort simulator in live mode.
+    if (!modelAvailable) {
+      onOpenAuditedPilot?.();
+      return;
+    }
     if(!selected.includes("cpu-placement")) choose([...selected,"cpu-placement"]);
     setPilotOpen(true);
     setTimeout(() => document.getElementById("cpu-pilot-planner")?.focus(),0);
@@ -134,7 +140,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
     <header className="page-header">
       <div><span className="eyebrow">CFO DECISION REVIEW</span>
         <h1>Prioritize a guarded pilot</h1>
-        <p>Investigate the evidence, model the downside, then authorize a measured test.</p>
+        <p>Investigate the evidence, then use the audited CPU pilot to model one job before authorizing a measured test.</p>
       </div>
       <a className="secondary" href={datasetHref("findings")}>Inspect source evidence <ArrowRight size={15} /></a>
     </header>
@@ -149,7 +155,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
         </div>
         <ol>
           <li><strong>1. Investigate</strong><span>Confirm the source records and eligible job scope.</span></li>
-          <li><strong>2. Model</strong><span>Price the named pilot and its downside.</span></li>
+          <li><strong>2. Model</strong><span>Price one evidence-linked CPU pilot and its downside.</span></li>
           <li><strong>3. Authorize</strong><span>Set an owner, stop limits, and a rollback path.</span></li>
         </ol>
       </section>
@@ -168,7 +174,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
               <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
-              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Compare CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>Model <ArrowRight size={13}/></button>}</td>
+              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : row.id === "cpu-placement" ? "Ready for an audited pilot" : "Investigate before any change"}</span>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Open audited CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>{modelAvailable ? "Model in demo" : "Open audited pilot"} <ArrowRight size={13}/></button>}</td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><details className="row-source-details"><summary>Details</summary><p>{row.fix}</p><p>Owner: {row.owner}</p><p>{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</p><p>{number(row.excluded_cancelled_jobs)} cancelled jobs excluded</p></details></td>
             </tr>)}</tbody>
           </table>

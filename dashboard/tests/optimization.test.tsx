@@ -116,4 +116,12 @@ describe("decision table interactions", () => {
     await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeEnabled());
     expect(screen.getByText("2 actions selected",{exact:true})).toBeVisible();
   });
+  it("routes live CPU modeling to A's audited single-job flow instead of B's cohort simulator", async () => {
+    const user = userEvent.setup(), api = createMockApi({delay:0});
+    const openAuditedPilot = vi.fn();
+    render(<CostOptimization api={api} modelAvailable={false} onOpenAuditedPilot={openAuditedPilot} />);
+    await user.click(await screen.findByRole("button", {name:"Open audited CPU pilot"}));
+    expect(openAuditedPilot).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("heading", {name:"CPU pilot planner"})).not.toBeInTheDocument();
+  });
 });

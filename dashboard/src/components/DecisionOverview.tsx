@@ -24,12 +24,12 @@ export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutco
     </article>
     <article className="panel decision-tile recommendation-tile">
       <div className="decision-tile-label"><FlaskConical size={17}/><span>2 · WHERE TO CUT FIRST</span></div>
-      <h2>{cpu?.affected_jobs ? "Run a guarded CPU pilot" : "Investigate the evidence"}</h2>
+      <h2>{cpu?.affected_jobs ? "Validate a CPU placement pilot" : "Investigate the evidence"}</h2>
       <p>{cpu?.affected_jobs ? "CPU placement pilot · platform + workload owner" : "No eligible CPU pilot jobs in this sample."}</p>
       <div className="decision-estimate"><span>Net reference benefit · CPU pilot only</span><strong>{r ? range(r.scenarios[0].net,r.scenarios[2].net) : "Estimate pending"}</strong><small>{r ? "Assumption-based range · negative means extra cost" : "Replacement costs and performance need testing"}</small></div>
       {r && <span className="evidence-status">Scenario modeled · not measured</span>}
       {review?.dirty && <p className="tile-draft" role="status">Assumptions changed · showing last calculation</p>}
-      <div className="tile-actions"><button className="text-button" onClick={onModel} disabled={disabled || !cpu?.affected_jobs}>{r ? "Update pilot scenario" : "Model pilot scenario"} <ArrowRight size={14}/></button></div>
+      <div className="tile-actions"><button className="text-button" onClick={onModel} disabled={disabled || !cpu?.affected_jobs}>{r ? "Update pilot scenario" : "Open audited pilot"} <ArrowRight size={14}/></button></div>
       <details className="tile-details"><summary>Why start here?</summary><p>{cpu?.affected_jobs ? `${number(cpu.affected_jobs)} completed jobs recorded zero average and peak GPU compute. That gives us a specific cohort to test; it does not prove CPU compatibility.` : "A source-backed cohort is required before estimating a CPU pilot."}</p>{!!cpu?.affected_jobs && <p>The entire cohort accounts for {cpu.allocated_share_pct.toFixed(1)}% of sample allocation. Even removing all that allocation would not meet the 20% goal; replacement costs would reduce the benefit further.</p>}<p>Priority reflects a testable hypothesis, not the largest promised saving. Owner: {cpu?.owner ?? "Platform + workload owner"}.</p><a href={datasetHref("findings",{query:"rules::gpu-not-needed"})}>Inspect supporting records</a></details>
     </article>
     <article className="panel decision-tile downside-tile">

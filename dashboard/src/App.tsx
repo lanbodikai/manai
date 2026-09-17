@@ -293,7 +293,18 @@ export function App({ runtime }: { runtime: Runtime }) {
           </div>
         )}
         {hash === "#optimization" && datasetAvailable ? (
-          <CostOptimization api={api} modelAvailable={runtime.mode !== "http"} />
+          <CostOptimization
+            api={api}
+            modelAvailable={runtime.mode !== "http"}
+            onOpenAuditedPilot={() => {
+              // An audit is created from the canonical recovery scenario first.
+              // A then exposes the evidence-linked, single-job CPU form below it.
+              window.location.hash = "#scenario";
+              window.setTimeout(() => {
+                document.getElementById("scenario")?.scrollIntoView({ block: "start", behavior: "smooth" });
+              }, 0);
+            }}
+          />
         ) : hash === "#optimization" ? (
           <section className="panel unavailable-state" aria-labelledby="decisions-unavailable-title">
             <span className="eyebrow">DECISION REVIEW UNAVAILABLE</span>
