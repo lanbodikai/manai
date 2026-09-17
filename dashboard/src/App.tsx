@@ -648,7 +648,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                       Cancelled work is not automatically wasted.
                     </p>
                   </section>
-                  <TestingCard />
+                  <TestingCard model={portfolio} />
                 </div>
                 <div className="pilot-evidence-section">
                   <section className="panel evidence-preview" id="evidence">
