@@ -132,18 +132,38 @@ def build(official):
     findings_path = official / 'data/synthetic/findings.json'
     finding_count = None
     if findings_path.exists():
-        if checks.digest(findings_path) != expected['synthetic/findings.json']:
-            raise RuntimeError('Findings checksum mismatch; preview was not published.')
+        for name in ['synthetic/findings.json', 'synthetic/resources.parquet', 'synthetic/edges.parquet']:
+            if checks.digest(official / 'data' / name) != expected[name]:
+                raise RuntimeError(f'Canonical checksum mismatch for {name}; preview was not published.')
+            fingerprints.append(expected[name])
+            print(f'ok {name}')
+        resources = pd.read_parquet(official / 'data/synthetic/resources.parquet')
+        pods = resources[resources.type == 'k8s:pod']
+        machines = resources[resources.type == 'k8s:node']
+        rid_to_job = dict(zip(pods.id, pods.resourceId))
+        rid_to_node = dict(zip(machines.id, machines.name))
         findings = json.loads(findings_path.read_text())
         for finding in findings:
-            meta = finding.get('metadata', {})
+            # Same enrichment as official api/data_loader.py; never infer a
+            # failed machine from the job's final placement or parse prose IDs.
+            meta = finding.setdefault('metadata', {})
+            related = []
+            for rid in finding.get('resourceIds', []):
+                if rid in rid_to_job:
+                    meta.setdefault('job_id', str(rid_to_job[rid]))
+                    related.append(link('jobs', rid_to_job[rid], f'Job {rid_to_job[rid]}'))
+                if rid in rid_to_node:
+                    meta.setdefault('node', rid_to_node[rid])
+                    related.append(link('machines', rid_to_node[rid], rid_to_node[rid]))
+            if meta.get('job_id') is not None:
+                related.append(link('jobs', meta['job_id'], f"Job {meta['job_id']}"))
+            related = list({(r['collection'], r['id']): r for r in related}.values())
             values = {'rule': finding.get('detectorId'), 'status': finding.get('status'), 'Node': meta.get('node'), 'id_job': str(meta['job_id']) if meta.get('job_id') is not None else None,
                       'impact_gpu_hours': meta.get('impact_gpu_hours'), 'impact_kind': meta.get('impact_kind'), 'impact_scope': meta.get('impact_scope')}
             values.update({k: dump(v) if isinstance(v, (dict, list)) else v for k, v in finding.items()})
-            related = [link('jobs', meta['job_id'], f"Job {meta['job_id']}")] if meta.get('job_id') is not None else []
             add('findings', str(finding['id']), finding.get('shortDescription', 'Finding'), finding.get('longDescription', ''), values, related, meta.get('synthetic', False))
         finding_count = len(findings)
-        version = hashlib.sha256((version + expected['synthetic/findings.json']).encode()).hexdigest()
+        version = hashlib.sha256(''.join(fingerprints).encode()).hexdigest()
     util = jobs.sm_util_avg.clip(0, 100) / 100
     summary = {'gpu_hours': float(jobs.gpu_hours.sum()), 'estimated_active_gpu_hours': float((jobs.gpu_hours * util).sum()),
                'estimated_completed_active_gpu_hours': float((jobs.loc[jobs.is_success, 'gpu_hours'] * util[jobs.is_success]).sum()),
@@ -152,11 +172,11 @@ def build(official):
                'window_label': 'Approximately four months; source timestamps are relative offsets', 'synthetic': False, 'nodes': nodes,
                'collections': [{'key': key, 'count': count, 'available': count is not None} for key, count in [('jobs', len(jobs)), ('gpus', gpu_count), ('machines', len(nodes)), ('findings', finding_count)]],
                'summary': summary, 'caveats': [
-                 'Jobs and GPU tables match the official semantic checksums. This does not validate the full five-file dataset or savings claims.',
+                 'All five source files match the official checksums. This verifies file contents, not savings claims.' if finding_count is not None else 'Jobs and GPU tables match the official semantic checksums. This does not validate the full five-file dataset or savings claims.',
                  'This workload sample cannot establish whole-cluster utilization or next-quarter savings.',
                  'GPU time is reported telemetry, not purchased capacity. Activity is an SM-weighted proxy, not measured research output.',
                  'Per-card activity averages use runtime clipped to the final job walltime; source reported hours remain visible for reconciliation. Requeues can mix attempts.',
-                 'Findings are not loaded unless the official generated file is present and checksum-matched.'
+                 'Findings are rule judgments, not verified savings. Job/machine links use source metadata and the official resource-ID mapping. Synthetic incidents remain labeled.' if finding_count is not None else 'Findings are not loaded unless the official generated files are present and checksum-matched.'
                ]}
     db.execute('INSERT INTO metadata VALUES (?,?)', ('catalog', dump(catalog)))
     db.commit()

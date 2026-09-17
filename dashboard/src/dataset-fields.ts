@@ -70,6 +70,7 @@ export const collectionInfo: Record<
       { key: "id_job", label: "Job" },
       { key: "impact_gpu_hours", label: "Reported impact", unit: "h" },
       { key: "impact_kind", label: "Impact type" },
+      { key: "impact_scope", label: "Scope" },
     ],
   },
 };

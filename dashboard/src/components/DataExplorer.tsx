@@ -742,6 +742,10 @@ function RecordDrawer({
   useEffect(() => {
     const prior = document.activeElement as HTMLElement;
     dialog.current?.showModal();
+    setData(null);
+    setError("");
+    setFields("");
+    setActivityFields(null);
     let alive = true;
     void api
       .datasets!.detail(selected.collection, selected.id, version)
@@ -757,7 +761,8 @@ function RecordDrawer({
       if (prior?.isConnected) prior.focus();
     };
   }, [api, selected.collection, selected.id, version]);
-  const record = data?.record;
+  const record = data?.collection === selected.collection && data.record.id === selected.id
+    ? data.record : undefined;
   const activity = record?.activity ?? [];
   return (
     <dialog
@@ -795,7 +800,9 @@ function RecordDrawer({
         ) : (
           <>
             <span className="badge">
-              {record.synthetic ? "Synthetic example" : "Real source record"}
+                {selected.collection === "findings"
+                  ? record.synthetic ? "Synthetic finding" : "Source-derived finding"
+                  : record.synthetic ? "Synthetic example" : "Real source record"}
             </span>
             <p className="record-summary">{record.summary}</p>
             {(selected.collection === "gpus" ||
@@ -818,7 +825,7 @@ function RecordDrawer({
             <div className="record-key-metrics">
               {collectionInfo[selected.collection].fields
                 .filter((f) =>
-                  ["gpu_hours", "sm_util_avg", "sm_util_weighted"].includes(
+                  ["gpu_hours", "sm_util_avg", "sm_util_weighted", "impact_gpu_hours", "impact_kind", "impact_scope"].includes(
                     f.key,
                   ),
                 )
