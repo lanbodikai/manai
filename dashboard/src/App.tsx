@@ -31,6 +31,7 @@ import { ScenarioForm } from "./components/ScenarioForm";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
 import { CostOptimization } from "./components/CostOptimization";
+import { PilotRecoveryPanel } from "./components/PilotRecoveryPanel";
 import {
   DataExplorer,
   DatasetHome,
@@ -42,6 +43,10 @@ const colors = ["#2856e8", "#9aaee6", "#c1ceec", "#d7dff0", "#e8edf6"];
 export function App({ runtime }: { runtime: Runtime }) {
   const { api } = runtime;
   const [hash, setHash] = useState(window.location.hash);
+  const [pilotRecoveryVisited, setPilotRecoveryVisited] = useState(window.location.hash === "#pilot-recovery" && runtime.mode !== "mock");
+  useEffect(() => {
+    if (hash === "#pilot-recovery" && runtime.mode !== "mock") setPilotRecoveryVisited(true);
+  }, [hash, runtime.mode]);
   const dataOpen = hash.startsWith("#data");
   const local = runtime.mode === "local";
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -201,6 +206,7 @@ export function App({ runtime }: { runtime: Runtime }) {
   const nav = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "optimization", label: "Decisions", icon: Wallet },
+    { id: "pilot-recovery", label: "Pilot & Recovery", icon: ShieldCheck },
     { id: "data", label: "Data explorer", icon: Database },
     { id: "scenario", label: "Scenario", icon: SlidersHorizontal },
     { id: "evidence", label: "Evidence", icon: Database },
@@ -221,7 +227,7 @@ export function App({ runtime }: { runtime: Runtime }) {
         <p className="nav-label">WORKSPACE</p>
         <nav aria-label="Main navigation">
           {nav
-            .filter((n) => !local || ["overview", "optimization", "data"].includes(n.id))
+            .filter((n) => (!mock || n.id !== "pilot-recovery") && (!local || ["overview", "optimization", "pilot-recovery", "data"].includes(n.id)))
             .map(({ id, label, icon: Icon }) => (
               <a
                 href={`#${id}`}
@@ -264,7 +270,7 @@ export function App({ runtime }: { runtime: Runtime }) {
           </span>
           <span className="topbar-right">
             <span className="small">
-              {local ? "Read-only preview" : "API v0.3"}
+              {local ? "Read-only preview" : `API v${health?.contract_version ?? "0.4"}`}
             </span>
             <span className="avatar">M</span>
           </span>
@@ -283,7 +289,10 @@ export function App({ runtime }: { runtime: Runtime }) {
             <span>No live monitoring, savings audit or MCP</span>
           </div>
         )}
-        {hash === "#optimization" ? (
+        {pilotRecoveryVisited && <div hidden={hash !== "#pilot-recovery"}><PilotRecoveryPanel api={api} audit={audit} /></div>}
+        {hash === "#pilot-recovery" ? (
+          mock ? <section className="pr-panel"><div className="panel pr-card"><h1>Pilot &amp; Recovery</h1><p>This feature requires the analysis service. Open HTTP or local-data mode; no mock simulation has been substituted.</p></div></section> : null
+        ) : hash === "#optimization" ? (
           <CostOptimization api={api} />
         ) : dataOpen ? (
           <DataExplorer api={api} hash={hash} />

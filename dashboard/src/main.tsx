@@ -5,4 +5,5 @@ import "./styles.css";
 import "./dataset.css";
 import "./optimization.css";
 import "./pilot.css";
+import "./pilot-recovery.css";
 createRoot(document.getElementById("root")!).render(<App runtime={runtime} />);

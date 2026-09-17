@@ -1,4 +1,4 @@
-# Default: official API :8000 + team service + temporary verification page :3000.
+# Default: official API :8000 + team service + live React dashboard :3000.
 services:
   api:
     build:
@@ -81,10 +81,8 @@ services:
   dashboard:
     build:
       context: .
-      dockerfile: tools/bootstrap/page/Dockerfile
+      dockerfile: dashboard/Dockerfile
     ports: ["3000:3000"]
-    environment:
-      ANALYSIS_URL: http://analysis:8001
     depends_on:
       analysis: {condition: service_healthy}
 

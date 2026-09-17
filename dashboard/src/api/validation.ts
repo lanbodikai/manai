@@ -2,7 +2,7 @@ import Ajv2020 from "ajv/dist/2020";
 import contract from "../../../contracts/openapi.json";
 import type { Schemas } from "./types";
 
-const ajv = new Ajv2020({ allErrors: true, strict: false });
+const ajv = new Ajv2020({ allErrors: true, strict: false, strictNumbers: true });
 ajv.addSchema({ $id: "manai-contract", components: contract.components });
 export class ApiError extends Error {
   constructor(

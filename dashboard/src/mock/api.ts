@@ -158,7 +158,7 @@ export function createMockApi(
       await wait();
       return parse("Health", {
         service: "ok",
-        contract_version: "0.3",
+        contract_version: "0.4",
         data_status: "ready",
         data_fingerprint: "synthetic-fixture-v1",
         agent_status: "unconfigured",
