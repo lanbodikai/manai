@@ -2,7 +2,7 @@
 
 ## Current mode
 
-BOOTSTRAP EXECUTION authorized by Winston in goal mode. Worktree: manai-bootstrap, branch codex/integration. Complete BASE-01 through BASE-07 and publish the shared baseline; preserve B's dashboard files and stop before full A/B/C implementation. Read docs/BOOTSTRAP_STATUS.md for actual gate results and docs/BOOTSTRAP_BOUNDARY.md for ownership. Historical planning activation questions do not override this authorization.
+COMMON BASE VERIFIED. Worktree: manai-bootstrap, branch codex/integration. BASE-01 through BASE-07 passed on implementation baseline 7530865. The bootstrap assignment stops here; subsequent A/B/C implementation requires the corresponding session assignment. Preserve B's dashboard files. Read docs/BOOTSTRAP_STATUS.md for actual gate results and docs/BOOTSTRAP_BOUNDARY.md for ownership. Historical planning activation questions do not override this authorization.
 
 B0 is explicitly authorized before the shared split gate: see docs/workstreams/B_PREBOOTSTRAP.md. A session assigned B0 may implement and publish the isolated fixture-driven frontend now, without waiting for bootstrap. Its file boundaries and mock-versus-live acceptance limits take precedence over earlier B wait instructions.
 

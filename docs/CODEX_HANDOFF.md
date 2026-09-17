@@ -1,6 +1,6 @@
 # Current handoff — common bootstrap
 
-Read BOOTSTRAP_STATUS.md for the verified baseline SHA and gate results; BOOTSTRAP_BOUNDARY.md freezes ownership and API v0.3. The published planning branch remains historical planning; use codex/integration for implementation. Workstream prompts in TEAM_START_HERE.md apply with the baseline below, not a placeholder. Do not redo the official import.
+Verified implementation baseline: `7530865eeca4fe87daf91b5cc275af378bd42fb7`. All BASE gates passed. Read BOOTSTRAP_STATUS.md for commands and gate results; BOOTSTRAP_BOUNDARY.md freezes ownership and API v0.3. The published planning branch remains historical planning; use codex/integration for implementation. Workstream prompts in TEAM_START_HERE.md apply with the baseline below, not a placeholder. Do not redo the official import.
 
 ## A
 

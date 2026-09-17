@@ -27,4 +27,4 @@ Recovery estimation, deduplication audit, final claims/report, production dashbo
 
 ## Branching and integration
 
-Baseline is the verified implementation commit identified in BOOTSTRAP_STATUS.md; subsequent status-only commits do not change its code. A/C branch from it on codex/analysis-service and codex/evidence-review-service. B retains codex/product-integration and merges that baseline, preserving B0 work. PR target: codex/integration. No force push or default-branch change. B coordinates reviewed slice merges after acceptance conditions pass.
+Baseline is verified implementation commit `7530865eeca4fe87daf91b5cc275af378bd42fb7` (all BASE gates passed); subsequent status-only commits do not change its code. A/C branch from it on codex/analysis-service and codex/evidence-review-service. B retains codex/product-integration and merges that baseline, preserving B0 work. PR target: codex/integration. No force push or default-branch change. B coordinates reviewed slice merges after acceptance conditions pass.

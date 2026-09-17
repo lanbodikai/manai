@@ -1,5 +1,11 @@
 # Project changelog
 
+## Verified split handoff — 2026-09-17
+
+- BASE-01 through BASE-07 passed including independently regenerated data, exact default startup, five tests, real MCP calls and browser verification.
+- Published implementation baseline 7530865; recorded exact A/B/C branch/merge commands, frozen ownership, Git exclusions and honest remaining work.
+- C/Featherless remains optional; no provider key used.
+
 ## Common-base bootstrap — 2026-09-17
 
 - Imported pinned Track 2 API/data tooling/MCP/notices with per-file provenance.
