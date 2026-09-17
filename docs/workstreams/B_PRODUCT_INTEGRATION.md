@@ -1,6 +1,6 @@
 # Workstream B — dashboard, packaging and integration
 
-Plan v0.3 / Contract v0.1. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.4 / Contract v0.2. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
 
 ## Mission
 

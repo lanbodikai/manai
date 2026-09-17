@@ -1,4 +1,4 @@
-# Codex handoff — v0.3
+# Codex handoff — v0.4
 
 ## Planning continuation (use now)
 
@@ -6,11 +6,11 @@ Work in `C:\Users\05mus\manai`, origin `https://github.com/lanbodikai/manai.git`
 
 ## Builder A prompt (only after activation and split gate)
 
-You own Workstream A at the agreed baseline commit. Read AGENTS.md, docs/THESIS.md, docs/CONTRACT.md, docs/EVALUATION.md and docs/workstreams/A_ANALYSIS_AGENT.md. Implement the deterministic audit slice first, then the bounded MCP agent. Preserve Builder B's ownership. Use original synthetic fixtures for tests and real local organizer data for validation. Start by reporting baseline commit, contract version and the first failing/missing acceptance condition. Submit A1/A2 in the documented order; do not claim causal savings or treat a proposed recovery fraction as measured. Publish only if the active assignment authorizes it. End each handoff with commits, actual checks/results, open assumptions and required B integration.
+You own Workstream A at the agreed baseline commit. Read AGENTS.md, docs/THESIS.md, docs/CONTRACT.md, docs/API_SPEC.md, contracts/openapi.json, docs/EVALUATION.md and docs/workstreams/A_ANALYSIS_AGENT.md. Implement the deterministic audit slice first, then the bounded MCP agent. Preserve Builder B's ownership. Use original synthetic fixtures for tests and real local organizer data for validation. Start by reporting baseline commit, contract version and the first failing/missing acceptance condition. Submit A1/A2 in the documented order; do not claim causal savings or treat a proposed recovery fraction as measured. Publish only if the active assignment authorizes it. End each handoff with commits, actual checks/results, open assumptions and required B integration.
 
 ## Builder B prompt (only after activation and split gate)
 
-You own Workstream B at the agreed baseline commit. Read AGENTS.md, docs/THESIS.md, docs/CONTRACT.md, docs/EVALUATION.md and docs/workstreams/B_PRODUCT_INTEGRATION.md. Build the entire dashboard journey against shared synthetic fixtures, then integrate A's canonical endpoints. Preserve A's calculation ownership. Own compose/startup, interface states, report assembly and demo. Verify port 3000 and source-data mode; never use a mock to hide a failing integration. Submit B1/B2 as documented; publish only if the active assignment authorizes it. End each handoff with commits, run instructions, actual checks, blockers and readiness.
+You own Workstream B at the agreed baseline commit. Read AGENTS.md, docs/THESIS.md, docs/CONTRACT.md, docs/API_SPEC.md, contracts/openapi.json, docs/EVALUATION.md and docs/workstreams/B_PRODUCT_INTEGRATION.md. Build the entire dashboard journey against shared synthetic fixtures, then integrate A's canonical endpoints. Preserve A's calculation ownership. Own compose/startup, interface states, report assembly and demo. Verify port 3000 and source-data mode; never use a mock to hide a failing integration. Submit B1/B2 as documented; publish only if the active assignment authorizes it. End each handoff with commits, run instructions, actual checks, blockers and readiness.
 
 ## Session coordination
 

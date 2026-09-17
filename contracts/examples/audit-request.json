@@ -1,0 +1,16 @@
+{
+  "client_request_id": "fixture-request-001",
+  "expected_data_fingerprint": "synthetic-fixture-v1",
+  "recommendation_id": "cpu-placement-pilot",
+  "scenario": {
+    "recovery_fraction": {
+      "low": 0.2,
+      "point": 0.4,
+      "high": 0.6
+    },
+    "usd_per_gpu_hour": 2.5,
+    "cancelled_policy": "exclude",
+    "interval_kind": "scenario",
+    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate."
+  }
+}

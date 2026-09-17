@@ -1,0 +1,101 @@
+{
+  "contract_version": "0.2",
+  "audit_id": "synthetic-audit-001",
+  "client_request_id": "fixture-request-001",
+  "recommendation_id": "cpu-placement-pilot",
+  "source_recommendation_ids": [],
+  "provenance": {
+    "data_fingerprint": "synthetic-fixture-v1",
+    "sample_label": "Original synthetic test jobs",
+    "window_label": "Synthetic window; no production dates",
+    "synthetic": true,
+    "source_version": "fixture-v1",
+    "caveats": [
+      "All values are invented for contract testing."
+    ]
+  },
+  "scenario": {
+    "recovery_fraction": {
+      "low": 0.2,
+      "point": 0.4,
+      "high": 0.6
+    },
+    "usd_per_gpu_hour": 2.5,
+    "cancelled_policy": "exclude",
+    "interval_kind": "scenario",
+    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate."
+  },
+  "eligibility": {
+    "definition": "COMPLETED; sm_util_avg == 0; sm_util_max == 0; gpu_hours > 1; required values present",
+    "unique_jobs": 2,
+    "eligible_gpu_hours": 30,
+    "excluded_jobs": 1,
+    "overlapping_finding_references": 1,
+    "coverage_note": "Synthetic complete measurement coverage."
+  },
+  "recovery": {
+    "gpu_hours": {
+      "low": 6,
+      "point": 12,
+      "high": 18
+    },
+    "reference_usd": {
+      "currency": "USD",
+      "unit": "reference_usd",
+      "values": {
+        "low": 15,
+        "point": 30,
+        "high": 45
+      },
+      "cash_savings_verified": false
+    },
+    "interval_kind": "scenario",
+    "basis": "30 unique eligible GPU-hours multiplied by stated recovery fractions."
+  },
+  "action": {
+    "title": "Pilot CPU placement for eligible workloads",
+    "owner_role": "Platform/SRE with workload owner",
+    "state": "proposed_pilot",
+    "compatibility_verified": false
+  },
+  "downside": {
+    "status": "unmeasured",
+    "mechanisms": [
+      "CPU-only execution may fail or run more slowly."
+    ],
+    "assumptions": [
+      "CPU compatibility and performance have not been tested."
+    ],
+    "guardrails": [
+      "Pilot on consenting workloads; retain rollback to original placement."
+    ],
+    "pilot_success_metrics": [
+      "Task completion",
+      "Runtime",
+      "Queue impact"
+    ],
+    "money": null,
+    "money_unit": null
+  },
+  "evidence_preview": [
+    {
+      "id": "job:J1",
+      "kind": "job",
+      "source_id": "J1",
+      "label": "Synthetic completed job J1",
+      "synthetic": true
+    },
+    {
+      "id": "job:J2",
+      "kind": "job",
+      "source_id": "J2",
+      "label": "Synthetic completed job J2",
+      "synthetic": true
+    }
+  ],
+  "evidence_count": 2,
+  "limitations": [
+    "Accounting verified only in this synthetic example.",
+    "No demonstrated intervention savings."
+  ]
+}

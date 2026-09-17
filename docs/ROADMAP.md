@@ -12,7 +12,7 @@ Once activated, use Builder B as merge coordinator and proposed bootstrap integr
 2. Get official data/preprocessing/generator/check-data/API working. Validate Docker on the intended demo machine. If blocked for 15 minutes, request concrete technical help and narrow packaging work; do not silently waive the container requirement.
 3. Inspect the chosen cohort's available columns and coverage. Make a go/no-go decision: keep cohort or explicitly revise D05.
 4. Make the full product shell load one overview and a clearly labeled original synthetic audit fixture.
-5. Freeze Contract v0.1 into executable schema/types + synthetic fixtures. Check one positive and one failure response end to end.
+5. Review draft Contract v0.2/OpenAPI and its existing synthetic fixtures, generate shared types if useful, and freeze the agreed version. Check one positive and one failure response end to end.
 6. Ensure a common committed baseline exists. If publishing is authorized, establish main before creating workstream PR branches; an empty remote has no useful PR base.
 
 **Split gate:** D05–D08 resolved; import/provenance complete; canonical data verified; one API query works; owner assignments recorded; contract and fixtures committed; mandatory evaluation IDs agreed; remaining-time cutoffs updated. If data access remains blocked, B may scaffold against fixtures while A resolves setup, but call this partial parallel progress, not a passed gate or real-data validation.

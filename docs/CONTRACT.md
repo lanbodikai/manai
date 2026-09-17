@@ -1,4 +1,4 @@
-# Shared contract v0.1 — PROPOSED, freeze before split
+# Shared contract v0.2 — PROPOSED, freeze before split
 
 Purpose: both sessions can work against one original synthetic fixture and interface without sharing unfinished code. This is our contract, not MantisGrid's API schema.
 
@@ -30,17 +30,9 @@ Recovery model for the first version: `eligible_unique_gpu_hours * explicitly_as
 
 ## Team service and UI boundary
 
-Proposed routes, served by a small team service with a same-origin dashboard proxy:
+Authoritative draft route/payload definitions are in [API_SPEC.md](API_SPEC.md) and [OpenAPI](../contracts/openapi.json). The v0.1 singular `/api/audit`, global evidence and global claims sketches are superseded by immutable audit-scoped routes in v0.2. Original synthetic fixtures now exist under `contracts/examples/`.
 
-- `GET /api/overview` — supplied overview with attribution and caveats.
-- `GET /api/recommendations` — source recommendations; mark only the investigated one as audited.
-- `POST /api/audit` — scenario in; canonical AuditResult out.
-- `GET /api/evidence/{id}` — bounded evidence detail, preserving measurement units and synthetic label.
-- `POST /api/explain` — question + current audit ID; Explanation out.
-- `GET /api/claims` — export matching current audit; submission export uses the final frozen scenario.
-- `GET /health` — service/data readiness separately reported; liveness alone is not data readiness.
-
-Error envelope: `code`, human-readable `message`, `retryable`, optional source identifier. Never return stale results under a new scenario label. UI cancels/ignores late responses from superseded scenarios. Store/retrieve audits by ID or canonical content hash, not mutable session-global state.
+The first completed-job cohort fixes `cancelled_policy=exclude`; changing that requires a cohort/contract decision. Explanation success is `ok` or `insufficient_evidence`; provider unavailability and timeout use structured error responses rather than a fabricated successful explanation.
 
 ## Builder B components
 
@@ -48,4 +40,4 @@ Error envelope: `code`, human-readable `message`, `retryable`, optional source i
 
 ## Freeze gate
 
-Before branching: approve stack/cohort, choose precise column mappings after inspecting the official schema, instantiate JSON schema/types and one synthetic valid fixture plus failure fixture, agree route/payload names and rounding/display rules. Both sessions acknowledge the same commit. This draft does not pretend those executable schemas already exist.
+Stack and cohort are approved. Before branching: verify precise column mappings against actual data, review the v0.2 OpenAPI schema and synthetic fixtures, agree rounding/display rules and have both sessions acknowledge the same commit. The schema/examples exist and can be validated; the API server and generated TypeScript client do not yet exist.

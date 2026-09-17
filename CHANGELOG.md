@@ -1,5 +1,12 @@
 # Plan changelog
 
+## v0.4 — 2026-09-17
+
+- Added an explicit frontend/backend API, OpenAPI 3.1 schema and six original synthetic examples.
+- Introduced immutable audit-scoped evidence, explanation and claim export, consistent error responses and stale-response rules.
+- Revised the shared contract to draft v0.2; no service implementation exists.
+- Added C01–C06 API validation conditions; runtime conditions remain NOT RUN.
+
 ## v0.3 — 2026-09-17
 
 - Recorded approved A/B responsibilities and B as merge coordinator.

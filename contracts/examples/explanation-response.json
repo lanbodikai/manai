@@ -1,0 +1,25 @@
+{
+  "audit_id": "synthetic-audit-001",
+  "client_request_id": "fixture-explain-001",
+  "status": "ok",
+  "answer": "The synthetic cohort contains 30 eligible GPU-hours. At the assumed 40% recovery fraction, the point scenario is 12 GPU-hours. CPU compatibility remains untested.",
+  "supporting_evidence_ids": [
+    "job:J1",
+    "job:J2"
+  ],
+  "limitations": [
+    "Example wording only; no agent has run."
+  ],
+  "tool_trace_ids": [
+    "synthetic-tool-trace-001"
+  ],
+  "usage": {
+    "tool_calls": 2,
+    "input_tokens": null,
+    "output_tokens": null,
+    "estimated_usd": null,
+    "latency_ms": 0,
+    "model": null,
+    "provider": null
+  }
+}

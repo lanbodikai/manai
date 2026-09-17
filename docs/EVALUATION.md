@@ -1,4 +1,4 @@
-# Tests and evaluation contract — proposed v0.1
+# Tests and evaluation contract — proposed v0.2
 
 These are explicit team acceptance gates, not organizer grading thresholds. Nothing has run yet. Test fixtures are original synthetic examples; real organizer data stay local. Freeze prompts/cases before tuning. Report denominator, failures and exclusions.
 
@@ -50,3 +50,7 @@ Run three repetitions for the numeric, unsupported-claim and tool-failure cases 
 Arithmetic/join/contracts need deterministic tests. Analytical credibility needs independent recomputation and source comparison. Agent explanations need repeated grounding evaluation. Decision usability needs a timed human task. Actual recoverability and harm reduction need a future controlled pilot: validate CPU compatibility or timeout safety, measure task success/throughput/queue impact, and compare against unchanged placement. Until then label ranges as scenarios; do not report empirical calibration or causal savings.
 
 Record results in `eval/RESULTS.md` with test ID, source/fixture version, configuration, pass/fail, artifacts and limitations. Baseline status is NOT RUN. A failed material check cannot be converted to a pass by narrowing the report after seeing it; record the scope change explicitly.
+
+## API-specific conditions
+
+C01–C06 are specified in [API_SPEC.md](API_SPEC.md). Builder A owns backend shape/error/identity tests; B owns superseded-response and displayed-audit/export consistency tests. Schema/example validation can pass before runtime implementation; it does not satisfy the integration conditions.

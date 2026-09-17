@@ -1,6 +1,6 @@
 # Workstream A — analysis, evidence and agent
 
-Plan v0.3 / Contract v0.1. Owner: Builder A, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.4 / Contract v0.2. Owner: Builder A, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
 
 ## Mission
 
@@ -8,7 +8,7 @@ Deliver one reproducible audit from source data to scenario estimate, with an ev
 
 ## Owned paths
 
-`analysis/`, `agent/`, `service/`, `tests/analysis/`, `tests/agent/`, `eval/`, `docs/methodology.md`. Produce canonical root `claims.json` only from the final investigated audit. B owns compose/dashboard/root report; send methodology and result references to B. Shared `contracts/` changes require joint agreement.
+`analysis/`, `agent/`, `service/`, `tests/analysis/`, `tests/agent/`, `eval/`, `docs/methodology.md`. Produce canonical root `claims.json` only from the final investigated audit. B owns compose/dashboard/root report; send methodology and result references to B. Read docs/API_SPEC.md and contracts/openapi.json before implementation. Shared `contracts/` changes require joint agreement.
 
 ## Functions and order
 

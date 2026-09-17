@@ -1,4 +1,4 @@
-# manai — planning draft v0.3
+# manai — planning draft v0.4
 
 Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
 
@@ -11,7 +11,7 @@ Build a complete GPU-efficiency decision dashboard around one verified recommend
 3. [Questions for the next discussion](docs/QUESTIONS.md)
 4. [Engineering roadmap and split gate](docs/ROADMAP.md)
 5. [Official starter import plan](docs/UPSTREAM.md)
-6. [Shared function/data contract](docs/CONTRACT.md)
+6. [Shared function/data contract](docs/CONTRACT.md), [frontend/backend API](docs/API_SPEC.md), and [OpenAPI schema](contracts/openapi.json)
 7. [Tests and evaluations](docs/EVALUATION.md)
 8. [Workstream A — analysis and agent](docs/workstreams/A_ANALYSIS_AGENT.md)
 9. [Workstream B — dashboard and integration](docs/workstreams/B_PRODUCT_INTEGRATION.md)
@@ -29,6 +29,6 @@ Read [AGENTS.md](AGENTS.md) before editing. Every builder starts from the same a
 
 ## Versioning
 
-v0.1 records Round 1; v0.2 records Round 2 and the explicit starter/notice checklist; v0.3 records B as merge coordinator and environment readiness limits. Each discussion revision updates [CHANGELOG.md](CHANGELOG.md), decision IDs and the handoff version. Commit each coherent revision locally. Publishing or opening PRs is a separate step from this initial planning draft.
+v0.1 records Round 1; v0.2 records Round 2 and the explicit starter/notice checklist; v0.3 records B as merge coordinator and environment readiness limits; v0.4 defines the reviewable frontend/backend API and synthetic examples. Each discussion revision updates [CHANGELOG.md](CHANGELOG.md), decision IDs and the handoff version. Commit each coherent revision locally. Publishing or opening PRs is a separate step from this initial planning draft.
 
 The 3 PM PDT September 17 deadline is fixed. Recalculate time remaining before execution; do not reuse a stale clock-based schedule from the briefing.

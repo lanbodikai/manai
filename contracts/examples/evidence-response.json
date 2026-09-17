@@ -1,0 +1,49 @@
+{
+  "audit_id": "synthetic-audit-001",
+  "evidence": {
+    "id": "job:J1",
+    "kind": "job",
+    "source_id": "J1",
+    "label": "Synthetic completed job J1",
+    "synthetic": true
+  },
+  "source_table": "synthetic_jobs",
+  "source_columns": [
+    "id_job",
+    "gpu_hours",
+    "state_name",
+    "sm_util_avg",
+    "sm_util_max"
+  ],
+  "join_keys": {
+    "id_job": "J1"
+  },
+  "observations": [
+    {
+      "name": "Allocated GPU-hours",
+      "value": 10,
+      "unit": "gpu_hours",
+      "column": "gpu_hours"
+    },
+    {
+      "name": "Average SM utilization",
+      "value": 0,
+      "unit": "percent",
+      "column": "sm_util_avg"
+    }
+  ],
+  "method": "Original hand-authored fixture; lookup by id_job.",
+  "caveats": [
+    "Not source-data-derived."
+  ],
+  "provenance": {
+    "data_fingerprint": "synthetic-fixture-v1",
+    "sample_label": "Original synthetic test jobs",
+    "window_label": "Synthetic window; no production dates",
+    "synthetic": true,
+    "source_version": "fixture-v1",
+    "caveats": [
+      "All values are invented for contract testing."
+    ]
+  }
+}

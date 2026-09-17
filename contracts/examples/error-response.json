@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "DATA_NOT_READY",
+    "message": "Prepare and verify local organizer data before requesting an audit.",
+    "retryable": true,
+    "request_id": "fixture-error-001"
+  }
+}
