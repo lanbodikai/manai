@@ -20,7 +20,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[2]
 
 
-async def review(analysis_url, reviewer_url, audit_id):
+async def review(analysis_url, reviewer_url, audit_id, *, explanations_url=None):
     base = analysis_url.rstrip('/') + '/api/audits/' + quote(audit_id, safe='')
     async with httpx.AsyncClient(timeout=35, trust_env=False, follow_redirects=False) as client:
         health = await client.get(reviewer_url.rstrip('/') + '/health')
@@ -32,7 +32,7 @@ async def review(analysis_url, reviewer_url, audit_id):
         audit = before_a.json()
         before_c = await client.get(base + '/claims', params={'team': 'C validation'})
         before_c.raise_for_status()
-        response = await client.post(reviewer_url.rstrip('/') + '/api/audits/' + quote(audit_id, safe='') + '/explanations',
+        response = await client.post((explanations_url or reviewer_url).rstrip('/') + '/api/audits/' + quote(audit_id, safe='') + '/explanations',
                                      json={'client_request_id': 'c-v04-live-review', 'question': 'Review evidence, CPU cost, downside risk and recovery assumptions.'})
         response.raise_for_status()
         body = response.json()
@@ -83,10 +83,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--analysis-url', required=True)
     parser.add_argument('--reviewer-url', required=True)
+    parser.add_argument('--explanations-url', help='Optional dashboard proxy origin; health still uses the direct reviewer URL')
     parser.add_argument('--audit-id', required=True)
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
-    result = asyncio.run(review(args.analysis_url, args.reviewer_url, args.audit_id))
+    result = asyncio.run(review(args.analysis_url, args.reviewer_url, args.audit_id, explanations_url=args.explanations_url))
     write_private(args.output, result)
     print(json.dumps({'scope': result['scope'], 'checks': result['checks'], 'check_counts': result['check_counts']}))
     raise SystemExit(0 if all(result['checks'].values()) else 1)
