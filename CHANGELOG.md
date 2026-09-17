@@ -97,3 +97,8 @@
 - No analytical results or implementation completion claimed.
 
 Historical next step at v0.1: Round 2 choices. Those choices are now recorded in v0.2. Implementation remains off until explicitly activated.
+# Workstream A / API v0.4 adoption — 2026-09-17
+
+- A1 published deterministic cohort/overlap/scenario/downside, immutable audit/evidence and claims at 05c7fa0. A2 required real MCP chatbot and live development-browser witness published at 141ee7b; no model key or C dependency.
+- Winston confirmed B agreement to exact ce6a44e CPU-pilot proposal. A recorded agreement in PR #2 before promoting schemas/examples and implementing CPU cost/delay and memory partitions. Claims and Explanation shapes remain unchanged; B must regenerate the strict client.
+- Recorded GPU allocation remains distinct from scheduler duration; single-job scenarios preserve negative/unknown values and never alter cohort claims. CPU compatibility, realized savings and stop enforcement remain unproven. Source records and private verification artifacts stay local.

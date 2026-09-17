@@ -1,5 +1,5 @@
 {
-  "client_request_id": "fixture-request-001",
+  "client_request_id": "synthetic-pilot-request-001",
   "expected_data_fingerprint": "synthetic-fixture-v1",
   "recommendation_id": "cpu-placement-pilot",
   "scenario": {
@@ -11,6 +11,17 @@
     "usd_per_gpu_hour": 2.5,
     "cancelled_policy": "exclude",
     "interval_kind": "scenario",
-    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate."
+    "assumption_note": "Illustrative recovery fractions only; not a default recommendation or measured rate.",
+    "cpu_pilot": {
+      "mode": "replacement_success",
+      "baseline_evidence_id": "job:J2",
+      "cpu_vcpus": 4,
+      "cpu_hours": 12,
+      "cpu_vcpu_hour_usd": 0.1,
+      "extra_queue_hours": 0,
+      "trial_cap_hours": null,
+      "baseline_host_costs_included": true,
+      "assumption_note": "Invented CPU runtime, allocation and rate. No workload executed; GPU reference price assumed to include baseline host costs."
+    }
   }
 }

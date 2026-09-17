@@ -1,8 +1,10 @@
 {
   "audit-request.json": "AuditRequest",
   "audit-response.json": "Audit",
-  "claims-response.json": "Claims",
-  "evidence-response.json": "EvidenceDetail",
+  "baseline-evidence.json": "EvidenceDetail",
   "explanation-response.json": "Explanation",
-  "error-response.json": "Error"
+  "audit-without-pilot.json": "Audit",
+  "claims-response.json": "Claims",
+  "error-response.json": "Error",
+  "evidence-response.json": "EvidenceDetail"
 }
