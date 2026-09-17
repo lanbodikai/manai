@@ -1,0 +1,1954 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "manai team API - CPU pilot proposal",
+    "version": "0.4.0",
+    "description": "PROPOSED, not active. A/B must agree this version before promotion to contracts/openapi.json. Runtime and B0 remain v0.3. No CPU pilot has run."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Dashboard same-origin proxy to team service"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Service liveness plus explicit data/agent readiness",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/overview": {
+      "get": {
+        "operationId": "getOverview",
+        "summary": "Source sample spending overview; not recoverable savings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Overview"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendations": {
+      "get": {
+        "operationId": "listRecommendations",
+        "summary": "Source judgments plus team audit availability",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recommendations"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audits": {
+      "post": {
+        "operationId": "createAudit",
+        "summary": "Create immutable scenario audit; no infrastructure action",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audit"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audits/{audit_id}": {
+      "get": {
+        "operationId": "getAudit",
+        "summary": "Read immutable audit snapshot",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audit"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/audits/{audit_id}/evidence": {
+      "get": {
+        "operationId": "listAuditEvidence",
+        "summary": "Page through audit-scoped evidence references",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidencePage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/audits/{audit_id}/evidence/{evidence_id}": {
+      "get": {
+        "operationId": "getAuditEvidence",
+        "summary": "Resolve a reference belonging to this audit",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/audits/{audit_id}/explanations": {
+      "post": {
+        "operationId": "explainAudit",
+        "summary": "Bounded MCP-backed explanation; cannot alter audit",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Explanation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExplanationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/audits/{audit_id}/claims": {
+      "get": {
+        "operationId": "exportClaims",
+        "summary": "Official-schema-compatible export of this exact audit",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claims"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "team",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ]
+      }
+    },
+    "/api/audits/{audit_id}/chat": {
+      "post": {
+        "operationId": "answerBaseChat",
+        "summary": "Required template-based chatbot using real official MCP tools; independent of optional reviewer",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Explanation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExplanationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "retryable": {
+                "type": "boolean"
+              },
+              "request_id": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "retryable",
+              "request_id"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data_fingerprint": {
+            "type": "string"
+          },
+          "sample_label": {
+            "type": "string"
+          },
+          "window_label": {
+            "type": "string"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "source_version": {
+            "type": "string"
+          },
+          "caveats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "data_fingerprint",
+          "sample_label",
+          "window_label",
+          "synthetic",
+          "source_version",
+          "caveats"
+        ]
+      },
+      "Interval": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "low": {
+            "type": "number",
+            "minimum": 0
+          },
+          "point": {
+            "type": "number",
+            "minimum": 0
+          },
+          "high": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "low",
+          "point",
+          "high"
+        ]
+      },
+      "RecoveryFractions": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "low": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "point": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "high": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "low",
+          "point",
+          "high"
+        ]
+      },
+      "MoneyRange": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": [
+              "USD"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "reference_usd"
+            ]
+          },
+          "values": {
+            "$ref": "#/components/schemas/Interval"
+          },
+          "cash_savings_verified": {
+            "const": false
+          }
+        },
+        "required": [
+          "currency",
+          "unit",
+          "values",
+          "cash_savings_verified"
+        ]
+      },
+      "Scenario": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recovery_fraction": {
+            "$ref": "#/components/schemas/RecoveryFractions"
+          },
+          "usd_per_gpu_hour": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "cancelled_policy": {
+            "type": "string",
+            "enum": [
+              "exclude"
+            ]
+          },
+          "interval_kind": {
+            "type": "string",
+            "enum": [
+              "scenario"
+            ]
+          },
+          "assumption_note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "cpu_pilot": {
+            "$ref": "#/components/schemas/CpuPilotInput"
+          }
+        },
+        "required": [
+          "recovery_fraction",
+          "usd_per_gpu_hour",
+          "cancelled_policy",
+          "interval_kind",
+          "assumption_note"
+        ]
+      },
+      "AuditRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "client_request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expected_data_fingerprint": {
+            "type": "string"
+          },
+          "recommendation_id": {
+            "type": "string",
+            "enum": [
+              "cpu-placement-pilot"
+            ]
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/Scenario"
+          }
+        },
+        "required": [
+          "client_request_id",
+          "expected_data_fingerprint",
+          "recommendation_id",
+          "scenario"
+        ]
+      },
+      "EvidenceRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "job",
+              "gpu",
+              "finding",
+              "rule",
+              "aggregate"
+            ]
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "synthetic": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "source_id",
+          "label",
+          "synthetic"
+        ]
+      },
+      "Observation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "column": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "column"
+        ]
+      },
+      "EvidenceDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "audit_id": {
+            "type": "string"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/EvidenceRef"
+          },
+          "source_table": {
+            "type": "string"
+          },
+          "source_columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "join_keys": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ]
+            }
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Observation"
+            }
+          },
+          "method": {
+            "type": "string"
+          },
+          "caveats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          }
+        },
+        "required": [
+          "audit_id",
+          "evidence",
+          "source_table",
+          "source_columns",
+          "join_keys",
+          "observations",
+          "method",
+          "caveats",
+          "provenance"
+        ]
+      },
+      "Downside": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "unmeasured",
+              "scenario"
+            ]
+          },
+          "mechanisms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "guardrails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pilot_success_metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "money": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "money_unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "reference_usd",
+              null
+            ]
+          },
+          "cpu_pilot": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CpuPilotResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "mechanisms",
+          "assumptions",
+          "guardrails",
+          "pilot_success_metrics",
+          "money",
+          "money_unit",
+          "cpu_pilot"
+        ]
+      },
+      "Audit": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "const": "0.4"
+          },
+          "audit_id": {
+            "type": "string"
+          },
+          "client_request_id": {
+            "type": "string"
+          },
+          "recommendation_id": {
+            "type": "string",
+            "enum": [
+              "cpu-placement-pilot"
+            ]
+          },
+          "source_recommendation_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/Scenario"
+          },
+          "eligibility": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "definition": {
+                "type": "string"
+              },
+              "unique_jobs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "eligible_gpu_hours": {
+                "type": "number",
+                "minimum": 0
+              },
+              "excluded_jobs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "overlapping_finding_references": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "coverage_note": {
+                "type": "string"
+              },
+              "memory_partition": {
+                "$ref": "#/components/schemas/MemoryPartition"
+              }
+            },
+            "required": [
+              "definition",
+              "unique_jobs",
+              "eligible_gpu_hours",
+              "excluded_jobs",
+              "overlapping_finding_references",
+              "coverage_note"
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "gpu_hours": {
+                "$ref": "#/components/schemas/Interval"
+              },
+              "reference_usd": {
+                "$ref": "#/components/schemas/MoneyRange"
+              },
+              "interval_kind": {
+                "type": "string",
+                "enum": [
+                  "scenario"
+                ]
+              },
+              "basis": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "gpu_hours",
+              "reference_usd",
+              "interval_kind",
+              "basis"
+            ]
+          },
+          "action": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "owner_role": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "proposed_pilot"
+                ]
+              },
+              "compatibility_verified": {
+                "const": false
+              }
+            },
+            "required": [
+              "title",
+              "owner_role",
+              "state",
+              "compatibility_verified"
+            ]
+          },
+          "downside": {
+            "$ref": "#/components/schemas/Downside"
+          },
+          "evidence_preview": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            }
+          },
+          "evidence_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "contract_version",
+          "audit_id",
+          "client_request_id",
+          "recommendation_id",
+          "source_recommendation_ids",
+          "provenance",
+          "scenario",
+          "eligibility",
+          "recovery",
+          "action",
+          "downside",
+          "evidence_preview",
+          "evidence_count",
+          "limitations"
+        ]
+      },
+      "Health": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "service": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "contract_version": {
+            "const": "0.4"
+          },
+          "data_status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "missing",
+              "invalid"
+            ]
+          },
+          "data_fingerprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agent_status": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "unconfigured",
+              "unavailable"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "real",
+              "synthetic_fixture"
+            ]
+          }
+        },
+        "required": [
+          "service",
+          "contract_version",
+          "data_status",
+          "data_fingerprint",
+          "agent_status",
+          "mode"
+        ]
+      },
+      "OutcomeRow": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "outcome": {
+            "type": "string"
+          },
+          "gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "reference_usd": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "outcome",
+          "gpu_hours",
+          "reference_usd"
+        ]
+      },
+      "Overview": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "price_book_version": {
+            "type": "string"
+          },
+          "usd_per_gpu_hour": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "allocated_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "job_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutcomeRow"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "provenance",
+          "price_book_version",
+          "usd_per_gpu_hour",
+          "allocated_gpu_hours",
+          "job_count",
+          "outcomes",
+          "warnings"
+        ]
+      },
+      "Recommendation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source_recommendation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "organizer",
+              "team"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "judgment",
+              "synthetic"
+            ]
+          },
+          "audit_available": {
+            "type": "boolean"
+          },
+          "finding_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "caveats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "source_recommendation_id",
+          "title",
+          "origin",
+          "kind",
+          "audit_available",
+          "finding_ids",
+          "caveats"
+        ]
+      },
+      "Recommendations": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Recommendation"
+            }
+          }
+        },
+        "required": [
+          "provenance",
+          "items"
+        ]
+      },
+      "EvidencePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "audit_id": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "audit_id",
+          "items",
+          "next_cursor",
+          "total"
+        ]
+      },
+      "ExplanationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "client_request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "client_request_id",
+          "question"
+        ]
+      },
+      "Usage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tool_calls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "output_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "estimated_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "model": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "tool_calls",
+          "input_tokens",
+          "output_tokens",
+          "estimated_usd",
+          "latency_ms",
+          "model",
+          "provider"
+        ]
+      },
+      "Explanation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "audit_id": {
+            "type": "string"
+          },
+          "client_request_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "insufficient_evidence"
+            ]
+          },
+          "answer": {
+            "type": "string"
+          },
+          "supporting_evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tool_trace_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        },
+        "required": [
+          "audit_id",
+          "client_request_id",
+          "status",
+          "answer",
+          "supporting_evidence_ids",
+          "limitations",
+          "tool_trace_ids",
+          "usage"
+        ]
+      },
+      "ClaimsEstimate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "low": {
+            "type": "number",
+            "minimum": 0
+          },
+          "point": {
+            "type": "number",
+            "minimum": 0
+          },
+          "high": {
+            "type": "number",
+            "minimum": 0
+          },
+          "basis": {
+            "type": "string"
+          },
+          "interval_kind": {
+            "type": "string",
+            "enum": [
+              "scenario"
+            ]
+          }
+        },
+        "required": [
+          "low",
+          "point",
+          "high",
+          "basis",
+          "interval_kind"
+        ]
+      },
+      "Claims": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "team": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recoverable_gpu_hours": {
+            "$ref": "#/components/schemas/ClaimsEstimate"
+          },
+          "recoverable_usd": {
+            "$ref": "#/components/schemas/ClaimsEstimate"
+          },
+          "cancelled_is_waste": {
+            "const": false
+          },
+          "cancelled_rationale": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "team",
+          "recoverable_gpu_hours",
+          "recoverable_usd",
+          "cancelled_is_waste",
+          "cancelled_rationale",
+          "notes"
+        ]
+      },
+      "CpuPilotInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "replacement_success",
+              "replacement_failure",
+              "additional_validation"
+            ]
+          },
+          "baseline_evidence_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Eligible job in this immutable audit; A resolves baseline measurements, never browser-supplied totals."
+          },
+          "cpu_vcpus": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cpu_vcpu_hour_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "extra_queue_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "trial_cap_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "baseline_host_costs_included": {
+            "type": "boolean",
+            "description": "Explicit pricing-boundary assumption. False suppresses net value until accounting is extended."
+          },
+          "assumption_note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "mode",
+          "baseline_evidence_id",
+          "cpu_vcpus",
+          "cpu_hours",
+          "cpu_vcpu_hour_usd",
+          "extra_queue_hours",
+          "trial_cap_hours",
+          "baseline_host_costs_included",
+          "assumption_note"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "replacement_success"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "cpu_hours": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CpuPilotBaseline": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gpu_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "elapsed_hours": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "recorded_gpu_hours": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "accounting_note": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence_id",
+          "gpu_count",
+          "elapsed_hours",
+          "recorded_gpu_hours",
+          "accounting_note"
+        ]
+      },
+      "CpuPilotResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scope": {
+            "const": "single_job"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "replacement_success",
+              "replacement_failure",
+              "additional_validation"
+            ]
+          },
+          "evidence_kind": {
+            "const": "scenario_estimate"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/CpuPilotBaseline"
+          },
+          "scenario_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "released_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "added_cpu_vcpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "released_gpu_reference_usd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "added_cpu_reference_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "net_reference_value_usd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "run_time_change_hours_excluding_queue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "completion_change_hours_including_extra_queue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "compatibility_verified": {
+            "const": false
+          },
+          "cash_savings_verified": {
+            "const": false
+          },
+          "trial_stop_enforcement_tested": {
+            "const": false
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "scope",
+          "mode",
+          "evidence_kind",
+          "baseline",
+          "scenario_gpu_hours",
+          "released_gpu_hours",
+          "added_cpu_vcpu_hours",
+          "released_gpu_reference_usd",
+          "added_cpu_reference_usd",
+          "net_reference_value_usd",
+          "run_time_change_hours_excluding_queue",
+          "completion_change_hours_including_extra_queue",
+          "compatibility_verified",
+          "cash_savings_verified",
+          "trial_stop_enforcement_tested",
+          "limitations"
+        ]
+      },
+      "MemoryGroup": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "unique_jobs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "recorded_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "unique_jobs",
+          "recorded_gpu_hours"
+        ]
+      },
+      "MemoryPartition": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "zero_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "positive_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "unknown_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "zero_memory",
+          "positive_memory",
+          "unknown_memory",
+          "basis"
+        ]
+      }
+    }
+  }
+}

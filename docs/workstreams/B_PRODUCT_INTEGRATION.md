@@ -12,7 +12,7 @@ Ship the complete decision journey and required package while Builder A supplies
 
 ## Components and functions
 
-The [A downside and A–C bridge](A_C_DOWNSIDE_BRIDGE.md) clarifies existing v0.3 fields: display A's downside directly, unknown money as not quantified, and C's review separately. No B0 adapter/schema change is needed.
+The [A downside and A–C bridge](A_C_DOWNSIDE_BRIDGE.md) clarifies existing v0.3 fields: display A's downside directly, unknown money as not quantified, and C's review separately. B0 remains on v0.3. For quantified CPU cost/delay, review the [v0.4 proposal and fixtures](../../contracts/proposals/v0.4/README.md) with A, then regenerate the client at the coordinated switch.
 
 - `loadOverview()` / `OverviewView`: sample/window, price book, spending breakdown, supplied caveats.
 - `loadRecommendations()` / `RecommendationList`: identify supplied judgments and the one audited recommendation; no invented rank labels.

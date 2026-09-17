@@ -77,3 +77,7 @@ These are required for slide-aligned base completion. A owns MCP/client correctn
 ## D06 — final claim basis (required for A2/final base)
 
 For each final low/point/high recovery estimate, document the eligibility ceiling, conversion assumptions and their evidence or judgment basis. A reviewer must trace each value to the stated calculation. Include a zero-recovery sensitivity case and explicitly justify any positive lower bound; if not defensible, revise it. UI defaults and synthetic fixture fractions are not evidence. Verify claims, report and final displayed audit agree. Scenario bounds must not be labeled statistically calibrated. Status: NOT RUN.
+
+## Proposed v0.4 CPU-pilot checks
+
+[Proposal validator and fixtures](../contracts/proposals/v0.4/README.md) extend C01 coverage only. A/B adoption adds success/failure/extra-validation, negative value, unknown price/queue, observed-allocation-versus-duration, pricing-boundary and immutable-identity cases to existing T05/T06/T07, C04/C06, U02/U03 and M02/M03. C uses them for G01–G05 when assigned. Schema/fixture passes and the offline verifier are not service/UI/MCP or operational acceptance. See [actual review results](VERIFIER_HANDOFF_REVIEW.md).

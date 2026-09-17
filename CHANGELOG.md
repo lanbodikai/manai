@@ -1,5 +1,13 @@
 # Project changelog
 
+## v0.11 — reviewed CPU-pilot handoff — 2026-09-17
+
+- Reproduced all 12 prototype calculation tests and RD01–RD17 in the bootstrap runtime; recorded the host reader failure and scope limits.
+- Revised v0.10's qualitative-only recommendation: A should implement the supplied quantified scenario model after A/B contract agreement.
+- Added a complete proposed v0.4 OpenAPI, six full synthetic payloads, eight scenario cases and a focused validator. Active v0.3, claims format and bootstrap implementation remain unchanged.
+- Defined observed-allocation versus duration handling, pricing boundary, one-job scope, memory priorities and A/B/C adoption responsibilities. User authorized direct main publication after validation; no A/B/C implementation or workload trial is included.
+
+
 ## Verified split handoff — 2026-09-17
 
 - BASE-01 through BASE-07 passed including independently regenerated data, exact default startup, five tests, real MCP calls and browser verification.

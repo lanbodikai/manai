@@ -44,7 +44,7 @@ Stack and cohort are approved. Before branching: verify precise column mappings 
 
 ## Base versus enhancement
 
-The [A downside and A–C bridge](workstreams/A_C_DOWNSIDE_BRIDGE.md) defines the minimum content of existing `Audit.downside` fields and C's read-only use of them. API v0.3 is unchanged; qualitative downside with null money is valid and available without C.
+The [A downside and A–C bridge](workstreams/A_C_DOWNSIDE_BRIDGE.md) defines the minimum content of existing `Audit.downside` fields and C's read-only use of them. Active API v0.3 is unchanged; qualitative downside with null money remains valid. The [proposed v0.4 extension](../contracts/proposals/v0.4/README.md) adds quantified single-job CPU scenarios for A/B agreement; no implementation or promotion is implied.
 
 D11 makes C optional. Core routes, including the required minimal MCP chat, are implemented by A and served through B independently. Explanation request/response schemas remain the same when C is enabled; otherwise the route returns 503 with a clear unavailable state. See API_SPEC.md for profile and timeout behavior.
 
