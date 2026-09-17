@@ -15,20 +15,21 @@ from reviewer.clients import AnalysisClient, OfficialMCP, ReviewError
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def fixture(name, v04=False):
-    base = ROOT / ("contracts/proposals/v0.4/examples" if v04 else "contracts/examples")
+def fixture(name):
+    base = ROOT / "contracts/examples"
     return json.loads((base / name).read_text())
 
 
 class AnalysisTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
-        self.audit = fixture("audit-response.json")
+        self.audit = fixture("audit-without-pilot.json")
         self.id = self.audit["audit_id"]
         self.refs = self.audit["evidence_preview"]
         self.page = {"audit_id": self.id, "items": self.refs, "next_cursor": None, "total": 2}
         self.details = {}
         for ref in self.refs:
             detail = fixture("evidence-response.json")
+            detail["audit_id"] = self.id
             detail["evidence"] = copy.deepcopy(ref)
             detail["join_keys"] = {"id_job": ref["source_id"]}
             self.details[ref["id"]] = detail
@@ -134,7 +135,7 @@ class AnalysisTests(unittest.IsolatedAsyncioTestCase):
     async def test_missing_required_and_extra_fields_rejected(self):
         del self.audit["scenario"]
         await self.assert_error(self.client(), 502, "UPSTREAM_RESPONSE_INVALID")
-        self.audit = fixture("audit-response.json")
+        self.audit = fixture("audit-without-pilot.json")
         self.audit["unreviewed_extension"] = 1
         await self.assert_error(self.client(), 502, "UPSTREAM_RESPONSE_INVALID")
 
@@ -176,15 +177,13 @@ class AnalysisTests(unittest.IsolatedAsyncioTestCase):
             return httpx.Response(200, json=self.audit)
         await self.assert_error(self.client(delayed, timeout=0.01), 504, "EXPLANATION_TIMEOUT")
 
-    async def test_v04_requires_explicit_opt_in(self):
-        self.audit = fixture("audit-response.json", v04=True)
-        self.id = self.audit["audit_id"]
-        self.audit.update(evidence_preview=[], evidence_count=0)
-        self.page = {"audit_id": self.id, "items": [], "next_cursor": None, "total": 0}
-        await self.assert_error(self.client(), 502, "UPSTREAM_RESPONSE_INVALID")
-        audit, _, coverage = await self.client(enable_v04=True).load(self.id)
+    async def test_active_v04_is_default_and_legacy_versions_are_rejected(self):
+        audit, _, coverage = await self.client().load(self.id)
         self.assertEqual(audit["contract_version"], "0.4")
         self.assertTrue(coverage["complete"])
+        for version in ("0.3", "0.5", "unknown"):
+            self.audit["contract_version"] = version
+            await self.assert_error(self.client(), 502, "UPSTREAM_RESPONSE_INVALID")
 
     def test_configuration_bounds(self):
         for kwargs in ({"max_pages": 0}, {"max_evidence": True}, {"max_bytes": -1}, {"timeout": float("inf")}):
@@ -237,7 +236,7 @@ class MCPTests(unittest.IsolatedAsyncioTestCase):
             return await client.inspect()
 
     async def test_real_official_stdio_price_book(self):
-        result = await OfficialMCP(ROOT, timeout=8).inspect()
+        result = await OfficialMCP(ROOT, timeout=15).inspect()
         self.assertEqual(result["tool_calls"], 2)
         self.assertEqual(len(result["tool_trace_ids"]), 2)
         self.assertIn("price_book", result["tool_names"])

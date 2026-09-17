@@ -304,13 +304,13 @@ def _pilot(report: _Report, audit: dict, records: dict) -> None:
     downside = _mapping(audit.get("downside"))
     request, result = scenario.get("cpu_pilot"), downside.get("cpu_pilot")
     if request is None and result is None:
-        report.add("downside.availability", "unknown", "No quantified CPU pilot is supplied; qualitative v0.3 downside is not a failed calculation.")
+        report.add("downside.availability", "unknown", "No quantified CPU pilot is supplied; qualitative downside is not a failed calculation.")
         report.limit("CPU pilot cost and completion effects are unquantified in this audit.")
         return
     if not isinstance(request, dict) or not isinstance(result, dict):
         report.add("downside.availability", "fail", "A quantified pilot must have both its explicit inputs and result.")
         return
-    report.compare("downside.contract_version", audit.get("contract_version", _MISSING), "0.4", "CPU pilot fields belong to proposed v0.4, not the closed active v0.3 payload.")
+    report.compare("downside.contract_version", audit.get("contract_version", _MISSING), "0.4", "CPU pilot fields require the active Contract 0.4.")
     report.compare("downside.status", downside.get("status", _MISSING), "scenario", "Quantified pilot outcomes are hypothetical scenarios.")
     for field in ("money", "money_unit"):
         report.compare("downside.legacy_" + field, downside.get(field, _MISSING), None, "Legacy downside money stays null; single-job signed metrics have separate meanings.")

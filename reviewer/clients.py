@@ -74,7 +74,7 @@ class AnalysisClient:
     """
 
     def __init__(self, base_url, timeout=5.0, max_pages=4, max_evidence=100,
-                 max_bytes=1000000, transport=None, *, enable_v04=False):
+                 max_bytes=1000000, transport=None):
         url = httpx.URL(base_url)
         if url.scheme not in ("http", "https") or not url.host or url.userinfo or url.query or url.fragment:
             raise ValueError("Analysis URL must be an HTTP(S) service URL without credentials, query or fragment")
@@ -90,10 +90,10 @@ class AnalysisClient:
         self.max_bytes = max_bytes
         self.transport = transport
         root = Path(__file__).resolve().parents[1]
-        paths = {"0.3": root / "contracts/openapi.json"}
-        if enable_v04:
-            paths["0.4"] = root / "contracts/proposals/v0.4/openapi.json"
-        self._specs = {version: json.loads(path.read_text()) for version, path in paths.items()}
+        spec = json.loads((root / "contracts/openapi.json").read_text())
+        if spec["components"]["schemas"]["Audit"]["properties"]["contract_version"].get("const") != "0.4":
+            raise ValueError("Reviewer requires the active Contract 0.4 schema")
+        self._specs = {"0.4": spec}
 
     def _validate(self, value: dict, name: str, version: str) -> None:
         spec = self._specs.get(version)

@@ -10,12 +10,11 @@ from reviewer.validation import validate_audit
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROPOSAL = ROOT / "contracts/proposals/v0.4/examples"
+EXAMPLES = ROOT / "contracts/examples"
 
 
-def fixture(name, proposal=True):
-    directory = PROPOSAL if proposal else ROOT / "contracts/examples"
-    return json.loads((directory / name).read_text())
+def fixture(name):
+    return json.loads((EXAMPLES / name).read_text())
 
 
 def coverage(count=2, *, complete=True, total=None):
@@ -77,13 +76,15 @@ class AuditValidationTests(unittest.TestCase):
                     self.assert_status(report, "downside." + metric, "pass")
                 self.assertEqual(report["verified_evidence_ids"], ["job:J1", "job:J2"])
 
-    def test_v03_qualitative_downside_is_unknown_not_failure(self):
-        audit = fixture("audit-response.json", proposal=False)
-        evidence = [fixture("evidence-response.json", proposal=False)]
+    def test_missing_predicate_observations_are_unknown_not_failure(self):
+        audit = fixture("audit-without-pilot.json")
+        evidence = [fixture("evidence-response.json")]
+        evidence[0]["audit_id"] = audit["audit_id"]
+        evidence[0]["observations"] = [o for o in evidence[0]["observations"] if o["column"] != "sm_util_max"]
         report = self.run_check(audit, evidence, coverage(1, complete=False, total=2))
         self.assert_status(report, "downside.availability", "unknown")
         self.assert_status(report, "cohort.recorded_gpu_hours", "unknown")
-        self.assert_status(report, "evidence.eligibility:job:J1", "unknown")
+        self.assert_status(report, "evidence.eligibility:" + evidence[0]["evidence"]["id"], "unknown")
         self.assertEqual([c for c in report["checks"] if c["status"] == "fail"], [])
 
     def test_v04_without_pilot_is_unknown_not_failure(self):

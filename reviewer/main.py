@@ -30,7 +30,7 @@ def create_app(settings=None, *, analysis=None, mcp=None, model=None):
     app.state.last_mcp = "not_checked"
     app.state.last_analysis = "not_checked"
     analysis = analysis or AnalysisClient(settings.analysis_url, max_pages=settings.max_pages,
-                                         max_evidence=settings.max_evidence, enable_v04=settings.enable_v04)
+                                         max_evidence=settings.max_evidence)
     mcp = mcp or OfficialMCP(settings.repo_root, context_mode=settings.mcp_context)
 
     def error_response(status, code, message, request_id, retryable=False):
@@ -48,7 +48,7 @@ def create_app(settings=None, *, analysis=None, mcp=None, model=None):
                 "mcp_scope": settings.mcp_context,
                 "provider": ("not_required" if settings.mode == "deterministic" else
                              "configured_not_probed" if settings.provider_key and settings.model else "unconfigured"),
-                "proposed_v04_enabled": settings.enable_v04}
+                "contract_version": "0.4"}
 
     @app.post("/api/audits/{audit_id}/explanations")
     async def explain(audit_id: str, request: Request):

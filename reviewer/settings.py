@@ -12,7 +12,6 @@ class Settings:
     timeout_seconds: float = 30.0
     max_evidence: int = 100
     max_pages: int = 4
-    enable_v04: bool = False
     mcp_context: str = "price_only"
     repo_root: Path = field(default_factory=lambda: Path(__file__).resolve().parents[1])
     provider_url: str = "https://api.featherless.ai/v1"
@@ -44,7 +43,6 @@ class Settings:
             timeout_seconds=float(os.getenv("REVIEWER_TIMEOUT_SECONDS", "30")),
             max_evidence=int(os.getenv("REVIEWER_MAX_EVIDENCE", "100")),
             max_pages=int(os.getenv("REVIEWER_MAX_PAGES", "4")),
-            enable_v04=os.getenv("REVIEWER_ENABLE_PROPOSED_V04", "false").lower() == "true",
             mcp_context=os.getenv("REVIEWER_MCP_CONTEXT", "price_only"),
             provider_url=os.getenv("FEATHERLESS_BASE_URL", "https://api.featherless.ai/v1"),
             provider_key=os.getenv("FEATHERLESS_API_KEY", ""),

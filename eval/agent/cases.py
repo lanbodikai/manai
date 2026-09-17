@@ -19,8 +19,8 @@ CASES = [
 
 
 def fixture(case="included_cohort"):
-    audit = json.loads((ROOT / "contracts/examples/audit-response.json").read_text())
-    baseline = json.loads((ROOT / "contracts/proposals/v0.4/examples/baseline-evidence.json").read_text())
+    audit = json.loads((ROOT / "contracts/examples/audit-without-pilot.json").read_text())
+    baseline = json.loads((ROOT / "contracts/examples/baseline-evidence.json").read_text())
     evidence = []
     for i, hours in [(1, 10), (2, 20)]:
         row = deepcopy(baseline)

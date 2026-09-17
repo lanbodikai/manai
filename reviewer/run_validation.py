@@ -14,7 +14,7 @@ async def run(audit_id):
     async with asyncio.timeout(settings.timeout_seconds):
         audit, details, coverage = await AnalysisClient(
             settings.analysis_url, max_pages=settings.max_pages,
-            max_evidence=settings.max_evidence, enable_v04=settings.enable_v04).load(audit_id)
+            max_evidence=settings.max_evidence).load(audit_id)
         context = await OfficialMCP(settings.repo_root, context_mode=settings.mcp_context).inspect()
         result = validate_audit(audit, details, coverage, context)
         result["tool_summary"] = context
