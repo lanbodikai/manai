@@ -149,6 +149,7 @@
 .decision-title { display:block; font-size:13px; font-weight:600; line-height:1.55; }
 .decision-owner { display:block; color:#7c8aa2; font-size:11px; font-weight:400; margin-top:6px; line-height:1.5; }
 .decision-pilot { display:inline-block; margin-top:9px; color:#2856e8; background:#edf3ff; border-radius:4px; padding:3px 7px; font-size:10px; font-weight:500; }
+.decision-not-built { display:inline-block; margin-top:9px; color:#758196; background:#eef1f5; border-radius:4px; padding:3px 7px; font-size:10px; font-weight:600; }
 .decision-percentage { font-size:25px; font-weight:600; color:#304875; }
 .decision-meter { height:5px; width:100%; background:#e8edf7; border-radius:4px; overflow:hidden; margin:10px 0; }
 .decision-meter span { height:100%; display:block; background:#6387eb; border-radius:4px; }
@@ -159,6 +160,11 @@
 .decision-table details p { color:#6e7e95; margin-bottom:0; }
 .decision-table td:last-child .muted { display:block; font-size:10px; line-height:1.7; }
 .decision-table .decision-selected { background:#f5f8ff; }
+.decision-table .decision-unavailable { background:#f8f9fb; color:#8a94a5; }
+.decision-table .decision-unavailable > * { opacity:.58; }
+.decision-table .decision-unavailable .decision-meter span { background:#aeb7c5; }
+.decision-table .decision-unavailable .text-button { color:#7f8a9c; }
+.decision-table .decision-unavailable input[type=checkbox] { filter:grayscale(1); }
 .decision-footnote { padding:18px 26px; font-size:11px; line-height:1.8; color:#71809a; margin:0; background:#fafcff; }
 .decision-empty { display:flex; align-items:flex-start; gap:10px; margin:0 26px 16px; }
 .inactive-opportunities { border-top:1px solid #edf1f8; color:#647999; }

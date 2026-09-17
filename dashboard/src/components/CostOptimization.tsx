@@ -57,7 +57,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   useEffect(() => {
     if(reviewWhenReady && current) {setConfirmOpen(true);setReviewWhenReady(false);}
   },[reviewWhenReady,current]);
-  const available = visible?.rows.filter(r => r.affected_jobs > 0).map(r => r.id) ?? [];
+  const available = visible?.rows.filter(r => r.id === "cpu-placement" && r.affected_jobs > 0).map(r => r.id) ?? [];
   const selectedRows = visible?.rows.filter(r => selected.includes(r.id)) ?? [];
   const actionableRows = visible?.rows.filter((row) => row.affected_jobs > 0) ?? [];
   const inactiveRows = visible?.rows.filter((row) => row.affected_jobs === 0) ?? [];
@@ -170,13 +170,15 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
           <table className="decision-table">
             <caption className="sr-only">Select actions backed by an eligible cohort. GPU-time percentages use the full sample allocation as their denominator; row percentages overlap and must not be added.</caption>
             <thead><tr><th><input type="checkbox" aria-label="Select all available fixes" checked={!!available.length && available.every(id => selected.includes(id))} ref={el => { if(el) el.indeterminate = selected.length > 0 && !available.every(id => selected.includes(id)); }} disabled={!available.length || sending} onChange={e => choose(e.target.checked ? available : [])} /></th><th>Task</th><th>GPU time affected</th><th>Potential fix</th><th>Evidence</th></tr></thead>
-            <tbody>{actionableRows.map(row => <tr key={row.id} className={selected.includes(row.id) ? "decision-selected" : ""}>
-              <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
-              <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
+            <tbody>{actionableRows.map(row => {
+              const built = row.id === "cpu-placement";
+              return <tr key={row.id} className={[selected.includes(row.id) ? "decision-selected" : "", !built ? "decision-unavailable" : ""].filter(Boolean).join(" ")} aria-disabled={!built || undefined}>
+              <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!built || !row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
+              <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{built ? <span className="decision-pilot">Available pilot</span> : <span className="decision-not-built">Not built yet</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
-              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : row.id === "cpu-placement" ? "Ready for an audited pilot" : "Investigate before any change"}</span>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Open audited CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>{modelAvailable ? "Model in demo" : "Open audited pilot"} <ArrowRight size={13}/></button>}</td>
+              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : built && review ? "Scenario modeled · not measured" : built ? "Ready for an audited pilot" : "Future investigation · no model or action"}</span>{built && <button className="text-button pilot-open" aria-label="Open audited CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>{modelAvailable ? "Model in demo" : "Open audited pilot"} <ArrowRight size={13}/></button>}</td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><details className="row-source-details"><summary>Details</summary><p>{row.fix}</p><p>Owner: {row.owner}</p><p>{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</p><p>{number(row.excluded_cancelled_jobs)} cancelled jobs excluded</p></details></td>
-            </tr>)}</tbody>
+            </tr>})}</tbody>
           </table>
         </div>
         {!!inactiveRows.length && <details className="inactive-opportunities"><summary>{inactiveRows.length} checks have no eligible cohort in this snapshot</summary><div>{inactiveRows.map((row) => <article key={row.id}><strong>{row.title}</strong><span>No eligible jobs in this source window.</span><a href={datasetHref("findings",{query:row.rule})}>Inspect findings <ArrowRight size={13}/></a></article>)}</div></details>}

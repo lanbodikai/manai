@@ -68,7 +68,7 @@ describe("backend optimization adapter", () => {
   });
 });
 describe("decision table interactions", () => {
-  it("selects fixes, shows a deduplicated percentage, and preserves selection after a backend error", async () => {
+  it("keeps non-built tasks disabled and preserves the CPU selection after a backend error", async () => {
     const user=userEvent.setup(), api=createMockApi({delay:0});
     const original=api.optimization!.submit;
     const submit=vi.fn().mockRejectedValueOnce(new Error("Backend unavailable")).mockImplementation(original);
@@ -81,14 +81,15 @@ describe("decision table interactions", () => {
     expect(screen.getAllByRole("row")).toHaveLength(4);
     expect(screen.queryByLabelText("Recovery high (%)")).not.toBeInTheDocument();
     expect(screen.getByRole("button",{name:"Review selected actions"})).toBeDisabled();
+    expect(screen.getByRole("checkbox",{name:"Select Idle interactive sessions"})).toBeDisabled();
+    expect(screen.getAllByText("Not built yet",{exact:true}).length).toBeGreaterThan(0);
     await user.click(screen.getByRole("checkbox",{name:"Select CPU placement pilot"}));
-    await user.click(screen.getByRole("checkbox",{name:"Select Idle interactive sessions"}));
     await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeEnabled());
     expect(screen.queryByText("What could go wrong?",{exact:true})).not.toBeInTheDocument();
     await user.click(screen.getByRole("button",{name:"Review selected actions"}));
-    let popup=screen.getByRole("dialog",{name:"Review 2 selected actions"});
+    let popup=screen.getByRole("dialog",{name:"Review 1 selected action"});
     expect(within(popup).getByText("5.0%",{exact:true})).toBeVisible();
-    expect(within(popup).getAllByText("What could go wrong?",{exact:true})).toHaveLength(2);
+    expect(within(popup).getAllByText("What could go wrong?",{exact:true})).toHaveLength(1);
     expect(submit).not.toHaveBeenCalled();
     await user.click(within(popup).getByRole("button",{name:"Return"}));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -101,7 +102,7 @@ describe("decision table interactions", () => {
     await user.click(within(popup).getByRole("button",{name:"Retry request"}));
     await screen.findByText("Synthetic example — request accepted");
     expect(submit.mock.calls[0][0]).toEqual(submit.mock.calls[1][0]);
-    expect(submit.mock.calls[0][0].fix_ids).toEqual(["cpu-placement","idle-sessions"]);
+    expect(submit.mock.calls[0][0].fix_ids).toEqual(["cpu-placement"]);
     expect(within(screen.getByRole("dialog")).getByRole("button",{name:"Request accepted"})).toBeDisabled();
   });
   it("ignores an earlier selection summary arriving after the current summary", async () => {
@@ -109,12 +110,13 @@ describe("decision table interactions", () => {
     let late: (value: DecisionTable) => void = () => {};
     api.optimization!.decisions=vi.fn((version:string,selected:string[]) => selected.length === 1 ? new Promise<DecisionTable>(resolve => {late=resolve;}) : original(version,selected));
     render(<CostOptimization api={api} />);
-    await user.click(await screen.findByRole("checkbox",{name:"Select CPU placement pilot"}));
-    await user.click(screen.getByRole("checkbox",{name:"Select Idle interactive sessions"}));
-    await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeEnabled());
+    const cpu = await screen.findByRole("checkbox",{name:"Select CPU placement pilot"});
+    await user.click(cpu);
+    await user.click(cpu);
+    await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeDisabled());
     late(await original("demo-dataset-v1",["cpu-placement"]));
-    await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeEnabled());
-    expect(screen.getByText("2 actions selected",{exact:true})).toBeVisible();
+    await waitFor(() => expect(screen.getByRole("button",{name:"Review selected actions"})).toBeDisabled());
+    expect(screen.getByText("Select an action to review",{exact:true})).toBeVisible();
   });
   it("routes live CPU modeling to A's audited single-job flow instead of B's cohort simulator", async () => {
     const user = userEvent.setup(), api = createMockApi({delay:0});
