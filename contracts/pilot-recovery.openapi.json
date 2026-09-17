@@ -1,0 +1,1059 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pilot and Recovery simulation API",
+    "version": "0.1",
+    "description": "Additive to active API v0.4. Hypothetical, independent alternatives only: no execution, durable simulation history, checkpoint verification, or realized savings. POST client_request_id is correlation only; repeating it performs no real work or charge."
+  },
+  "paths": {
+    "/api/audits/{audit_id}/pilot-baselines": {
+      "get": {
+        "operationId": "pilotBaselines",
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Frozen hypothetical scenario data; no workload execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotBaselines"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Audit or eligible baseline not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Source or scoped baseline identity changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid assumptions, nonfinite arithmetic or closed-schema violation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Source unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audits/{audit_id}/pilot-simulations": {
+      "post": {
+        "operationId": "simulatePilotRecovery",
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotSimulationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Frozen hypothetical scenario data; no workload execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotSimulation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Audit or eligible baseline not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Source or scoped baseline identity changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid assumptions, nonfinite arithmetic or closed-schema violation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Source unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PilotSimulationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "client_request_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "baseline_evidence_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "proposal": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "correctness_check": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "cpu_vcpus": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "cpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cpu_vcpu_hour_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "max_runtime_hours": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "max_trial_spend_usd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "setup_cost_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "extra_queue_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "baseline_host_costs_included": {
+            "type": "boolean"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure_recovered",
+              "failure_unavailable"
+            ]
+          },
+          "failure_reason": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "recovery_note": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "client_request_id",
+          "baseline_evidence_id",
+          "proposal",
+          "correctness_check",
+          "cpu_vcpus",
+          "cpu_hours",
+          "cpu_vcpu_hour_usd",
+          "max_runtime_hours",
+          "max_trial_spend_usd",
+          "setup_cost_usd",
+          "extra_queue_hours",
+          "baseline_host_costs_included",
+          "outcome",
+          "failure_reason",
+          "recovery_note"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "outcome": {
+                  "const": "success"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "cpu_hours": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "failure_reason": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "PilotBaseline": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source_job_id": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "state_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sm_util_avg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "sm_util_max": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "max_gpu_mem_used": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "gpu_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "elapsed_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "recorded_gpu_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "usd_per_gpu_hour": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "original_reference_cost_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "missing_fields": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2000,
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "required": [
+          "evidence_id",
+          "source_job_id",
+          "synthetic",
+          "state_name",
+          "sm_util_avg",
+          "sm_util_max",
+          "max_gpu_mem_used",
+          "gpu_count",
+          "elapsed_hours",
+          "recorded_gpu_hours",
+          "usd_per_gpu_hour",
+          "original_reference_cost_usd",
+          "missing_fields"
+        ]
+      },
+      "PilotBaselines": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "feature_version": {
+            "const": "0.1"
+          },
+          "audit_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "audit_client_request_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "data_fingerprint": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source_version": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "simulation_only": {
+            "const": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotBaseline"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2000,
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "required": [
+          "feature_version",
+          "audit_id",
+          "audit_client_request_id",
+          "data_fingerprint",
+          "source_version",
+          "synthetic",
+          "simulation_only",
+          "items",
+          "total",
+          "limitations"
+        ]
+      },
+      "PilotSimulation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "feature_version": {
+            "const": "0.1"
+          },
+          "audit_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "audit_client_request_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "data_fingerprint": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source_version": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "simulation_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "client_request_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "simulation_only": {
+            "const": true
+          },
+          "execution_performed": {
+            "const": false
+          },
+          "independent_alternative": {
+            "const": true
+          },
+          "history_persisted": {
+            "const": false
+          },
+          "compatibility_verified": {
+            "const": false
+          },
+          "cash_savings_verified": {
+            "const": false
+          },
+          "live_stop_enforcement_verified": {
+            "const": false
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/PilotSimulationRequest"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/PilotBaseline"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "recovered",
+              "paused"
+            ]
+          },
+          "effective_outcome": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure_recovered",
+              "failure_unavailable"
+            ]
+          },
+          "stop_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              null,
+              "runtime_limit",
+              "spend_limit",
+              "runtime_and_spend_limit",
+              "setup_exceeds_spend_limit"
+            ]
+          },
+          "failure_details": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "requested_failure_reason": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "effective_failure_reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "selected_outcome_changed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "requested_failure_reason",
+              "effective_failure_reason",
+              "selected_outcome_changed"
+            ]
+          },
+          "costs": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "currency": {
+                "const": "USD"
+              },
+              "kind": {
+                "const": "reference_estimate"
+              },
+              "original_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "cpu_trial_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "setup_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "trial_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "recovery_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "cost_so_far_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "total_cost_to_complete_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "net_benefit_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "currency",
+              "kind",
+              "original_cost_usd",
+              "cpu_trial_cost_usd",
+              "setup_cost_usd",
+              "trial_cost_usd",
+              "recovery_cost_usd",
+              "cost_so_far_usd",
+              "total_cost_to_complete_usd",
+              "net_benefit_usd"
+            ]
+          },
+          "timing": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "requested_cpu_hours": {
+                "type": "number",
+                "minimum": 0
+              },
+              "effective_cpu_hours": {
+                "type": "number",
+                "minimum": 0
+              },
+              "baseline_elapsed_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0
+              },
+              "extra_queue_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "run_time_change_hours_excluding_queue": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "completion_change_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "total_elapsed_hours_including_queue": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "requested_cpu_hours",
+              "effective_cpu_hours",
+              "baseline_elapsed_hours",
+              "extra_queue_hours",
+              "run_time_change_hours_excluding_queue",
+              "completion_change_hours",
+              "total_elapsed_hours_including_queue"
+            ]
+          },
+          "capacity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "released_gpu_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "remaining_gpu_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "added_cpu_vcpu_hours": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "released_gpu_hours",
+              "remaining_gpu_hours",
+              "added_cpu_vcpu_hours"
+            ]
+          },
+          "limits": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max_runtime_hours": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "max_trial_spend_usd": {
+                "type": "number",
+                "minimum": 0
+              },
+              "requested_setup_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "runtime_limit_reached": {
+                "type": "boolean"
+              },
+              "spend_limit_status": {
+                "type": "string",
+                "enum": [
+                  "within_limit",
+                  "reached",
+                  "unverified",
+                  "blocked_before_start"
+                ]
+              },
+              "cap_enforcement": {
+                "const": "simulation_only"
+              },
+              "trial_started": {
+                "type": "boolean"
+              },
+              "spend_limit_excludes_recovery": {
+                "const": true
+              }
+            },
+            "required": [
+              "max_runtime_hours",
+              "max_trial_spend_usd",
+              "requested_setup_cost_usd",
+              "runtime_limit_reached",
+              "spend_limit_status",
+              "cap_enforcement",
+              "trial_started",
+              "spend_limit_excludes_recovery"
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_required",
+                  "assumed_completed",
+                  "unavailable_paused"
+                ]
+              },
+              "strategy": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "full_original_gpu_rerun"
+                ]
+              },
+              "checkpoint_verified": {
+                "const": false
+              },
+              "available_assumed": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "recovery_gpu_hours": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "status",
+              "strategy",
+              "checkpoint_verified",
+              "available_assumed",
+              "note",
+              "recovery_gpu_hours"
+            ]
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "step": {
+                  "type": "string",
+                  "enum": [
+                    "baseline",
+                    "trial",
+                    "recovery",
+                    "result"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "incomplete",
+                    "captured",
+                    "blocked",
+                    "stopped",
+                    "assumed_success",
+                    "assumed_failure",
+                    "paused",
+                    "assumed_completed",
+                    "not_required",
+                    "estimated"
+                  ]
+                },
+                "detail": {
+                  "type": "string",
+                  "maxLength": 5000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "step",
+                "status",
+                "detail"
+              ]
+            }
+          },
+          "canonical_calculator_reused": {
+            "type": "boolean"
+          },
+          "calculator_proof": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "quantity": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "formula": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "const": "reference USD"
+                }
+              },
+              "required": [
+                "quantity",
+                "formula",
+                "value",
+                "unit"
+              ]
+            }
+          },
+          "possible_causes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "hypothesis": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "next_check": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "evidence_status": {
+                  "const": "unverified_hypothesis"
+                }
+              },
+              "required": [
+                "hypothesis",
+                "next_check",
+                "evidence_status"
+              ]
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2000,
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "required": [
+          "feature_version",
+          "audit_id",
+          "audit_client_request_id",
+          "data_fingerprint",
+          "source_version",
+          "synthetic",
+          "simulation_id",
+          "client_request_id",
+          "simulation_only",
+          "execution_performed",
+          "independent_alternative",
+          "history_persisted",
+          "compatibility_verified",
+          "cash_savings_verified",
+          "live_stop_enforcement_verified",
+          "inputs",
+          "baseline",
+          "status",
+          "effective_outcome",
+          "stop_reason",
+          "failure_details",
+          "costs",
+          "timing",
+          "capacity",
+          "limits",
+          "recovery",
+          "timeline",
+          "canonical_calculator_reused",
+          "calculator_proof",
+          "possible_causes",
+          "limitations"
+        ]
+      },
+      "PilotError": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "maxLength": 2000,
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 2000,
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "retryable": {
+                "type": "boolean"
+              },
+              "request_id": {
+                "type": "string",
+                "maxLength": 2000,
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "retryable",
+              "request_id"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}

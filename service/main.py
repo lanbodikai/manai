@@ -17,6 +17,7 @@ from service.source import inspect_data, current_status
 from service.analysis_routes import router, ServiceError
 from service.audits import AuditStore
 from service.base_chat.chat import router as chat_router
+from service.pilot_recovery_routes import router as pilot_recovery_router
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -123,6 +124,7 @@ async def overview(request: Request):
 
 app.include_router(router)
 app.include_router(chat_router)
+app.include_router(pilot_recovery_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):
