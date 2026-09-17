@@ -509,6 +509,73 @@ p {
   font-size: 9px;
   margin-left: 4px;
 }
+.cpu-pilot-summary {
+  margin: 0 0 20px;
+}
+.cpu-pilot-summary > p {
+  max-width: 680px;
+  margin: 0 0 18px;
+}
+.cpu-pilot-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.cpu-pilot-metrics > div {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fafcff;
+}
+.cpu-pilot-metrics svg {
+  color: #5570d9;
+}
+.cpu-pilot-metrics span,
+.cpu-pilot-metrics strong {
+  display: block;
+}
+.cpu-pilot-metrics span {
+  margin-top: 8px;
+  color: #71809a;
+  font-size: 11px;
+}
+.cpu-pilot-metrics strong {
+  margin-top: 4px;
+  color: #263d60;
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+.cpu-pilot-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.cpu-pilot-details {
+  margin-top: 16px;
+  color: #647999;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.cpu-pilot-details summary {
+  cursor: pointer;
+  color: #526b92;
+}
+.unavailable-state {
+  max-width: 720px;
+  margin: 52px auto;
+  padding: 32px;
+}
+.unavailable-state h1 {
+  margin: 10px 0;
+}
+.unavailable-state p {
+  color: #647999;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
 .middle-grid {
   display: grid;
   grid-template-columns: 1.65fr 1fr;
@@ -1468,6 +1535,13 @@ section[id] {
   }
   .audit-status .mono {
     font-size: 8px;
+  }
+  .cpu-pilot-metrics {
+    grid-template-columns: 1fr;
+  }
+  .unavailable-state {
+    margin: 28px 0;
+    padding: 22px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,11 @@
 # Project changelog
 
+## Validated main baseline — 2026-09-17
+
+- Published frozen A+B snapshot 5c4fd83 through PR #6/integration and PR #7/main (`610f89d`), with exact tree equality verified. Winston explicitly deferred independent cross-review and U05; neither is marked passed.
+- Preserved B’s later 7a3b201 revision, merged main into its history without changing its files, and retargeted PR #4 to main.
+- C’s current 75137bb revision must check compatibility against the new main; C remains disabled. No newer B, Pilot & Recovery, or C feature was included in the baseline merge.
+
 ## A+B integration candidate — 2026-09-17
 
 - Reviewed/reproduced A v0.4 and merged PR #2 onto integration `db6f418`; preserved all B history through `e24c78a` and retargeted PR #4 to integration.

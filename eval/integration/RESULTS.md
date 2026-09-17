@@ -1,6 +1,8 @@
 # A+B integration execution — 2026-09-17
 
-Candidate implementation: `2dbc7fc` on `codex/product-integration`, PR #4 into `codex/integration`. Shared baseline: `db6f418`, including reviewed A `adfcd88` and existing main/B history. `5166afd` adds v0.4 UI; `4a260ae` adds production read-only data/decisions; `2dbc7fc` preserves B's concurrent UI through `788b5ad` with multi-fix action disabled. Final main merge has **not** happened.
+Publication update: Winston explicitly approved merging this baseline while deferring independent cross-review and U05. PR #6 merged the frozen snapshot into integration (`982b407`); PR #7 merged it to main (`610f89d`). Main at that merge has exactly the tested snapshot tree. Subsequent B revisions and C compatibility remain separate; see [current handoff](../../docs/MAIN_BASELINE_HANDOFF.md). The historical test record below retains its original scope.
+
+Candidate implementation: `2dbc7fc` on `codex/product-integration`, PR #4 into `codex/integration`. Shared baseline: `db6f418`, including reviewed A `adfcd88` and existing main/B history. `5166afd` adds v0.4 UI; `4a260ae` adds production read-only data/decisions; `2dbc7fc` preserves B's concurrent UI through `788b5ad` with multi-fix action disabled. This candidate was subsequently published by the baseline merges recorded above.
 
 ## Outcomes actually observed
 

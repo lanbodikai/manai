@@ -52,6 +52,22 @@ export function validateAuditRequest(value: unknown) {
     throw new ApiError("INVALID_SCENARIO", "Successful replacement needs positive CPU duration; duration must not exceed the assumed cap.", 422);
   return request;
 }
+
+/**
+ * v0.4 is deliberately not wire-compatible with v0.3.  Keep this check close
+ * to the parser so a stale service is reported as a connection issue instead
+ * of being rendered as partial data.
+ */
+export function assertV04<T extends { contract_version: string }>(value: T): T {
+  if (value.contract_version !== "0.4")
+    throw new ApiError(
+      "UNSUPPORTED_CONTRACT_VERSION",
+      `This dashboard requires API v0.4; received v${value.contract_version}.`,
+      426,
+      true,
+    );
+  return value;
+}
 export function assertAuditId<T extends { audit_id: string }>(
   value: T,
   id: string,

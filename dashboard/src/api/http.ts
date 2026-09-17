@@ -3,6 +3,7 @@ import {
   ApiError,
   assertAuditId,
   assertRequestId,
+  assertV04,
   parse,
   validateAuditRequest,
 } from "./validation";
@@ -16,7 +17,7 @@ export function createHttpApi(
   } = {},
 ): DashboardApi {
   const fetcher = options.fetcher ?? fetch;
-  const base = options.baseUrl ?? "";
+  const base = options.baseUrl ?? import.meta.env.VITE_MANAI_API_URL ?? "";
   const auditPath = (id: string) => `/api/audits/${encodeURIComponent(id)}`;
   async function request<K extends keyof Schemas>(
     path: string,
@@ -73,6 +74,19 @@ export function createHttpApi(
               error.retryable,
             );
           }
+          if (
+            schema === "Health" &&
+            payload &&
+            typeof payload === "object" &&
+            "contract_version" in payload &&
+            (payload as { contract_version?: unknown }).contract_version !== "0.4"
+          )
+            throw new ApiError(
+              "UNSUPPORTED_CONTRACT_VERSION",
+              `This dashboard requires API v0.4; received v${String((payload as { contract_version?: unknown }).contract_version)}.`,
+              426,
+              true,
+            );
           return parse(schema, payload);
         })(),
       ]);
@@ -113,7 +127,7 @@ export function createHttpApi(
     return assertRequestId(assertAuditId(result, id), body.client_request_id);
   }
   return {
-    getHealth: () => request("/api/health", "Health"),
+    getHealth: async () => assertV04(await request("/api/health", "Health")),
     getOverview: () => request("/api/overview", "Overview"),
     listRecommendations: () =>
       request("/api/recommendations", "Recommendations"),

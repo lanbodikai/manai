@@ -1,15 +1,15 @@
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {ArrowRight, Download, ShieldCheck, TriangleAlert} from "lucide-react";
-import {initialPilotInputs, modelPilot, type PilotInputs, type PilotSource, type PilotResult} from "../pilot-model";
+import {initialPilotInputs, modelPilot, type PilotInputs, type PilotSource, type PilotSnapshot, type PilotReview} from "../pilot-model";
 import {number,usd,range} from "../format";
 import {datasetHref} from "./DataExplorer";
 
-type Snapshot={inputs:PilotInputs; source:PilotSource; result:PilotResult};
-export function CpuPilotPlanner({source}: {source:PilotSource}) {
+export function CpuPilotPlanner({source,onReview}: {source:PilotSource; onReview?:(review:PilotReview)=>void}) {
   const [inputs,setInputs]=useState<PilotInputs>({...initialPilotInputs});
-  const [snapshot,setSnapshot]=useState<Snapshot|null>(null);
+  const [snapshot,setSnapshot]=useState<PilotSnapshot|null>(null);
   const [error,setError]=useState("");
   const dirty=!!snapshot && JSON.stringify(inputs)!==JSON.stringify(snapshot.inputs);
+  useEffect(() => {onReview?.({snapshot,dirty});},[snapshot,dirty,onReview]);
   const field=(key:Exclude<keyof PilotInputs,"basis">,label:string,help?:string) => <label>{label}<input aria-label={label} aria-describedby={help ? `pilot-help-${key}` : undefined} type="number" min="0" max={key.startsWith("recovery") || key==="pilotPercent" ? 100 : undefined} step="any" value={inputs[key]} onChange={e => setInputs({...inputs,[key]:e.target.value})} />{help && <small id={`pilot-help-${key}`}>{help}</small>}</label>;
   function compare(e:React.FormEvent) {
     e.preventDefault();setError("");
