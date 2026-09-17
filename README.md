@@ -1,12 +1,12 @@
-# manai — A+B integration candidate
+# manai — integrated A+B baseline
 
 Track 2: a bounded CPU-placement pilot with traceable evidence, explicit assumptions and downside. The running base uses API v0.4. It does not establish CPU compatibility or realized savings.
 
-**Implementation is integrated; final release review is pending.** See [actual checks](eval/integration/RESULTS.md), [A/B author handoff](docs/AB_INTEGRATION_HANDOFF.md) and [report/demo](REPORT.md). C remains disabled; multi-fix modeling remains deferred.
+**Validated A+B is merged to main.** Independent cross-review and timed usability were explicitly deferred by Winston for this baseline merge; final submission readiness is not claimed. See [the new-main B/C handoff](docs/MAIN_BASELINE_HANDOFF.md). See [actual checks](eval/integration/RESULTS.md), [A/B author handoff](docs/AB_INTEGRATION_HANDOFF.md) and [report/demo](REPORT.md). C remains disabled; multi-fix modeling remains deferred.
 
 ## Run
 
-Use Git and Docker Desktop/Engine with Linux containers. No host Node/Python or model key is required to run the product. Check out the reviewed candidate branch, currently `codex/product-integration`; main does not yet contain this full release.
+Use Git and Docker Desktop/Engine with Linux containers. No host Node/Python or model key is required to run the product. Check out `main` for the validated baseline. New B revisions are reviewed separately against main.
 
 Provision the organizer data using [data setup](data/README.md). On Windows, `powershell -ExecutionPolicy Bypass -File tools/bootstrap/setup.ps1` downloads/prepares/generates and verifies it. This is data provisioning; app startup is one command:
 

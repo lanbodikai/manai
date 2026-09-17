@@ -1,5 +1,7 @@
 # A/B integration handoff — 2026-09-17
 
+**Superseding publication update:** the validated baseline is now on main at runtime merge `610f89d` (PR #7). Winston explicitly deferred cross-review/U05 for this baseline merge. PR #4 now targets main for B’s later work. C has since published v0.4 fixes at `75137bb`; the old C findings below are historical, not a verdict on that new revision. Use [the current B/C handoff](MAIN_BASELINE_HANDOFF.md); the earlier branch state and review record below are retained.
+
 Current release candidate: PR [#4](https://github.com/lanbodikai/manai/pull/4), `codex/product-integration` into `codex/integration`. A PR [#2](https://github.com/lanbodikai/manai/pull/2) is merged at integration `db6f418`. Main remains `5a8d995`; this is not a final-main merge announcement. Use [the acceptance record](../eval/integration/RESULTS.md) for exact tested commits and commands.
 
 ## Branches before and after
