@@ -15,14 +15,18 @@ import explanationFixture from "../../contracts/examples/explanation-response.js
 import claimsFixture from "../../contracts/examples/claims-response.json";
 import errorFixture from "../../contracts/examples/error-response.json";
 
-const request = () => structuredClone(parse("AuditRequest", requestFixture));
+const request = () => {
+  const value = structuredClone(parse("AuditRequest", requestFixture));
+  delete value.scenario.cpu_pilot;
+  return value;
+};
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json" },
   });
 
-describe("v0.3 contract", () => {
+describe("v0.4 contract", () => {
   it("checks every shared example and dashboard-specific fixtures", () => {
     for (const [name, data] of [
       ["AuditRequest", requestFixture],
@@ -46,6 +50,7 @@ describe("v0.3 contract", () => {
       { low: 0.8, point: 0.4, high: 0.9 },
       { low: 0.2, point: 0.4, high: 1.1 },
       { low: NaN, point: 0.4, high: 0.6 },
+      { low: 0, point: 0.4, high: Infinity },
     ]) {
       const r = request();
       r.scenario.recovery_fraction = invalid;
@@ -103,7 +108,7 @@ describe("mock snapshots and export", () => {
       api.listEvidence(first.audit_id, { cursor: "nonsense" }),
     ).rejects.toMatchObject({ status: 422 });
     expect(
-      (await api.getEvidence(first.audit_id, "job:J2")).observations[0].value,
+      (await api.getEvidence(first.audit_id, "job:J2")).observations.find(o => o.column === "gpu_hours")?.value,
     ).toBe(20);
   });
   it("handles empty cohorts and stale data explicitly", async () => {
@@ -184,7 +189,7 @@ describe("HTTP adapter never substitutes fixtures", () => {
       api.getEvidence("another-audit", "job:J1"),
     ).rejects.toMatchObject({ code: "AUDIT_ID_MISMATCH" });
     await expect(
-      api.getEvidence(initialAudit.audit_id, "job:J2"),
+      api.getEvidence(initialAudit.audit_id, "job:J1"),
     ).rejects.toMatchObject({ code: "EVIDENCE_ID_MISMATCH" });
     const chat = createHttpApi({
       fetcher: vi.fn().mockResolvedValue(json(explanationFixture)),

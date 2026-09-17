@@ -224,6 +224,7 @@ export interface components {
             /** @enum {string} */
             interval_kind: "scenario";
             assumption_note: string;
+            cpu_pilot?: components["schemas"]["CpuPilotInput"];
         };
         AuditRequest: {
             client_request_id: string;
@@ -269,10 +270,11 @@ export interface components {
             money: number | null;
             /** @enum {string|null} */
             money_unit: "reference_usd" | null;
+            cpu_pilot: components["schemas"]["CpuPilotResult"] | null;
         };
         Audit: {
             /** @constant */
-            contract_version: "0.3";
+            contract_version: "0.4";
             audit_id: string;
             client_request_id: string;
             /** @enum {string} */
@@ -287,6 +289,7 @@ export interface components {
                 excluded_jobs: number;
                 overlapping_finding_references: number;
                 coverage_note: string;
+                memory_partition?: components["schemas"]["MemoryPartition"];
             };
             recovery: {
                 gpu_hours: components["schemas"]["Interval"];
@@ -312,7 +315,7 @@ export interface components {
             /** @enum {string} */
             service: "ok";
             /** @constant */
-            contract_version: "0.3";
+            contract_version: "0.4";
             /** @enum {string} */
             data_status: "ready" | "missing" | "invalid";
             data_fingerprint: string | null;
@@ -397,6 +400,61 @@ export interface components {
             cancelled_is_waste: false;
             cancelled_rationale: string;
             notes: string;
+        };
+        CpuPilotInput: {
+            /** @enum {string} */
+            mode: "replacement_success" | "replacement_failure" | "additional_validation";
+            /** @description Eligible job in this immutable audit; A resolves baseline measurements, never browser-supplied totals. */
+            baseline_evidence_id: string;
+            cpu_vcpus: number;
+            cpu_hours: number;
+            cpu_vcpu_hour_usd: number | null;
+            extra_queue_hours: number | null;
+            trial_cap_hours: number | null;
+            /** @description Explicit pricing-boundary assumption. False suppresses net value until accounting is extended. */
+            baseline_host_costs_included: boolean;
+            assumption_note: string;
+        } & unknown;
+        CpuPilotBaseline: {
+            evidence_id: string;
+            gpu_count: number;
+            elapsed_hours: number;
+            recorded_gpu_hours: number;
+            accounting_note: string;
+        };
+        CpuPilotResult: {
+            /** @constant */
+            scope: "single_job";
+            /** @enum {string} */
+            mode: "replacement_success" | "replacement_failure" | "additional_validation";
+            /** @constant */
+            evidence_kind: "scenario_estimate";
+            baseline: components["schemas"]["CpuPilotBaseline"];
+            scenario_gpu_hours: number;
+            released_gpu_hours: number;
+            added_cpu_vcpu_hours: number;
+            released_gpu_reference_usd: number;
+            added_cpu_reference_usd: number | null;
+            net_reference_value_usd: number | null;
+            run_time_change_hours_excluding_queue: number | null;
+            completion_change_hours_including_extra_queue: number | null;
+            /** @constant */
+            compatibility_verified: false;
+            /** @constant */
+            cash_savings_verified: false;
+            /** @constant */
+            trial_stop_enforcement_tested: false;
+            limitations: string[];
+        };
+        MemoryGroup: {
+            unique_jobs: number;
+            recorded_gpu_hours: number;
+        };
+        MemoryPartition: {
+            zero_memory: components["schemas"]["MemoryGroup"];
+            positive_memory: components["schemas"]["MemoryGroup"];
+            unknown_memory: components["schemas"]["MemoryGroup"];
+            basis: string;
         };
     };
     responses: never;

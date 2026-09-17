@@ -128,7 +128,7 @@ test("live entry shows connection failure and never loads mock modules", async (
 }) => {
   const urls: string[] = [];
   page.on("request", (r) => urls.push(r.url()));
-  await page.goto("http://127.0.0.1:3001");
+  await page.goto(`http://127.0.0.1:${process.env.MANAI_TEST_HTTP_PORT ?? "3001"}`);
   await expect(
     page.getByRole("heading", { name: "Source data unavailable" }),
   ).toBeVisible();

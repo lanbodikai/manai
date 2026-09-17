@@ -67,7 +67,7 @@ class Contracts(unittest.TestCase):
                     ('get','/api/overview',503,'DATA_NOT_READY'),
                     ('get','/api/audits/missing',404,'AUDIT_NOT_FOUND'),
                     ('post','/api/audits/missing/explanations',503,'AGENT_UNAVAILABLE'),
-                    ('post','/api/audits',503,'BOOTSTRAP_NOT_IMPLEMENTED')]:
+                    ('post','/api/audits',422,'INVALID_SCENARIO')]:
                     with self.subTest(path=path):
                         response=getattr(client,method)(path)
                         self.assertEqual(response.status_code,status)

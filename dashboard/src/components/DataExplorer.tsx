@@ -28,13 +28,13 @@ import {
   pagePayload,
   detailPayload,
 } from "../api/dataset";
-import { collectionInfo, displayValue } from "../dataset-fields";
+import { collectionInfo, displayValue, findingStatusLabel } from "../dataset-fields";
 import { errorMessage } from "../api/validation";
 import { number } from "../format";
 
 export function datasetHref(
   collection: Collection,
-  filters: { outcome?: string; node?: string; id?: string; gpu?: string } = {},
+  filters: { outcome?: string; node?: string; id?: string; gpu?: string; query?: string } = {},
 ) {
   const params = new URLSearchParams(
     Object.entries(filters).filter(([, value]) => value),
@@ -212,8 +212,8 @@ export function DatasetHome({ api }: { api: DashboardApi }) {
           <h1>GPU data overview</h1>
           <p>Understand the sample. Explore the work behind each number.</p>
         </div>
-        <a className="primary" href={datasetHref("jobs")}>
-          Explore the dataset <ArrowRight size={16} />
+        <a className="primary" href="#optimization">
+          Review cost opportunities <ArrowRight size={16} />
         </a>
       </header>
       {error ? (
@@ -280,6 +280,7 @@ export function DataExplorer({
       initialNode={params.get("node") ?? ""}
       initialId={params.get("id") ?? undefined}
       initialGpu={params.get("gpu") ?? ""}
+      initialQuery={params.get("query") ?? ""}
     />
   );
 }
@@ -290,6 +291,7 @@ function ExplorerTable({
   initialNode,
   initialId,
   initialGpu,
+  initialQuery,
 }: {
   api: DashboardApi;
   collection: Collection;
@@ -297,12 +299,13 @@ function ExplorerTable({
   initialNode: string;
   initialId?: string;
   initialGpu: string;
+  initialQuery: string;
 }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const info = collectionInfo[collection];
   const [gpu, setGpu] = useState(initialGpu);
-  const [query, setQuery] = useState("");
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+  const [search, setSearch] = useState(initialQuery);
   const [outcome, setOutcome] = useState(initialOutcome);
   const [node, setNode] = useState(initialNode);
   const [sort, setSort] = useState(info.fields[0].key);
@@ -316,12 +319,14 @@ function ExplorerTable({
     initialId ? { collection, id: initialId, label: initialId } : null,
   );
   useEffect(() => {
+    // Initial/unchanged search must not reset a quick pagination click.
+    if (query.trim() === search) return;
     const timer = setTimeout(() => {
       setSearch(query.trim());
       setOffset(0);
     }, 250);
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, search]);
   useEffect(() => {
     let alive = true;
     if (!catalog || !api.datasets) return;
@@ -510,7 +515,7 @@ function ExplorerTable({
                       All {collection === "jobs" ? "outcomes" : "statuses"}
                     </option>
                     {stateOptions.map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s} value={s}>{collection === "findings" ? findingStatusLabel(s) : s}</option>
                     ))}
                   </select>
                 </label>
@@ -614,7 +619,7 @@ function ExplorerTable({
                                         })
                                       }
                                     >
-                                      {displayValue(r.values[f.key], f.unit)}
+                                      {f.key === "status" ? findingStatusLabel(r.values[f.key]) : displayValue(r.values[f.key], f.unit)}
                                     </button>
                                   ) : (
                                     <span
@@ -625,7 +630,7 @@ function ExplorerTable({
                                           : ""
                                       }
                                     >
-                                      {displayValue(r.values[f.key], f.unit)}
+                                      {f.key === "status" ? findingStatusLabel(r.values[f.key]) : displayValue(r.values[f.key], f.unit)}
                                     </span>
                                   )}
                                 </td>
@@ -742,6 +747,10 @@ function RecordDrawer({
   useEffect(() => {
     const prior = document.activeElement as HTMLElement;
     dialog.current?.showModal();
+    setData(null);
+    setError("");
+    setFields("");
+    setActivityFields(null);
     let alive = true;
     void api
       .datasets!.detail(selected.collection, selected.id, version)
@@ -757,7 +766,8 @@ function RecordDrawer({
       if (prior?.isConnected) prior.focus();
     };
   }, [api, selected.collection, selected.id, version]);
-  const record = data?.record;
+  const record = data?.collection === selected.collection && data.record.id === selected.id
+    ? data.record : undefined;
   const activity = record?.activity ?? [];
   return (
     <dialog
@@ -795,7 +805,9 @@ function RecordDrawer({
         ) : (
           <>
             <span className="badge">
-              {record.synthetic ? "Synthetic example" : "Real source record"}
+                {selected.collection === "findings"
+                  ? record.synthetic ? "Synthetic finding" : "Source-derived finding"
+                  : record.synthetic ? "Synthetic example" : "Real source record"}
             </span>
             <p className="record-summary">{record.summary}</p>
             {(selected.collection === "gpus" ||
@@ -818,7 +830,7 @@ function RecordDrawer({
             <div className="record-key-metrics">
               {collectionInfo[selected.collection].fields
                 .filter((f) =>
-                  ["gpu_hours", "sm_util_avg", "sm_util_weighted"].includes(
+                  ["gpu_hours", "sm_util_avg", "sm_util_weighted", "impact_gpu_hours", "impact_kind", "impact_scope"].includes(
                     f.key,
                   ),
                 )

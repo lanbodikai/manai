@@ -333,6 +333,7 @@
 }
 .record-key-metrics {
   display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   background: #f2f6fd;
   padding: 20px;

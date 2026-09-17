@@ -1,5 +1,6 @@
 import type { components } from "./generated";
 import type { DatasetApi } from "./dataset";
+import type { OptimizationApi } from "./optimization";
 export type Schemas = components["schemas"];
 export type Audit = Schemas["Audit"];
 export type Scenario = Schemas["Scenario"];
@@ -10,6 +11,8 @@ export type PageInput = { limit?: number; cursor?: string };
 export interface DashboardApi {
   /** Optional frontend preview capability; not a frozen v0.3 route extension. */
   datasets?: DatasetApi;
+  /** Proposed modeled-action interface; not an adopted v0.3/v0.4 extension. */
+  optimization?: OptimizationApi;
   getHealth(): Promise<Schemas["Health"]>;
   getOverview(): Promise<Overview>;
   listRecommendations(): Promise<Schemas["Recommendations"]>;

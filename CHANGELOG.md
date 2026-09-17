@@ -1,5 +1,15 @@
 # Project changelog
 
+## A+B integration candidate — 2026-09-17
+
+- Reviewed/reproduced A v0.4 and merged PR #2 onto integration `db6f418`; preserved all B history through `e24c78a` and retargeted PR #4 to integration.
+- Added strict v0.4 UI, minimal CPU scenario inputs/results, conservative default recovery, explicit provenance/ceiling labels and production Compose packaging.
+- User additionally authorized connecting the existing read-only Data explorer and Decisions to the production dashboard. Reused B's route/calculation code server-side with a checksum-verified private snapshot; multi-fix calculations stay deferred.
+- Fixed the explorer pagination reset found in browser regression; preserved B's separate CFO planner and source views.
+- Tested real CPU/MCP/export flow and optional-reviewer isolation. Recorded C compatibility defects separately; no C merge or enablement.
+- Added reproducible acceptance scripts, local final-claims export, report and author handoffs. Historical bootstrap and proposal notes below are retained; current results supersede their status statements.
+
+
 ## v0.11 — reviewed CPU-pilot handoff — 2026-09-17
 
 - Reproduced all 12 prototype calculation tests and RD01–RD17 in the bootstrap runtime; recorded the host reader failure and scope limits.
@@ -97,3 +107,8 @@
 - No analytical results or implementation completion claimed.
 
 Historical next step at v0.1: Round 2 choices. Those choices are now recorded in v0.2. Implementation remains off until explicitly activated.
+# Workstream A / API v0.4 adoption — 2026-09-17
+
+- A1 published deterministic cohort/overlap/scenario/downside, immutable audit/evidence and claims at 05c7fa0. A2 required real MCP chatbot and live development-browser witness published at 141ee7b; no model key or C dependency.
+- Winston confirmed B agreement to exact ce6a44e CPU-pilot proposal. A recorded agreement in PR #2 before promoting schemas/examples and implementing CPU cost/delay and memory partitions. Claims and Explanation shapes remain unchanged; B must regenerate the strict client.
+- Recorded GPU allocation remains distinct from scheduler duration; single-job scenarios preserve negative/unknown values and never alter cohort claims. CPU compatibility, realized savings and stop enforcement remain unproven. Source records and private verification artifacts stay local.

@@ -1,3 +1,5 @@
+> Current integration update (2026-09-17): production Compose now serves the v0.4 audit flow and the existing read-only explorer/decision routes on :3000. `dataset-prep` builds the verified private snapshot automatically; `tools/dataset-handler.ts` is shared with the local preview. These browsing routes remain B-owned and are not additions to A's v0.4 contract. Multi-fix modeling is disabled in production. The historical local/B0 instructions below remain useful for development; their production-unavailable statements are superseded by [current root instructions](../README.md) and [integration results](../eval/integration/RESULTS.md).
+
 # MANAI dashboard — B0 synthetic MVP
 
 React + TypeScript + Vite, Recharts, Lucide and plain CSS. This frontend is runnable before the shared bootstrap. All demo records are invented. No real data, savings, MCP execution or submission readiness is established here.

@@ -147,6 +147,10 @@ export function catalogPayload(v: unknown): Catalog {
       )
     )
       throw invalid();
+    const outcomes = s.outcomes as {outcome:string; gpu_hours:number}[];
+    const total = s.gpu_hours as number;
+    if (new Set(outcomes.map(o => o.outcome)).size !== outcomes.length ||
+        Math.abs(outcomes.reduce((sum,o) => sum+o.gpu_hours,0)-total) > Math.max(0.00001,total*1e-9)) throw invalid();
   }
   return v as unknown as Catalog;
 }
