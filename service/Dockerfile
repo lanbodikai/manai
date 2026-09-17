@@ -13,6 +13,7 @@ COPY contracts contracts
 COPY starter/claims.schema.json starter/claims.schema.json
 COPY tests/bootstrap tests/bootstrap
 COPY tests/analysis tests/analysis
+COPY tests/base_chat tests/base_chat
 COPY eval/analysis eval/analysis
 COPY tools/bootstrap tools/bootstrap
 ENV PYTHONUNBUFFERED=1

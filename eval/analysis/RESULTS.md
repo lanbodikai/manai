@@ -23,3 +23,18 @@
 - Read private `private-eval/analysis/record-review.json` and verified each inclusion/exclusion against the predicate.
 
 Runtime reused the pinned bootstrap image in a separate A container on localhost:18001; shared services were not restarted. Source and code mounts read-only; only ignored private evaluation output writable. Generated audit/claims/review artifacts stay local. No model key or C service was used. CPU compatibility and realized savings remain unproven. A2 and B integration follow; no merge is authorized.
+
+## A2 verification update
+
+A1 published commit: `05c7fa0`. A2 adds real official MCP chat and additional upstream/error consistency checks. Active v0.3; B contract acceptance and final integration review remain pending.
+
+- Analysis/API suite: **9/9 PASS**. Base-chat suite: **4/4 PASS**, covering four supported intents, unsupported certainty/injection, missing/malformed/error tools, wrong-audit evidence, stale observations, timeout cleanup and nested transport errors. Bootstrap: **5/5 PASS**.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_live`: repeated D01/D02/D03/D05 and A-side D06 PASS after source consistency checks. Private D04 examples remain the same inspected records. No source rows entered Git.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_chat`: **4/4 supported live questions PASS**, ten actual MCP calls including a repeat after C-unavailable response. Citations resolve, claims unchanged, no provider/model. Observed answer latencies about 2.7–3.4 seconds. Both API and MCP use the canonical fingerprint above.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_mcp_cleanup`: **PASS** real stdio cancellation (504) and absent audit membership (502), with no orphan MCP processes. The forced short timeout includes SDK cleanup latency; normal public budget reserves five seconds for shutdown.
+- `node eval/analysis/ui_smoke.cjs artifacts/b-review/dashboard/node_modules`: **PASS** in Edge with Node 22.16.0 against unchanged B `5a8d995`, development HTTP preview on :13000 and A on :18001. M01 live UI→A→official MCP with citation; M04 reviewer unavailable/malformed/wrong-audit/hang injection preserves actual base chat and identical claims. C04 displayed audit/export agreement and D06 0/0/1 display/export verified. Desktop/narrow screenshots inspected privately; no page exceptions or mock imports. No B source files changed.
+- The first frontend dependency install used host Node 24 and warned about B's engine range; verification subsequently used isolated Node 22.16.0. No frontend dependencies or lockfiles changed in A's tracked tree.
+
+M02 and M03 are verified within the template-based scope. M01/M04 now have live development-browser witnesses, not final Compose acceptance. Final D06 REPORT agreement, B cross-review, U05/P/R01/R05 packaging checks and optional G checks remain **PENDING/NOT RUN**. These witnesses do not declare the overall base or C enhancement complete.
+
+Observed B-owned follow-ups: the team recommendation is rendered as “Organizer judgment”; the main upper range should explicitly say eligibility ceiling. The v0.3 target/gap panel remains honestly unavailable. Full real-data browser artifacts remain under ignored `private-eval/ui/`.

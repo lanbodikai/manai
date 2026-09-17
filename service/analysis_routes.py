@@ -68,6 +68,12 @@ async def fetch_source_context(client):
 
 def prepare_context(data_dir, source, upstream):
     jobs, findings = load_tables(data_dir)
+    # Official HTTP context must describe the mounted source, not another dataset.
+    allocated = float(jobs.loc[jobs.state_name.notna(), "gpu_hours"].sum())
+    if round(allocated, 1) != upstream["summary"]["value"]:
+        raise ValueError("Official API allocation does not match mounted data")
+    if upstream["rule"]["findings"] != sum(f["detectorId"] == RULE for f in findings):
+        raise ValueError("Official API rule count does not match mounted data")
     cohort = select_cohort(jobs)
     impacts = audit_impacts(cohort, findings)
     summary = upstream["summary"]

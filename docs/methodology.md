@@ -26,6 +26,14 @@ Active API is v0.3. Each creation returns a new opaque immutable snapshot; numer
 
 The proposed v0.4 contract at ce6a44e remains gated on B's recorded acceptance. No proposed fields are inserted into v0.3. CPU cost/delay will be single-job accounting separate from cohort claims when adopted.
 
+## Required MCP chatbot
+
+`/chat` accepts the existing ExplanationRequest and returns Explanation. Exact normalized supported questions include B's four chips: Why this pilot?, Which jobs are eligible?, What are the recovery assumptions?, What could go wrong? Other questions decline with insufficient evidence. The method uses actual official stdio MCP `list_rules` and bounded `list_findings` calls, checks rule/finding values and audit membership, and cites canonical job/accounting evidence. A retrieved example does not establish the whole cohort or justify a recovery fraction.
+
+The maximum is three tool calls and ten seconds server-side. Actual answers use two calls. Five seconds are reserved for the pinned SDK's bounded shutdown (writer flush, process exit and kill/reap); retrieval is cancelled after five seconds. Two concurrent requests are permitted; additional requests return 429. Source checks surround every tool call. Tool errors, stale sources and timeouts remain explicit failures; the deterministic summary is separately available. No provider/model key or C service is used. Private trace files record actual tool requests and results under ignored `private-eval/base-chat/`.
+
+The development browser witness runs the unchanged B dashboard from 5a8d995 against A. It verifies matching displayed/exported ranges, real MCP citations, and preservation through optional reviewer unavailable/malformed/wrong-audit/hanging responses. It does not prove final Compose packaging, R05 or independent human usability.
+
 ## Reproduction and privacy
 
 Run `python -m unittest discover -s tests/analysis -v`, inherited bootstrap tests, and `python -m eval.analysis.verify_live` in the pinned service runtime with canonical data read-only. The live harness calls the actual service, independently loops over source records, reconciles GPU-row hours, paginates evidence and evaluates three recovery settings at two prices. It writes private review rows, snapshots and claims under ignored `private-eval/analysis/`. Inspect five included and three boundary records before marking D04 passed.

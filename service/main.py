@@ -16,6 +16,7 @@ from starlette.exceptions import HTTPException
 from service.source import inspect_data, current_status
 from service.analysis_routes import router, ServiceError
 from service.audits import AuditStore
+from service.base_chat.chat import router as chat_router
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -28,6 +29,7 @@ async def lifespan(app):
     app.state.audits = AuditStore(capacity=128)
     app.state.analysis_context = None
     app.state.context_lock = asyncio.Lock()
+    app.state.chat_slots = asyncio.Semaphore(2)
     app.state.source = await asyncio.to_thread(inspect_data, DATA)
     app.state.job_count = None
     if app.state.source["status"] == "ready":
@@ -59,6 +61,10 @@ async def invalid(request, exc):
 @app.exception_handler(ServiceError)
 async def service_error(request, exc):
     return error(request, exc.status, exc.code, exc.message, exc.retryable)
+
+@app.exception_handler(Exception)
+async def unexpected_error(request, exc):
+    return error(request, 500, "INTERNAL_ERROR", "The analysis service could not complete this request.")
 
 @app.exception_handler(HTTPException)
 async def http_error(request, exc):
@@ -116,6 +122,7 @@ async def overview(request: Request):
         return error(request,502,"UPSTREAM_RESPONSE_INVALID","Official response did not match the expected overview contract.")
 
 app.include_router(router)
+app.include_router(chat_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):
