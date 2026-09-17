@@ -1,5 +1,13 @@
 # B0 handoff — fixture UI, bootstrap pending
 
+## Latest update — main merged and API alignment acknowledged
+
+The dashboard branch was merged into `main` at **`5a8d995a624dcd188101de802f75263a512bcc48`** at the user's request; PR #1 is merged. Immediately before publication, `npm test` passed **33/33** and `npm run build` passed typecheck, production build and mock-exclusion checks. The nonfatal chunk-size warning remains. Earlier draft-PR/bootstrap-pending statements below are historical.
+
+At the user's subsequent request, B reviewed both contracts and acknowledges **v0.3 as the official current team contract and v0.4 as the accepted official CPU-extension specification for implementation**. These are manai team contracts, not MantisGrid product APIs. This supplies B's acceptance; A agreement and coordinated runtime adoption remain pending. Active schemas, backend and current v0.3 client were preserved.
+
+See [API alignment review](../../dashboard/API_ALIGNMENT.md) for compatibility, UI implications, actual verification and next-owner actions. The v0.4 validator passed six complete fixtures and eight synthetic pilot cases. Ajv fixture and cross-version probes confirm realistic alignment but a required client upgrade: the closed v0.3 validator rejects v0.4 audits. Positive infinity is accepted under the current non-strict Ajv number configuration; explicit finite-number validation is required during adoption. CPU hours versus trial-cap comparison also needs semantic validation in A. Live v0.4, MCP, Docker and operational-effect checks are **NOT RUN** in this review. No calculator/UI implementation or shared-contract promotion is claimed.
+
 ## Latest update — real local dataset explorer and baseline merged
 
 The original B0 record below is historical. Following the user's request for real front-page visualizations and per-GPU data browsing, implementation commit **`e28179e`** adds an explicit read-only local preview. Merge commit **`25fbe6d6204e4ecfbc8864b144cbb540ac01380d`** incorporates `origin/codex/integration` at `ee529ee9f1839131c4ef1b72656030ce4780b9d4`, including the verified implementation baseline **`7530865eeca4fe87daf91b5cc275af378bd42fb7`**. Bootstrap's published status now records BASE-01–BASE-07 PASS. The merge had no conflicts and changed no dashboard or shared-contract files relative to our tested implementation. These are bootstrap owner's recorded results, not a rerun by B.
