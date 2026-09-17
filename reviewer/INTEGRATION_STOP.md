@@ -1,3 +1,6 @@
+> Update: Docker and organizer-data acceptance now pass on the isolated Mac deployment.
+> [REAL_HOST_HANDOFF.md](REAL_HOST_HANDOFF.md) supersedes the earlier blockers below.
+
 > Real-host execution was attempted after this simulation handoff. It is blocked
 > at host access, with no deployment started. See [REAL_HOST_HANDOFF.md](REAL_HOST_HANDOFF.md).
 

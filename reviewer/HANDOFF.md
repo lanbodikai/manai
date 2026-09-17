@@ -1,3 +1,7 @@
+> Latest: real-data Docker website and C failure-isolation acceptance passed.
+> See [REAL_HOST_HANDOFF.md](REAL_HOST_HANDOFF.md) for the current pinned receipt.
+> The isolated preview is http://127.0.0.1:13012; no main merge was performed.
+
 > Current work moved to a fresh branch from PR #8 main: `codex/c-main-integration`.
 > See [INTEGRATION_STOP.md](INTEGRATION_STOP.md) for the tested full-flow simulation,
 > mobile fix and 15-minute integration-host stopping point. The PR #3 notes below

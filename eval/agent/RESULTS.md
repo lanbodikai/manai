@@ -1,3 +1,33 @@
+# Real-data Docker acceptance — 2026-09-17 20:55 UTC
+
+**PASS on the isolated local Docker deployment.** This supersedes the earlier
+missing-Docker/remote-access blocker. User-authorized private generation produced
+all five organizer files matching the committed checksums; runtime mounts are
+read-only. Main remains pinned to `a7087ebc1a6d08e10f43eb0b32e4c3ff432df5b9`.
+Runtime images were built from `91c704d2a7d9e68bf661d453d5b55f0571e07aeb`;
+acceptance runner is `d32a84f24928c0c68ea064a22f69167268824e7c`.
+
+- Five images build; A/B/C/API healthy, Contract 0.4 and real data ready.
+- Container reviewer regression **99/99**, deterministic fixtures **24/24**.
+- Real browser audit → failed CPU trial → C → citation → claims **PASS**.
+- CPU added cost **$0.05**, net **−$0.05**, delay **0.5h**; recorded GPU baseline
+  retained once and cohort recovery unchanged.
+- Real container live-review gates **8/8**; **253 PASS, 0 FAIL, 5 UNKNOWN**.
+  Partial coverage (100/1,045 references), cohort totals/memory and MCP lineage
+  remain unknown; review appropriately returns `insufficient_evidence`.
+- C stop preserves base MCP chat/evidence/audit/export; restart and UI retry pass.
+- Desktop and 390px review text visually checked; no horizontal overflow.
+
+CPU audit `6733c7acbc864e14b474e2bcf1b10505`. Private receipts/screenshots:
+`reviewer/.private/real-host-pass/verified/`. No provider calls or workload runs.
+One initial test assertion was corrected to preserve recorded H separately from
+scheduler g×T; it was a runner error, not an application change. Failed receipt
+retained. See `reviewer/REAL_HOST_HANDOFF.md` for exact revisions, commands,
+limitations and the healthy isolated deployment stopping point. Main and PR #3
+remain untouched. Historical synthetic results below remain separately labeled.
+
+---
+
 # Real-data execution preflight — 2026-09-17 20:35 UTC
 
 **BLOCKED: integration-host access is unavailable from this Mac task.**
