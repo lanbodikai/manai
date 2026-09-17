@@ -23,3 +23,12 @@ Follow-up: removed disabled-row styling when a simulation is available and label
 those rows "Simulation available". Live browser verified all eight rows have full
 opacity, Model deep links work, and the seven unimplemented action selectors stay
 disabled. Rebuilt only the dashboard; 14/14 decision tests and build/typecheck pass.
+
+Task-selection correction supersedes the preceding checkbox restriction: all
+eight implemented simulations can now be selected in Decisions. "Model selected
+tasks" transfers that selection into the shared Model draft; Recalculate uses
+the real portfolio endpoint. No workload execution is enabled.
+`node eval/integration/task-selection.cjs http://127.0.0.1:13121` PASS: eight
+enabled task selectors, select-all/clear, two-task draft transfer, exact two-action
+recalculation, zero execution requests. Typecheck, 14 decision tests and rebuilt
+dashboard PASS. Review-service changes by the other participant were untouched.

@@ -71,7 +71,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   }, [api,catalog,selectionKey]);
   const visible = table?.dataset_version === catalog?.version ? table : null;
   const current = !!visible && sameFixes(visible.selection.fix_ids,selected) && !loading && !loadError;
-  const available = visible?.rows.filter(r => r.id === "cpu-placement" && r.affected_jobs > 0).map(r => r.id) ?? [];
+  const available = visible?.rows.filter(r => (r.id === "cpu-placement" || portfolio?.enabled && modeledActions.includes(r.id as typeof modeledActions[number])) && r.affected_jobs > 0).map(r => r.id) ?? [];
   const selectedRows = visible?.rows.filter(r => selected.includes(r.id)) ?? [];
   const actionableRows = visible?.rows.filter((row) => row.affected_jobs > 0) ?? [];
   const inactiveRows = visible?.rows.filter((row) => row.affected_jobs === 0) ?? [];
@@ -89,6 +89,15 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     choose([]);
     setTable(null);
     retry();
+  }
+  function reviewSelection(trigger: HTMLElement) {
+    if (portfolio?.enabled && portfolio.draft) {
+      portfolio.setDraft({...portfolio.draft, selected_actions: modeledActions.filter(id => selected.includes(id))});
+      window.location.hash = "#model";
+      return;
+    }
+    dialogTrigger.current = trigger;
+    setConfirmOpen(true);
   }
   async function optimize() {
     if (!modelAvailable || !current || !selected.length || !api.optimization || sending || receipt) return;
@@ -158,7 +167,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     {visible && <>
       <DecisionOverview portfolio={portfolio} totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} disabled={sending || loading || !!loadError}/>
       <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
-        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
+        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending || !!portfolio?.enabled && !portfolio.draft} onClick={e => reviewSelection(e.currentTarget)}>{portfolio?.enabled ? "Model selected tasks" : "Review selected actions"} <ArrowRight size={16}/></button></div></div>
         {sending && !confirmOpen && <p className="decision-footnote" role="status">Sending your modeling request…</p>}
         {receipt && !confirmOpen && <div className="optimization-receipt" role="status"><CheckCircle2 size={19}/><p>Modeling request accepted. No workload change or savings has been verified.</p></div>}
         {actionError && !confirmOpen && <div className="optimization-error" role="alert">{actionError} Review the selected actions before retrying.</div>}
@@ -171,7 +180,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
               const built = row.id === "cpu-placement";
               const modelAvailableForRow = portfolio?.enabled && modeledActions.includes(row.id as typeof modeledActions[number]);
               return <tr key={row.id} className={[selected.includes(row.id) ? "decision-selected" : "", !built && !modelAvailableForRow ? "decision-unavailable" : ""].filter(Boolean).join(" ")}>
-              <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!built || !row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
+              <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={(!built && !modelAvailableForRow) || !row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{built ? <span className="decision-pilot">Available pilot</span> : modelAvailableForRow ? <span className="decision-pilot">Simulation available</span> : <span className="decision-not-built">Not built yet</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
               <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p>{portfolio?.enabled&&<div className="small">{(()=>{const a=portfolio.result?.actions.find(a=>a.id===row.id);return a?<><strong>Standalone: {range(Math.min(...a.standalone_cases.map(c=>c.net_reference_usd)),Math.max(...a.standalone_cases.map(c=>c.net_reference_usd)))}</strong><p>Portfolio contribution: {range(Math.min(...a.cases.map(c=>c.net_reference_usd)),Math.max(...a.cases.map(c=>c.net_reference_usd)))}</p><span>{a.model_kind==='assumption_only_screening'?'Assumption-only screening':'Detailed scenario'}{portfolio.dirty?' · previous calculation':''}</span></>:<span>Not included in the current calculation.</span>;})()}</div>}<span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{portfolio?.enabled && modeledActions.includes(row.id as typeof modeledActions[number]) && <a className="text-button" aria-label={`Model ${row.title}`} href={`#model?action=${row.id}`}>Model →</a>}{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label={portfolio?.enabled ? "Compare CPU pilot" : "Open audited CPU pilot"} disabled={sending || !row.affected_jobs} onClick={openPilot}>{portfolio?.enabled ? "Separate CPU / small pilot" : "Model"} <ArrowRight size={13}/></button>}</td>
