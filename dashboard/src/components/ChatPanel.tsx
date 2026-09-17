@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { MessageSquare, Sparkles, ArrowUpRight, ArrowUp, SquarePen, BookOpen, LoaderCircle } from "lucide-react";
 import "../chat.css";
 import type { Audit, DashboardApi, Explanation } from "../api/types";
+import type {ModelState} from './PortfolioModel';
+import {SimulationReview} from './SimulationReview';
 import {
   ApiError,
   assertAuditId,
@@ -178,6 +180,7 @@ function QuestionPanel({
   );
 }
 type ChatProps = {
+  portfolio?: ModelState;
   api: DashboardApi;
   audit: Audit;
   mock: boolean;
@@ -258,14 +261,18 @@ function Conversation({ api, audit, mock, onEvidence }: ChatProps) {
 }
 
 export function ChatPanel(props: ChatProps) {
+  const [scope,setScope]=useState(props.portfolio?.enabled?'simulation':'pilot');
   return (
     <section className="chat-workspace" id="ask">
       <h1 className="sr-only">Ask about this pilot</h1>
+      {props.portfolio?.enabled&&<div className="review-scope-tabs" role="group" aria-label="Assistant scope"><button className="secondary" aria-pressed={scope==='simulation'} onClick={()=>setScope('simulation')}>Cost simulation review</button><button className="secondary" aria-pressed={scope==='pilot'} onClick={()=>setScope('pilot')}>Base pilot assistant</button></div>}
+      {scope==='simulation'&&props.portfolio?.enabled?<SimulationReview model={props.portfolio}/>:<>
       <Conversation {...props}/>
       <details className="reviewer-disclosure chat-reviewer">
         <summary>Open optional advanced reviewer</summary>
         <QuestionPanel {...props} advanced />
       </details>
+      </>}
     </section>
   );
 }

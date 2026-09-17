@@ -3,17 +3,21 @@ import { ArrowRight, CheckCircle2, RefreshCw, TriangleAlert } from "lucide-react
 import type { DashboardApi } from "../api/types";
 import { decisionPayload, sameFixes, type DecisionTable, type OptimizeReceipt, type OptimizeRequest } from "../api/optimization";
 import { errorMessage } from "../api/validation";
-import { number, usd } from "../format";
+import { number, usd, range } from "../format";
 import { datasetHref, useDatasetCatalog } from "./DataExplorer";
 import { CpuPilotPlanner } from "./CpuPilotPlanner";
 import { OptimizeDialog } from "./OptimizeDialog";
 import { DecisionOverview } from "./DecisionOverview";
 import type { PilotReview } from "../pilot-model";
 import { taskSummary } from "../optimization-options";
+import type {ModelState} from './PortfolioModel';
+import {actions as modeledActions} from '../api/portfolio';
+import type {HardwareScenario} from "../api/hardware";
+import {HardwareScenarioPanel} from "./HardwareScenarioPanel";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
-export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilot }: { api: DashboardApi; modelAvailable?: boolean; onOpenAuditedPilot?: () => void }) {
+export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilot, portfolio }: { api: DashboardApi; modelAvailable?: boolean; onOpenAuditedPilot?: () => void; portfolio?:ModelState }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const [table, setTable] = useState<DecisionTable | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -25,6 +29,20 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pilotOpen, setPilotOpen] = useState(false);
   const [pilotReview, setPilotReview] = useState<PilotReview|null>(null);
+  const [hardware,setHardware] = useState<HardwareScenario|null>(null);
+  const [hardwareError,setHardwareError] = useState("");
+  const [hardwareMode,setHardwareMode] = useState(true);
+  const [hardwareAllocation,setHardwareAllocation] = useState("memory_adjusted");
+  useEffect(()=>{
+    let alive=true;setHardware(null);setHardwareError("");
+    if(catalog && !catalog.synthetic && api.hardware) {
+      void api.hardware.summary(catalog.version).then(value=>{
+        if(value.synthetic!==catalog.synthetic) throw new Error("Hardware scenario provenance does not match the workspace.");
+        if(alive)setHardware(value);
+      }).catch(error=>{if(alive)setHardwareError(errorMessage(error));});
+    }
+    return()=>{alive=false;};
+  },[api,catalog]);
   // Verified against the supplied API /v1/price-book (2026-Q3), 2026-09-17. Reference pricing, not an actual bill.
   const referencePrice = 2.5;
   const pending = useRef<OptimizeRequest | null>(null);
@@ -101,7 +119,9 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   ];
   const outcomes = outcomeGroups.map(group => ({...group,hours:(catalog?.summary?.outcomes ?? []).filter(item => group.states.length ? group.states.includes(item.outcome) : !outcomeGroups.some(g => g.states.includes(item.outcome))).reduce((sum,item) => sum+item.gpu_hours,0)}));
   const cpuRow = visible?.rows.find(row => row.id === "cpu-placement");
-  const review = selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
+  const matchingHardware=hardware?.dataset_version===visible?.dataset_version ? hardware : null;
+  const activeHardware=hardwareMode ? matchingHardware : null;
+  const review = !activeHardware && selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
   function openPilot() {
     // A owns the only adopted v0.4 model: an immutable, evidence-linked,
     // single-job CPU scenario. Never substitute B's cohort simulator in live mode.
@@ -136,7 +156,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     {error && <div className="panel error-state" role="alert"><TriangleAlert /><h2>Could not load the decision table</h2><p>{error}</p><button className="secondary" onClick={reload} disabled={sending}><RefreshCw size={15} /> Reload data</button></div>}
     {!visible && !error && <div className="panel" role="status">Reading verified findings and job hours…</div>}
     {visible && <>
-      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} disabled={sending || loading || !!loadError}/>
+      <DecisionOverview portfolio={portfolio} totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} disabled={sending || loading || !!loadError}/>
       <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
         <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
         {sending && !confirmOpen && <p className="decision-footnote" role="status">Sending your modeling request…</p>}
@@ -153,7 +173,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
               <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!built || !row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{built ? <span className="decision-pilot">Available pilot</span> : <span className="decision-not-built">Not built yet</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
-              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : built && review ? "Scenario modeled · not measured" : built ? "Ready for an audited pilot" : "Future investigation · no model or action"}</span>{built && <button className="text-button pilot-open" aria-label="Open audited CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>{modelAvailable ? "Model in demo" : "Open audited pilot"} <ArrowRight size={13}/></button>}</td>
+              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p>{portfolio?.enabled&&<div className="small">{(()=>{const a=portfolio.result?.actions.find(a=>a.id===row.id);return a?<><strong>Standalone: {range(Math.min(...a.standalone_cases.map(c=>c.net_reference_usd)),Math.max(...a.standalone_cases.map(c=>c.net_reference_usd)))}</strong><p>Portfolio contribution: {range(Math.min(...a.cases.map(c=>c.net_reference_usd)),Math.max(...a.cases.map(c=>c.net_reference_usd)))}</p><span>{a.model_kind==='assumption_only_screening'?'Assumption-only screening':'Detailed scenario'}{portfolio.dirty?' · previous calculation':''}</span></>:<span>Not included in the current calculation.</span>;})()}</div>}<span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{portfolio?.enabled && modeledActions.includes(row.id as typeof modeledActions[number]) && <a className="text-button" aria-label={`Model ${row.title}`} href={`#model?action=${row.id}`}>Model →</a>}{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label={portfolio?.enabled ? "Compare CPU pilot" : "Open audited CPU pilot"} disabled={sending || !row.affected_jobs} onClick={openPilot}>{portfolio?.enabled ? "Separate CPU / small pilot" : "Model"} <ArrowRight size={13}/></button>}</td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><details className="row-source-details"><summary>Details</summary><p>{row.fix}</p><p>Owner: {row.owner}</p><p>{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</p><p>{number(row.excluded_cancelled_jobs)} cancelled jobs excluded</p></details></td>
             </tr>})}</tbody>
           </table>
@@ -162,7 +182,10 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
         <details className="decision-footnote"><summary>About the numbers</summary><p>Percentages use all recorded GPU-hours as the denominator. Task hours exclude cancellation and synthetic findings. Each selected job is counted once. Reference value uses $2.50/GPU-hour for the sample window; it is not a bill or savings estimate.</p></details>
       </section>
       {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
-      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
+      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <>
+        {matchingHardware && <div className="panel hardware-mode" role="group" aria-label="Scenario scope"><button className="secondary" aria-pressed={hardwareMode} onClick={()=>setHardwareMode(true)}>Documented hardware scenario</button><button className="secondary" aria-pressed={!hardwareMode} onClick={()=>setHardwareMode(false)}>Manual small-pilot plan</button></div>}
+        {activeHardware && api.hardware ? <HardwareScenarioPanel key={activeHardware.scenario_id} scenario={activeHardware} api={api.hardware} allocation={hardwareAllocation} onAllocation={setHardwareAllocation}/> : <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
+      </>}
       <details className="panel technical-decisions"><summary>About the optional 20% spending goal</summary><div className="optional-goal"><h2>What does a 20% cut mean?</h2><p>The hackathon brief asks for 20% lower spending: spend $80 for every $100 previously spent, while preserving research performance. This is an example, not the cluster’s bill. You can investigate opportunities without choosing a target first.</p><p>The pilot model compares against 20% of the historical sample’s reference value. It does not forecast next-quarter savings.</p></div></details>
     </>}
   </div>;

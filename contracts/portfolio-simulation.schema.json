@@ -1,0 +1,600 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "portfolio-simulation-1",
+  "$defs": {
+    "fraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "cost": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "action": {
+      "enum": [
+        "cpu-placement",
+        "idle-sessions",
+        "timeouts",
+        "startup-failures",
+        "failed-arrays",
+        "low-utilization",
+        "gpu-imbalance",
+        "memory-sizing"
+      ]
+    },
+    "overhead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "setup_usd",
+        "storage_usd",
+        "other_usd"
+      ],
+      "properties": {
+        "setup_usd": {
+          "$ref": "#/$defs/cost"
+        },
+        "storage_usd": {
+          "$ref": "#/$defs/cost"
+        },
+        "other_usd": {
+          "$ref": "#/$defs/cost"
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "cpu_price_ratio",
+        "checkpoint_enrollment",
+        "replay_fraction",
+        "interval_minutes",
+        "checkpoint_minutes",
+        "restart_minutes",
+        "idle_enrollment",
+        "release_hours",
+        "mistake_fraction",
+        "screening"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "lower",
+            "illustrative",
+            "upper"
+          ]
+        },
+        "cpu_price_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "checkpoint_enrollment": {
+          "$ref": "#/$defs/fraction"
+        },
+        "replay_fraction": {
+          "$ref": "#/$defs/fraction"
+        },
+        "interval_minutes": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 100000
+        },
+        "checkpoint_minutes": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "restart_minutes": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "idle_enrollment": {
+          "$ref": "#/$defs/fraction"
+        },
+        "release_hours": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 100000
+        },
+        "mistake_fraction": {
+          "$ref": "#/$defs/fraction"
+        },
+        "screening": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "startup-failures",
+            "failed-arrays",
+            "low-utilization",
+            "gpu-imbalance",
+            "memory-sizing"
+          ],
+          "properties": {
+            "startup-failures": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "enrollment",
+                "avoided_fraction",
+                "added_cost_fraction",
+                "failure_cost_fraction"
+              ],
+              "properties": {
+                "enrollment": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "avoided_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "added_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "failure_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                }
+              }
+            },
+            "failed-arrays": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "enrollment",
+                "avoided_fraction",
+                "added_cost_fraction",
+                "failure_cost_fraction"
+              ],
+              "properties": {
+                "enrollment": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "avoided_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "added_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "failure_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                }
+              }
+            },
+            "low-utilization": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "enrollment",
+                "avoided_fraction",
+                "added_cost_fraction",
+                "failure_cost_fraction"
+              ],
+              "properties": {
+                "enrollment": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "avoided_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "added_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "failure_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                }
+              }
+            },
+            "gpu-imbalance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "enrollment",
+                "avoided_fraction",
+                "added_cost_fraction",
+                "failure_cost_fraction"
+              ],
+              "properties": {
+                "enrollment": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "avoided_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "added_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "failure_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                }
+              }
+            },
+            "memory-sizing": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "enrollment",
+                "avoided_fraction",
+                "added_cost_fraction",
+                "failure_cost_fraction"
+              ],
+              "properties": {
+                "enrollment": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "avoided_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "added_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                },
+                "failure_cost_fraction": {
+                  "$ref": "#/$defs/fraction"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "preset_version",
+        "dataset_version",
+        "selected_actions",
+        "cpu_allocation",
+        "cases",
+        "overheads"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "portfolio-simulation-1"
+        },
+        "preset_version": {
+          "const": "illustrative-2026-09-17-v1"
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "selected_actions": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "cpu_allocation": {
+          "enum": [
+            "memory_adjusted",
+            "whole_node"
+          ]
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/case"
+          }
+        },
+        "overheads": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpu-placement",
+            "idle-sessions",
+            "timeouts",
+            "startup-failures",
+            "failed-arrays",
+            "low-utilization",
+            "gpu-imbalance",
+            "memory-sizing"
+          ],
+          "properties": {
+            "cpu-placement": {
+              "$ref": "#/$defs/overhead"
+            },
+            "idle-sessions": {
+              "$ref": "#/$defs/overhead"
+            },
+            "timeouts": {
+              "$ref": "#/$defs/overhead"
+            },
+            "startup-failures": {
+              "$ref": "#/$defs/overhead"
+            },
+            "failed-arrays": {
+              "$ref": "#/$defs/overhead"
+            },
+            "low-utilization": {
+              "$ref": "#/$defs/overhead"
+            },
+            "gpu-imbalance": {
+              "$ref": "#/$defs/overhead"
+            },
+            "memory-sizing": {
+              "$ref": "#/$defs/overhead"
+            }
+          }
+        }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "required": [
+        "low",
+        "high"
+      ],
+      "properties": {
+        "low": {
+          "type": "number"
+        },
+        "high": {
+          "type": "number"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "required": [
+        "id",
+        "gross_reference_usd",
+        "intervention_reference_usd",
+        "net_reference_usd",
+        "failure_extra_reference_usd",
+        "enrolled_gpu_hours",
+        "released_gpu_hours",
+        "avoided_replay_gpu_hours",
+        "overhead_gpu_hours",
+        "cpu_core_hours"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "lower",
+            "illustrative",
+            "upper"
+          ]
+        },
+        "gross_reference_usd": {
+          "type": "number"
+        },
+        "intervention_reference_usd": {
+          "type": "number"
+        },
+        "net_reference_usd": {
+          "type": "number"
+        },
+        "failure_extra_reference_usd": {
+          "type": "number"
+        },
+        "enrolled_gpu_hours": {
+          "type": "number"
+        },
+        "released_gpu_hours": {
+          "type": "number"
+        },
+        "avoided_replay_gpu_hours": {
+          "type": "number"
+        },
+        "overhead_gpu_hours": {
+          "type": "number"
+        },
+        "cpu_core_hours": {
+          "type": "number"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "simulation_id",
+        "dataset_version",
+        "data_fingerprint",
+        "synthetic",
+        "kind",
+        "cash_savings_verified",
+        "performance_verified",
+        "configuration",
+        "baseline_reference_usd",
+        "target_reference_usd",
+        "gpu_reference_usd_per_hour",
+        "cases",
+        "bounds",
+        "actions",
+        "coverage",
+        "limitations"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "portfolio-simulation-1"
+        },
+        "simulation_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "dataset_version": {
+          "type": "string"
+        },
+        "data_fingerprint": {
+          "type": "string"
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "scenario_estimate"
+        },
+        "cash_savings_verified": {
+          "const": false
+        },
+        "performance_verified": {
+          "const": false
+        },
+        "configuration": {
+          "$ref": "#/$defs/request"
+        },
+        "baseline_reference_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "target_reference_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "gpu_reference_usd_per_hour": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/totals"
+          }
+        },
+        "bounds": {
+          "type": "object",
+          "required": [
+            "net_reference_usd",
+            "failure_extra_reference_usd",
+            "baseline_reduction_pct",
+            "target_contribution_pct",
+            "remaining_target_reference_usd"
+          ],
+          "additionalProperties": {
+            "$ref": "#/$defs/bounds"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "diagnosed_jobs",
+              "diagnosed_gpu_hours",
+              "evaluable_jobs",
+              "excluded_jobs",
+              "excluded_gpu_hours",
+              "assigned_jobs",
+              "assigned_gpu_hours",
+              "statistics",
+              "cases"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/action"
+              },
+              "cases": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "$ref": "#/$defs/totals"
+                }
+              }
+            }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "required": [
+            "unique_jobs",
+            "unique_gpu_hours",
+            "assigned_jobs",
+            "unassigned_jobs",
+            "unassigned_gpu_hours",
+            "overlapping_references_removed",
+            "overlapping_gpu_hours_removed"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "simulation_id",
+        "dataset_version",
+        "offset",
+        "limit",
+        "total",
+        "items"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "portfolio-simulation-1"
+        },
+        "simulation_id": {
+          "type": "string"
+        },
+        "dataset_version": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "required": [
+              "job_id",
+              "diagnoses",
+              "assigned_action",
+              "exclusions",
+              "source",
+              "cases"
+            ],
+            "properties": {
+              "job_id": {
+                "type": "string"
+              },
+              "assigned_action": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/action"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

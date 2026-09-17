@@ -1,4 +1,11 @@
-# manai — integrated A+B baseline
+# manai — A+B cost simulation and evidence review
+
+The current release adds eight-action cost simulation and A-owned Featherless
+evidence review. C is excluded. Three detailed mechanisms and five assumption-only
+screening estimates remain distinct; no realized savings or workload compatibility
+is established. See [release checks and model setup](docs/FEATHERLESS_WRAPUP.md).
+Default startup works without a model key. To enable Featherless, use the optional
+`service/compose.featherless.yml` overlay with an ignored local environment file.
 
 Track 2: a bounded CPU-placement pilot with traceable evidence, explicit assumptions and downside. The running base uses API v0.4. It does not establish CPU compatibility or realized savings.
 
@@ -22,9 +29,9 @@ For an existing data directory set `MANAI_DATA_DIR` to its absolute path. `MANAI
 
 - Overview, immutable recovery scenarios, one-job CPU cost/delay cases, evidence and claims come from A v0.4.
 - Data explorer and Decisions share B's read-only dataset routes with its local preview. These are B-owned `preview-1` / `optimization-preview-1` interfaces, separate from A's audit contract. Selections show deduplicated observed exposure; they do not approve or execute changes.
-- Multi-fix modeling is visibly disabled. B's preserved cohort CPU planner is a hypothetical comparison, separate from the audited single-job scenario and claims.
+- Overview, Decisions and Model share an immutable eight-action simulation with deduplicated assigned contributions and per-job evidence. Workload execution stays disabled. Simulation exports are separate from audited v0.4 claims.
 - The required template chatbot makes real official MCP calls without a model key. A deterministic summary is separately labeled.
-- No C installation, build, health check or provider key is required. Optional explanation errors preserve the base. C is not ready to enable; see the handoff.
+- C is excluded. Optional Featherless review runs in A, selects existing evidence facts and preserves explicit unknowns. Its failure leaves calculations and canonical claims unchanged; base MCP chat requires no key.
 
 A 503 on Overview means an actual data/upstream failure, not normal operation. Inspect `docker compose ps` and the api/analysis logs. A dataset preparation error appears in `docker compose logs dataset-prep`; fix the missing or mismatched source files before restarting. Obsolete development URLs such as :13010 may point at a different stack. Use :3000 for this candidate.
 
@@ -42,4 +49,4 @@ Frontend checks and real browser commands are in [integration results](eval/inte
 
 Imported official commit: `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`; [manifest and modifications](UPSTREAM_PROVENANCE.md). Preserve [license](docs/upstream/LICENSE), [attribution](docs/upstream/ATTRIBUTION.md) and [participant agreement](docs/upstream/PARTICIPANT_AGREEMENT.md). Source/prepared/generated data are local and excluded from Git and image contexts.
 
-AI assistance: OpenAI Codex (GPT-6, as identified in this integration session) generated planning, integration code, production packaging, tests and handoff documentation, and performed the recorded tool-based checks. The team supplied product choices and scope constraints. Official API/data tooling and MCP server are organizer-provided. No provider model has yet powered the product. Update this disclosure with actual A/B/C models/frameworks and human modifications before final submission.
+AI assistance: OpenAI Codex (GPT-6, as identified in this integration session) generated planning, integration code, production packaging, tests and handoff documentation, and performed the recorded tool-based checks. The team supplied product choices and scope constraints. Official API/data tooling and MCP server are organizer-provided. The optional live review uses Featherless-hosted `Qwen/Qwen3-30B-A3B-Instruct-2507` to select existing fact IDs; deterministic code calculates and renders numeric claims. No C service is included. Full team disclosure remains a final submission task.

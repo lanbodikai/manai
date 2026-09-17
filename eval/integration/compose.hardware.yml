@@ -1,0 +1,11 @@
+# Isolated local product verification; no changes to running development stacks.
+services:
+  api:
+    ports: !override ["127.0.0.1:18031:8000"]
+  dashboard:
+    ports: !override ["127.0.0.1:13111:3000"]
+networks:
+  default:
+    ipam:
+      config: !override
+        - subnet: 10.254.193.0/24

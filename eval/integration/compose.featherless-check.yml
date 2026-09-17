@@ -1,0 +1,10 @@
+services:
+  api:
+    ports: !override ["127.0.0.1:18041:8000"]
+  dashboard:
+    ports: !override ["127.0.0.1:13121:3000"]
+networks:
+  default:
+    ipam:
+      config: !override
+        - subnet: 10.254.192.0/24

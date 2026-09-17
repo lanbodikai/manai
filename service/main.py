@@ -17,6 +17,10 @@ from service.source import inspect_data, current_status
 from service.analysis_routes import router, ServiceError
 from service.audits import AuditStore
 from service.base_chat.chat import router as chat_router
+from service.hardware_routes import router as hardware_router
+from service.portfolio_routes import router as portfolio_router
+from service.simulation_review import router as simulation_review_router
+from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -29,6 +33,12 @@ async def lifespan(app):
     app.state.audits = AuditStore(capacity=128)
     app.state.analysis_context = None
     app.state.context_lock = asyncio.Lock()
+    app.state.hardware_lock = asyncio.Lock()
+    app.state.hardware_snapshot = None
+    app.state.portfolio_lock = asyncio.Lock()
+    app.state.portfolio_source = None
+    app.state.portfolio_snapshots = OrderedDict()
+    app.state.portfolio_requests = {}
     app.state.chat_slots = asyncio.Semaphore(2)
     app.state.source = await asyncio.to_thread(inspect_data, DATA)
     app.state.job_count = None
@@ -123,6 +133,9 @@ async def overview(request: Request):
 
 app.include_router(router)
 app.include_router(chat_router)
+app.include_router(hardware_router)
+app.include_router(portfolio_router)
+app.include_router(simulation_review_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):
@@ -131,3 +144,4 @@ def reviewer_unavailable(audit_id: str, request: Request):
 @app.api_route("/api/{remaining:path}", methods=["GET","POST"])
 def not_implemented(remaining: str, request: Request):
     return error(request,503,"BOOTSTRAP_NOT_IMPLEMENTED","This capability belongs to the next workstream slice.")
+

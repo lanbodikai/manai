@@ -1,6 +1,8 @@
 import type { components } from "./generated";
 import type { DatasetApi } from "./dataset";
 import type { OptimizationApi } from "./optimization";
+import type { HardwareApi } from "./hardware";
+import type { PortfolioApi } from "./portfolio";
 export type Schemas = components["schemas"];
 export type Audit = Schemas["Audit"];
 export type Scenario = Schemas["Scenario"];
@@ -9,6 +11,9 @@ export type EvidenceDetail = Schemas["EvidenceDetail"];
 export type Explanation = Schemas["Explanation"];
 export type PageInput = { limit?: number; cursor?: string };
 export interface DashboardApi {
+  portfolio?: PortfolioApi;
+  /** Separate cpu-hardware-1 simulation; never canonical recovery/claims. */
+  hardware?: HardwareApi;
   /** Optional frontend preview capability; not a frozen v0.3 route extension. */
   datasets?: DatasetApi;
   /** Proposed modeled-action interface; not an adopted v0.3/v0.4 extension. */

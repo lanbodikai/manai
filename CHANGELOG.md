@@ -1,5 +1,20 @@
 # Project changelog
 
+## Connected portfolio simulation — private branch — 2026-09-17
+
+- Connected Overview, Decisions and the shared Model route to one source-bound calculation with explicit draft/recalculate behavior, cost range, target contribution and separate failure stress.
+- Added checkpoint/restart and elapsed-age idle release beside the existing hardware CPU model. At Winston's subsequent request, added five explicitly assumption-only allocation-cost screens so all eight decision options have editable cost estimates.
+- Frozen presets precede evaluation. Calculations retain losses, charge fixed overheads once per action and assign each job to one selected action. Standalone action estimates are labeled as overlapping and kept separate from portfolio contributions.
+- Independent full-source Decimal checks, immutable snapshot/evidence tests and production browser checks recorded in docs/PORTFOLIO_SIMULATION.md. Source-derived results stay private. Active v0.4 claims and C remain unchanged.
+
+## Bounded hardware scenario — local follow-up to PR #8 — 2026-09-17
+
+- Added a deterministic documented-hardware model using requested CPU/RAM, approved cohort eligibility and the existing CPU calculator. Full fitting-population estimates, failure costs and historical target gap are separate from canonical recovery/claims and the manual small pilot.
+- Added the independent `cpu-hardware-1` feature schema, read-only endpoints, bounded evidence pages and source-linked Model panel. Active v0.4 and C remain unchanged.
+- Kept private source-derived receipts out of Git. Added exhaustive independent arithmetic verification and live browser checks, including explicit feature failure and refresh recovery.
+- Real-data verification caught array-valued prepared metadata reaching scalar normalization. Restricted normalization to model input columns and added an invented regression case. The isolated port conflict and failed attempts are preserved privately.
+- This branch is local and unmerged. Human usability and actual CPU execution remain untested by this follow-up.
+
 ## Validated main baseline — 2026-09-17
 
 - Published frozen A+B snapshot 5c4fd83 through PR #6/integration and PR #7/main (`610f89d`), with exact tree equality verified. Winston explicitly deferred independent cross-review and U05; neither is marked passed.
@@ -118,3 +133,9 @@ Historical next step at v0.1: Round 2 choices. Those choices are now recorded in
 - A1 published deterministic cohort/overlap/scenario/downside, immutable audit/evidence and claims at 05c7fa0. A2 required real MCP chatbot and live development-browser witness published at 141ee7b; no model key or C dependency.
 - Winston confirmed B agreement to exact ce6a44e CPU-pilot proposal. A recorded agreement in PR #2 before promoting schemas/examples and implementing CPU cost/delay and memory partitions. Claims and Explanation shapes remain unchanged; B must regenerate the strict client.
 - Recorded GPU allocation remains distinct from scheduler duration; single-job scenarios preserve negative/unknown values and never alter cohort claims. CPU compatibility, realized savings and stop enforcement remain unproven. Source records and private verification artifacts stay local.
+# Featherless simulation review integration
+
+Integrated newest main and the eight-action simulation; added bounded A-owned
+Featherless review from result to assumptions and frozen job evidence. C excluded
+by Winston's explicit instruction. See docs/FEATHERLESS_WRAPUP.md for checks,
+scope and remaining limits.

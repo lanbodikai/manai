@@ -1,0 +1,191 @@
+{
+  "contract_version": "portfolio-simulation-1",
+  "preset_version": "illustrative-2026-09-17-v1",
+  "selected_actions": [
+    "cpu-placement",
+    "idle-sessions",
+    "timeouts",
+    "startup-failures",
+    "failed-arrays",
+    "low-utilization",
+    "gpu-imbalance",
+    "memory-sizing"
+  ],
+  "cpu_allocation": "memory_adjusted",
+  "overheads": {
+    "cpu-placement": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "idle-sessions": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "timeouts": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "startup-failures": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "failed-arrays": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "low-utilization": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "gpu-imbalance": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    },
+    "memory-sizing": {
+      "setup_usd": 0,
+      "storage_usd": 0,
+      "other_usd": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "lower",
+      "cpu_price_ratio": 0.02,
+      "checkpoint_enrollment": 0.25,
+      "replay_fraction": 0.25,
+      "interval_minutes": 60,
+      "checkpoint_minutes": 3,
+      "restart_minutes": 10,
+      "idle_enrollment": 0.25,
+      "release_hours": 8,
+      "mistake_fraction": 0.1,
+      "screening": {
+        "startup-failures": {
+          "enrollment": 0.25,
+          "avoided_fraction": 0.1,
+          "added_cost_fraction": 0.1,
+          "failure_cost_fraction": 1
+        },
+        "failed-arrays": {
+          "enrollment": 0.25,
+          "avoided_fraction": 0.1,
+          "added_cost_fraction": 0.1,
+          "failure_cost_fraction": 1
+        },
+        "low-utilization": {
+          "enrollment": 0.25,
+          "avoided_fraction": 0.1,
+          "added_cost_fraction": 0.1,
+          "failure_cost_fraction": 1
+        },
+        "gpu-imbalance": {
+          "enrollment": 0.25,
+          "avoided_fraction": 0.1,
+          "added_cost_fraction": 0.1,
+          "failure_cost_fraction": 1
+        },
+        "memory-sizing": {
+          "enrollment": 0.25,
+          "avoided_fraction": 0.1,
+          "added_cost_fraction": 0.1,
+          "failure_cost_fraction": 1
+        }
+      }
+    },
+    {
+      "id": "illustrative",
+      "cpu_price_ratio": 0.0125,
+      "checkpoint_enrollment": 0.5,
+      "replay_fraction": 0.5,
+      "interval_minutes": 30,
+      "checkpoint_minutes": 1,
+      "restart_minutes": 5,
+      "idle_enrollment": 0.5,
+      "release_hours": 4,
+      "mistake_fraction": 0.05,
+      "screening": {
+        "startup-failures": {
+          "enrollment": 0.5,
+          "avoided_fraction": 0.25,
+          "added_cost_fraction": 0.05,
+          "failure_cost_fraction": 1
+        },
+        "failed-arrays": {
+          "enrollment": 0.5,
+          "avoided_fraction": 0.25,
+          "added_cost_fraction": 0.05,
+          "failure_cost_fraction": 1
+        },
+        "low-utilization": {
+          "enrollment": 0.5,
+          "avoided_fraction": 0.25,
+          "added_cost_fraction": 0.05,
+          "failure_cost_fraction": 1
+        },
+        "gpu-imbalance": {
+          "enrollment": 0.5,
+          "avoided_fraction": 0.25,
+          "added_cost_fraction": 0.05,
+          "failure_cost_fraction": 1
+        },
+        "memory-sizing": {
+          "enrollment": 0.5,
+          "avoided_fraction": 0.25,
+          "added_cost_fraction": 0.05,
+          "failure_cost_fraction": 1
+        }
+      }
+    },
+    {
+      "id": "upper",
+      "cpu_price_ratio": 0.005,
+      "checkpoint_enrollment": 0.75,
+      "replay_fraction": 0.75,
+      "interval_minutes": 10,
+      "checkpoint_minutes": 0.25,
+      "restart_minutes": 1,
+      "idle_enrollment": 0.75,
+      "release_hours": 2,
+      "mistake_fraction": 0.01,
+      "screening": {
+        "startup-failures": {
+          "enrollment": 0.75,
+          "avoided_fraction": 0.5,
+          "added_cost_fraction": 0.02,
+          "failure_cost_fraction": 1
+        },
+        "failed-arrays": {
+          "enrollment": 0.75,
+          "avoided_fraction": 0.5,
+          "added_cost_fraction": 0.02,
+          "failure_cost_fraction": 1
+        },
+        "low-utilization": {
+          "enrollment": 0.75,
+          "avoided_fraction": 0.5,
+          "added_cost_fraction": 0.02,
+          "failure_cost_fraction": 1
+        },
+        "gpu-imbalance": {
+          "enrollment": 0.75,
+          "avoided_fraction": 0.5,
+          "added_cost_fraction": 0.02,
+          "failure_cost_fraction": 1
+        },
+        "memory-sizing": {
+          "enrollment": 0.75,
+          "avoided_fraction": 0.5,
+          "added_cost_fraction": 0.02,
+          "failure_cost_fraction": 1
+        }
+      }
+    }
+  ]
+}
