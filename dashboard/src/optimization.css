@@ -236,3 +236,11 @@
 .hardware-scenario table { width:100%; border-collapse:collapse; }
 .hardware-scenario th,.hardware-scenario td { padding:10px; text-align:left; border-bottom:1px solid #dfe5ef; }
 .hardware-scenario p { line-height:1.6; }
+.portfolio-summary,.portfolio-workspace>.panel{padding:24px;min-width:0;margin-bottom:20px}
+.portfolio-summary h2{margin:12px 0}.portfolio-summary p{line-height:1.65}.portfolio-headline{display:block;font-size:clamp(22px,2.3vw,34px);line-height:1.35;overflow-wrap:anywhere}
+.tile .portfolio-summary{padding:0;border:0;box-shadow:none;background:transparent;margin:0}.tile .portfolio-summary h2{font-size:18px}
+.portfolio-action{padding:20px 0;border-top:1px solid #e2e8f5}.portfolio-action>label{display:flex;gap:10px;align-items:center;font-weight:600}.portfolio-action small{display:block;font-weight:400;max-width:310px}
+.portfolio-workspace input[type=number]{width:125px;padding:10px;border:1px solid #c7d2e7;border-radius:7px}.portfolio-workspace select{max-width:100%;padding:10px;border:1px solid #c7d2e7;border-radius:7px}.portfolio-workspace input[type=checkbox]{width:18px;height:18px}
+.portfolio-overheads{display:flex;flex-wrap:wrap;gap:20px;margin-top:14px}.portfolio-overheads label{display:flex;flex-direction:column;gap:5px}.portfolio-workspace button{margin:8px 10px 0 0}.portfolio-workspace details{margin:18px 0}.portfolio-workspace pre{max-width:500px;max-height:320px;overflow:auto}.portfolio-identity{overflow-wrap:anywhere}.canonical-audit-summary{padding:12px 0;border-bottom:1px solid #e2e8f5}
+.portfolio-action>label{flex-direction:row;justify-content:flex-start}.portfolio-workspace table{width:100%;border-collapse:collapse}.portfolio-workspace th,.portfolio-workspace td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f5}.portfolio-workspace th small{display:block;font-weight:400}.portfolio-workspace .decision-scroll{max-width:100%}
+@media(max-width:650px){.sidebar .brand{flex-shrink:0}.sidebar nav{min-width:0;overflow-x:auto;margin-left:12px}.sidebar nav a{flex-shrink:0}.portfolio-workspace>.panel{padding:16px}}

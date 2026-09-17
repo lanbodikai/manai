@@ -3,19 +3,21 @@ import { ArrowRight, CheckCircle2, RefreshCw, TriangleAlert } from "lucide-react
 import type { DashboardApi } from "../api/types";
 import { decisionPayload, sameFixes, type DecisionTable, type OptimizeReceipt, type OptimizeRequest } from "../api/optimization";
 import { errorMessage } from "../api/validation";
-import { number, usd } from "../format";
+import { number, usd, range } from "../format";
 import { datasetHref, useDatasetCatalog } from "./DataExplorer";
 import { CpuPilotPlanner } from "./CpuPilotPlanner";
 import { OptimizeDialog } from "./OptimizeDialog";
 import { DecisionOverview } from "./DecisionOverview";
 import type { PilotReview } from "../pilot-model";
 import { taskSummary } from "../optimization-options";
+import type {ModelState} from './PortfolioModel';
+import {actions as modeledActions} from '../api/portfolio';
 import type {HardwareScenario} from "../api/hardware";
 import {HardwareScenarioPanel} from "./HardwareScenarioPanel";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
-export function CostOptimization({ api, modelAvailable = true }: { api: DashboardApi; modelAvailable?: boolean }) {
+export function CostOptimization({ api, modelAvailable = true, portfolio }: { api: DashboardApi; modelAvailable?: boolean; portfolio?:ModelState }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const [table, setTable] = useState<DecisionTable | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -171,7 +173,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
           <li><strong>3. Authorize</strong><span>Set an owner, stop limits, and a rollback path.</span></li>
         </ol>
       </section>
-      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={activeHardware ? null : review} hardware={activeHardware} hardwareAllocation={hardwareAllocation} onModel={openPilot} onReview={activeHardware ? openPilot : reviewPilot} disabled={sending || loading || !!loadError}/>
+      <DecisionOverview portfolio={portfolio} totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={activeHardware ? null : review} hardware={activeHardware} hardwareAllocation={hardwareAllocation} onModel={openPilot} onReview={activeHardware ? openPilot : reviewPilot} disabled={sending || loading || !!loadError}/>
       {hardwareError && <p className="small muted" role="status">Hardware scenario unavailable: {hardwareError} Manual planning remains available. <button className="text-button" onClick={reload}>Refresh source</button></p>}
       <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
         <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
@@ -187,7 +189,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
               <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
-              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Compare CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>Model <ArrowRight size={13}/></button>}</td>
+              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p>{portfolio?.enabled&&<div className="small">{(()=>{const a=portfolio.result?.actions.find(a=>a.id===row.id);return a?<><strong>Standalone: {range(Math.min(...a.standalone_cases.map(c=>c.net_reference_usd)),Math.max(...a.standalone_cases.map(c=>c.net_reference_usd)))}</strong><p>Portfolio contribution: {range(Math.min(...a.cases.map(c=>c.net_reference_usd)),Math.max(...a.cases.map(c=>c.net_reference_usd)))}</p><span>{a.model_kind==='assumption_only_screening'?'Assumption-only screening':'Detailed scenario'}{portfolio.dirty?' · previous calculation':''}</span></>:<span>Not included in the current calculation.</span>;})()}</div>}<span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{portfolio?.enabled && modeledActions.includes(row.id as typeof modeledActions[number]) && <a className="text-button" aria-label={`Model ${row.title}`} href={`#model?action=${row.id}`}>Model →</a>}{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Compare CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>{portfolio?.enabled ? "Separate CPU / small pilot" : "Model"} <ArrowRight size={13}/></button>}</td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><details className="row-source-details"><summary>Details</summary><p>{row.fix}</p><p>Owner: {row.owner}</p><p>{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</p><p>{number(row.excluded_cancelled_jobs)} cancelled jobs excluded</p></details></td>
             </tr>)}</tbody>
           </table>

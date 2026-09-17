@@ -2,6 +2,8 @@
 
 ## Current mode
 
+CONNECTED PORTFOLIO — LOCAL IMPLEMENTATION. Winston authorized the shared Overview/Decisions/Model cost simulation on `codex/portfolio-simulation` from `605f4cc`, then explicitly expanded it to all eight options. Three detailed mechanisms and five assumption-only screening estimates must remain distinguished. Keep canonical v0.4 claims and manual pilot separate. Private evaluation and local commits are authorized; publication, merge, workload execution and C integration are not. See docs/PORTFOLIO_SIMULATION.md. Earlier narrower/deferred multi-fix wording is superseded only for this local simulation.
+
 BOUNDED HARDWARE SCENARIO — LOCAL FOLLOW-UP. Winston authorized a reproducible branch from merged PR #8/main `a7087eb` to place the bounded CPU hardware simulation in Decisions → Model and show its historical target contribution. Branch `codex/cpu-hardware-product` owns this narrow A/B follow-up. Preserve the manual pilot and active v0.4 claims; no C integration, workloads, publication or merge in this task. See docs/CPU_HARDWARE_HANDOFF.md and eval/analysis/HARDWARE_PRODUCT_RESULTS.md. Earlier publication authorizations below do not publish this new feature.
 
 MAIN BASELINE MERGED. Winston approved publishing validated A+B snapshot 5c4fd83 through integration to main (runtime merge 610f89d), explicitly deferring independent cross-review and U05. Those checks remain pending, not passed. New B revisions target main separately. C must first merge/read the new main and validate compatibility; C remains disabled by default. See docs/MAIN_BASELINE_HANDOFF.md. This status supersedes earlier candidate-only wording below.

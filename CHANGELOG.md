@@ -1,5 +1,12 @@
 # Project changelog
 
+## Connected portfolio simulation — private branch — 2026-09-17
+
+- Connected Overview, Decisions and the shared Model route to one source-bound calculation with explicit draft/recalculate behavior, cost range, target contribution and separate failure stress.
+- Added checkpoint/restart and elapsed-age idle release beside the existing hardware CPU model. At Winston's subsequent request, added five explicitly assumption-only allocation-cost screens so all eight decision options have editable cost estimates.
+- Frozen presets precede evaluation. Calculations retain losses, charge fixed overheads once per action and assign each job to one selected action. Standalone action estimates are labeled as overlapping and kept separate from portfolio contributions.
+- Independent full-source Decimal checks, immutable snapshot/evidence tests and production browser checks recorded in docs/PORTFOLIO_SIMULATION.md. Source-derived results stay private. Active v0.4 claims and C remain unchanged.
+
 ## Bounded hardware scenario — local follow-up to PR #8 — 2026-09-17
 
 - Added a deterministic documented-hardware model using requested CPU/RAM, approved cohort eligibility and the existing CPU calculator. Full fitting-population estimates, failure costs and historical target gap are separate from canonical recovery/claims and the manual small pilot.

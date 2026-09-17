@@ -33,6 +33,7 @@ import { CpuPilot } from "./components/CpuPilot";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
 import { CostOptimization } from "./components/CostOptimization";
+import {usePortfolio,PortfolioSummary,PortfolioWorkspace} from './components/PortfolioModel';
 import { CpuPilotSummary } from "./components/CpuPilotSummary";
 import {
   DataExplorer,
@@ -70,11 +71,12 @@ export function App({ runtime }: { runtime: Runtime }) {
   const mock = runtime.mode === "mock";
   const datasetAvailable =
     local || mock || import.meta.env.VITE_DATASET_API_ENABLED === "true";
+  const portfolio=usePortfolio(api, runtime.mode === "http" && datasetAvailable);
   useEffect(() => {
     const change = () => {
       const h = window.location.hash;
       setHash(h);
-      setActive(h.startsWith("#data") ? "data" : h.slice(1) || "overview");
+      setActive(h.startsWith("#data") ? "data" : h.slice(1).split("?")[0] || "overview");
     };
     window.addEventListener("hashchange", change);
     change();
@@ -207,7 +209,8 @@ export function App({ runtime }: { runtime: Runtime }) {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "optimization", label: "Decisions", icon: Wallet },
     { id: "data", label: "Data explorer", icon: Database },
-    { id: "scenario", label: "Scenario", icon: SlidersHorizontal },
+    { id: "model", label: "Model", icon: FlaskConical },
+    { id: "scenario", label: "CPU audit", icon: SlidersHorizontal },
     { id: "evidence", label: "Evidence", icon: FileSearch },
     { id: "ask", label: "Ask about this pilot", icon: MessageSquare },
   ];
@@ -292,8 +295,10 @@ export function App({ runtime }: { runtime: Runtime }) {
             <span>No live monitoring, savings audit or MCP</span>
           </div>
         )}
-        {hash === "#optimization" && datasetAvailable ? (
-          <CostOptimization api={api} modelAvailable={runtime.mode !== "http"} />
+        {hash.split("?")[0] === "#model" ? (
+          <PortfolioWorkspace model={portfolio} focusAction={new URLSearchParams(hash.split("?")[1] ?? "").get("action") ?? undefined}/>
+        ) : hash === "#optimization" && datasetAvailable ? (
+          <CostOptimization api={api} modelAvailable={runtime.mode !== "http"} portfolio={portfolio} />
         ) : hash === "#optimization" ? (
           <section className="panel unavailable-state" aria-labelledby="decisions-unavailable-title">
             <span className="eyebrow">DECISION REVIEW UNAVAILABLE</span>
@@ -383,12 +388,12 @@ export function App({ runtime }: { runtime: Runtime }) {
                       <span className="step">01</span>
                     </div>
                     <strong className="metric">
-                      {presentation
+                      {portfolio.enabled ? usd(portfolio.result?.baseline_reference_usd ?? overview.allocated_gpu_hours*overview.usd_per_gpu_hour) : presentation
                         ? usd(presentation.baselineUsd)
                         : `${number(overview.allocated_gpu_hours)} h`}
                     </strong>
                     <p className="metric-label">
-                      {presentation
+                      {portfolio.enabled ? "Historical sample · reference cost" : presentation
                         ? "Reference value · illustrative sample"
                         : "Allocated GPU-hours · source sample"}
                     </p>
@@ -419,7 +424,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                       <h2>Where to cut first</h2>
                       <span className="step">02</span>
                     </div>
-                    {audit ? (
+                    {portfolio.enabled ? <PortfolioSummary model={portfolio} compact/> : audit ? (
                       <>
                         <button
                           className="metric metric-link"
@@ -479,13 +484,13 @@ export function App({ runtime }: { runtime: Runtime }) {
                       run more slowly.
                     </strong>
                     <p className="small">
-                      {audit?.downside.mechanisms[0] ??
+                      {portfolio.enabled ? "CPU replacement, checkpoint recovery or an idle-release decision could fail." : audit?.downside.mechanisms[0] ??
                         "CPU-only execution may fail or run more slowly."}
                     </p>
                     <div className="tile-bottom">
                       <span>Financial downside</span>
                       <strong>
-                        {audit?.downside.money != null
+                        {portfolio.enabled ? portfolio.result ? range(portfolio.result.bounds.failure_extra_reference_usd.low,portfolio.result.bounds.failure_extra_reference_usd.high) + " extra" : "Not yet modeled" : audit?.downside.money != null
                           ? usd(audit.downside.money)
                           : "Not measured"}
                       </strong>
@@ -628,9 +633,14 @@ export function App({ runtime }: { runtime: Runtime }) {
                     <h2>
                       How far does
                       <br />
-                      this pilot get us?
+                      these actions get us?
                     </h2>
-                    {presentation ? (
+                    {portfolio.enabled ? <>
+                      <p>Combined modeled contribution toward the historical reference-cost target.</p>
+                      {portfolio.result ? <><strong className="portfolio-headline">{number(portfolio.result.bounds.baseline_reduction_pct.low)}%–{number(portfolio.result.bounds.baseline_reduction_pct.high)}%</strong><p>of baseline; {number(portfolio.result.bounds.target_contribution_pct.low)}%–{number(portfolio.result.bounds.target_contribution_pct.high)}% of the 20% target.</p><p>Remaining gap: {range(portfolio.result.bounds.remaining_target_reference_usd.low,portfolio.result.bounds.remaining_target_reference_usd.high)}</p>{portfolio.dirty&&<p>Assumptions changed · showing previous calculation</p>}</> : <p>Awaiting a source-backed simulation.</p>}
+                      <a href="#model">Inspect actions and assumptions →</a>
+                      <p className="small">Conditional reference values, not measured cash savings. Checkpoint benefits concern avoided future replay.</p>
+                    </> : presentation ? (
                       <>
                         <p>A small contribution. An honest gap.</p>
                         <div className="target-figure">
@@ -720,7 +730,8 @@ export function App({ runtime }: { runtime: Runtime }) {
                     </div>
                     {audit ? (
                       <>
-                        <div className="evidence-stats">
+                        {portfolio.enabled && <div className="canonical-audit-summary"><h3>Separate CPU recovery audit · official claims</h3><button className="text-button" aria-label="Inspect recovery value and evidence" onClick={()=>setDrawer({})}>{range(audit.recovery.reference_usd.values.low,audit.recovery.reference_usd.values.high)}</button><p>High bound: eligibility ceiling, not a forecast. This canonical audit does not include the combined cost simulation.</p></div>}
+                      <div className="evidence-stats">
                           <div>
                             <strong>
                               {number(audit.eligibility.unique_jobs)}

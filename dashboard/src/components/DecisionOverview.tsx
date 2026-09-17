@@ -4,17 +4,24 @@ import type {PilotReview} from "../pilot-model";
 import {number,range,usd} from "../format";
 import {datasetHref} from "./DataExplorer";
 import type {HardwareScenario} from "../api/hardware";
+import {PortfolioSummary,type ModelState} from './PortfolioModel';
 
 export type OutcomeSlice={label:string;hours:number;color:string;note:string};
-export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutcomes,cpu,review,onModel,onReview,disabled,hardware,hardwareAllocation="memory_adjusted"}:{
+export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutcomes,cpu,review,onModel,onReview,disabled,hardware,hardwareAllocation="memory_adjusted",portfolio}:{
   totalHours:number;price:number;windowLabel:string;outcomes:OutcomeSlice[];hasOutcomes:boolean;cpu?:DecisionRow;
   review:PilotReview|null;onModel:()=>void;onReview:()=>void;disabled:boolean;
   hardware?:HardwareScenario|null;hardwareAllocation?:string;
+  portfolio?:ModelState;
 }) {
   const snapshot=review?.snapshot;
   const r=snapshot?.result;
   const h=hardware?.allocations.find(a=>a.id===hardwareAllocation);
   const compactUsd=(value:number) => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:2}).format(value);
+  if(portfolio?.enabled)return <section className="decision-overview" aria-label="CFO decision overview">
+    <article className="panel decision-tile"><span className="eyebrow">1 · WHERE SPENDING GOES</span><h2>{compactUsd(totalHours*price)}</h2><p>Historical sample allocation value · reference pricing</p><p>{windowLabel}</p><p>{number(totalHours)} recorded GPU-hours. 20% target: {usd(totalHours*price*.2)}.</p><a href="#overview">Inspect spending by outcome →</a></article>
+    <PortfolioSummary model={portfolio} compact/>
+    <article className="panel decision-tile"><span className="eyebrow">3 · COST IF WE ARE WRONG</span><h2>{portfolio.result?range(portfolio.result.bounds.failure_extra_reference_usd.low,portfolio.result.bounds.failure_extra_reference_usd.high):'Not yet modeled'}</h2><p>Extra reference cost under intervention failure.</p><p>No usable checkpoint recovery, failed CPU replacement and mistaken idle releases requiring reruns. This is not an absolute worst case; business harm and further retries are unpriced.</p><a href="#model">Review assumptions and downside →</a></article>
+  </section>;
   return <section className="decision-overview" aria-label="CFO decision overview">
     <article className="panel decision-tile spend-tile">
       <div className="decision-tile-label"><ChartPie size={17}/><span>1 · WHERE SPENDING GOES</span></div>

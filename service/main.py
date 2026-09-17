@@ -18,6 +18,8 @@ from service.analysis_routes import router, ServiceError
 from service.audits import AuditStore
 from service.base_chat.chat import router as chat_router
 from service.hardware_routes import router as hardware_router
+from service.portfolio_routes import router as portfolio_router
+from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -32,6 +34,10 @@ async def lifespan(app):
     app.state.context_lock = asyncio.Lock()
     app.state.hardware_lock = asyncio.Lock()
     app.state.hardware_snapshot = None
+    app.state.portfolio_lock = asyncio.Lock()
+    app.state.portfolio_source = None
+    app.state.portfolio_snapshots = OrderedDict()
+    app.state.portfolio_requests = {}
     app.state.chat_slots = asyncio.Semaphore(2)
     app.state.source = await asyncio.to_thread(inspect_data, DATA)
     app.state.job_count = None
@@ -127,6 +133,7 @@ async def overview(request: Request):
 app.include_router(router)
 app.include_router(chat_router)
 app.include_router(hardware_router)
+app.include_router(portfolio_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):
