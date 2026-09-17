@@ -38,6 +38,7 @@ export function ScenarioForm({
     cancelled_policy: "exclude",
     interval_kind: "scenario",
     assumption_note: note,
+    ...(audit?.scenario.cpu_pilot ? { cpu_pilot: audit.scenario.cpu_pilot } : {}),
   };
   const dirty =
     !audit || JSON.stringify(audit.scenario) !== JSON.stringify(scenario);

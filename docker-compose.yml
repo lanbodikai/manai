@@ -1,4 +1,4 @@
-# Default: official API :8000 + team service + temporary verification page :3000.
+# Default: official API :8000 + analysis/MCP + production dashboard :3000.
 services:
   api:
     build:
@@ -7,7 +7,7 @@ services:
     ports: ["8000:8000"]
     volumes:
       - ./api:/app/api:ro
-      - ./data:/app/data:ro
+      - ${MANAI_DATA_DIR:-./data}:/app/data:ro
     environment: [PYTHONUNBUFFERED=1]
     healthcheck:
       test: ["CMD", "python", "-c",
@@ -68,7 +68,7 @@ services:
     environment:
       MGAI_URL: http://api:8000
     volumes:
-      - ./data:/app/data:ro
+      - ${MANAI_DATA_DIR:-./data}:/app/data:ro
     depends_on:
       api: {condition: service_healthy}
     healthcheck:
@@ -81,12 +81,17 @@ services:
   dashboard:
     build:
       context: .
-      dockerfile: tools/bootstrap/page/Dockerfile
+      dockerfile: dashboard/Dockerfile
     ports: ["3000:3000"]
     environment:
       ANALYSIS_URL: http://analysis:8001
     depends_on:
       analysis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3000/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
 
 networks:
   default:

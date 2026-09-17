@@ -16,3 +16,7 @@ work
 **/dist
 **/artifacts
 **/test-results
+**/.local-data
+**/.local-python
+**/.private
+**/playwright-report

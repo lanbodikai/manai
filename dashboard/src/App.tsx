@@ -28,6 +28,7 @@ import type { Audit, Overview, Runtime, Scenario, Schemas } from "./api/types";
 import { assertRequestId, errorMessage } from "./api/validation";
 import { number, range, usd } from "./format";
 import { ScenarioForm } from "./components/ScenarioForm";
+import { CpuPilot } from "./components/CpuPilot";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
 import { CostOptimization } from "./components/CostOptimization";
@@ -264,7 +265,7 @@ export function App({ runtime }: { runtime: Runtime }) {
           </span>
           <span className="topbar-right">
             <span className="small">
-              {local ? "Read-only preview" : "API v0.3"}
+              {local ? "Read-only preview" : "API v0.4"}
             </span>
             <span className="avatar">M</span>
           </span>
@@ -409,6 +410,9 @@ export function App({ runtime }: { runtime: Runtime }) {
                         <p className="metric-label">
                           Potential recovery · reference dollars
                         </p>
+                        <p className="small muted">{audit.scenario.recovery_fraction.high === 1
+                          ? "High bound: eligibility ceiling, not a forecast."
+                          : "High bound: assumed recovery, below the physical eligibility ceiling."} CPU recoverability remains unmeasured.</p>
                         <strong className="action-title">
                           Pilot CPU placement
                         </strong>
@@ -653,7 +657,12 @@ export function App({ runtime }: { runtime: Runtime }) {
                 </div>
                 <div className="bottom-grid">
                   <ScenarioForm
-                    initial={runtime.initialScenario}
+                    initial={runtime.initialScenario ?? {
+                      recovery_fraction: { low: 0, point: 0, high: 1 },
+                      usd_per_gpu_hour: overview.usd_per_gpu_hour,
+                      cancelled_policy: "exclude", interval_kind: "scenario",
+                      assumption_note: "No empirical CPU recoverability: zero low/point; high is the physical eligibility ceiling, not a forecast.",
+                    }}
                     audit={audit}
                     price={overview.usd_per_gpu_hour}
                     busy={calculating}
@@ -677,7 +686,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                         <strong>{pilot?.title ?? "CPU-placement pilot"}</strong>
                         <p className="small muted">
                           {pilot?.kind === "judgment"
-                            ? "Organizer judgment · investigate before action"
+                            ? `${pilot.origin === "team" ? "Team" : "Organizer"} judgment · investigate before action`
                             : mock
                               ? "Synthetic example · not a verified intervention"
                               : "Proposed pilot · compatibility unverified"}
@@ -744,6 +753,8 @@ export function App({ runtime }: { runtime: Runtime }) {
                 </div>
                 {audit && (
                   <>
+                    <CpuPilot key={`pilot-${audit.audit_id}`} api={api} audit={audit} busy={calculating}
+                      onSubmit={(s) => void model(s)} onEvidence={(id) => setDrawer({ evidence: id })} />
                     <ChatPanel
                       key={audit.audit_id}
                       api={api}
