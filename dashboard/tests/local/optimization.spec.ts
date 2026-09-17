@@ -19,8 +19,8 @@ test("real decision percentages, checkbox selection, evidence and actual unavail
   await page.keyboard.press("Enter");
   await expect(cancelledButton).toHaveAttribute("aria-pressed","true");
   await expect(page.getByText(/Someone cancelled this work/)).toBeVisible();
-  await expect(page.getByRole("article")).toHaveCount(3);
-  await page.getByRole("button",{name:"Show 5 more opportunities"}).click();
+  await expect(page.getByRole("article")).toHaveCount(2);
+  await page.getByRole("button",{name:"Show 6 more opportunities"}).click();
   await expect(page.getByRole("article")).toHaveCount(8);
   await page.getByRole("button",{name:"Show fewer opportunities"}).click();
   await expect(page.getByRole("table")).toBeHidden();

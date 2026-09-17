@@ -83,7 +83,7 @@ describe("decision table interactions", () => {
     await user.click(screen.getByRole("checkbox",{name:"Select CPU placement pilot"}));
     await user.click(screen.getByRole("checkbox",{name:"Select Idle interactive sessions"}));
     await waitFor(() => expect(within(screen.getByRole("region",{name:"Optimization context"})).getByText("5.0%")).toBeVisible());
-    expect(within(screen.getByRole("region",{name:"Optimization context"})).queryByText(/\$/)).not.toBeInTheDocument();
+    expect(screen.getByRole("heading",{name:"Should we run the CPU pilot?"})).toBeVisible();
     await user.click(screen.getByRole("button",{name:"Model selected changes"}));
     expect(await screen.findByRole("alert")).toHaveTextContent("Backend unavailable");
     expect(screen.getByRole("checkbox",{name:"Select CPU placement pilot"})).toBeChecked();

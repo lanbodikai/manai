@@ -5,6 +5,7 @@ import { decisionPayload, sameFixes, type DecisionTable, type OptimizeReceipt, t
 import { errorMessage } from "../api/validation";
 import { number, usd } from "../format";
 import { datasetHref, useDatasetCatalog } from "./DataExplorer";
+import { CpuPilotPlanner } from "./CpuPilotPlanner";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
@@ -89,7 +90,8 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
     { label:"Other", states:[], color:"#b5a2d3", note:"Other or undecoded outcomes need investigation before a decision can be made." },
   ];
   const outcomes = outcomeGroups.map(group => ({...group,hours:(catalog?.summary?.outcomes ?? []).filter(item => group.states.length ? group.states.includes(item.outcome) : !outcomeGroups.some(g => g.states.includes(item.outcome))).reduce((sum,item) => sum+item.gpu_hours,0)}));
-  const shownRows = showAll ? visible?.rows : visible?.rows.slice(0,3);
+  const shownRows = showAll ? visible?.rows : visible?.rows.slice(0,2);
+  const cpuRow = visible?.rows.find(row => row.id === "cpu-placement");
   return <div className="optimization-page">
     <header className="page-header">
       <div><span className="eyebrow">FROM FINDINGS TO A SMALLER GPU BILL</span>
@@ -114,26 +116,29 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
       </section>
       <section className="optimization-stats" aria-label="Optimization context">
         <div className="panel selected-stat"><span className="eyebrow">SELECTED FOR REVIEW</span><strong aria-live="polite">{current ? percent(visible.selection.share_pct) : "Updating…"}</strong><p>{current ? `${number(visible.selection.unique_jobs)} unique jobs · ${number(visible.selection.gpu_hours)} GPU-hours` : "Checking overlapping jobs"}<br />Each job counted once across your selection</p></div>
-        <div className="panel"><span className="eyebrow">VERIFIED SAVINGS</span><strong className="unmodeled">Not modeled</strong><p>Recovery, replacement costs and performance effects<br />need a validated backend scenario.</p></div>
+        <div className="panel"><span className="eyebrow">20% CUT · SAMPLE COMPARISON</span><strong className="unmodeled">{usd(visible.total_gpu_hours*referencePrice*.2)}</strong><p>20% of {usd(visible.total_gpu_hours*referencePrice)} sample reference cost, not a next-quarter forecast.<br />Even 100% recovery of the CPU cohort covers only {percent(cpuRow?.allocated_share_pct ?? 0)} of the baseline before replacement costs. Verified savings: <span>Not modeled</span>.</p></div>
       </section>
       <section className="panel decision-panel" aria-labelledby="decision-heading">
-        <div className="decision-heading"><div><span className="eyebrow">2 · CHOOSE WHAT TO TEST</span><h2 id="decision-heading">Start with a small, reversible change</h2><p>Three investigations to consider first—not a ranking of proven savings.</p></div>
+        <div className="decision-heading"><div><span className="eyebrow">2 · CHOOSE WHAT TO TEST</span><h2 id="decision-heading">Start with a small, reversible change</h2><p>First: test CPU compatibility. Next: investigate idle sessions. Priority reflects testability, not proven savings.</p></div>
           <span className="badge">{visible.synthetic ? "Synthetic decision example" : "Verified local source"}</span></div>
         <div className="decision-policy"><span>Cancelled jobs excluded</span><span>{number(visible.excluded_synthetic_findings)} synthetic findings excluded</span><span>Full historical sample, including resolved findings</span></div>
         <div className="decision-tasks">{shownRows?.map(row => <article key={row.id} className={`decision-task ${selected.includes(row.id) ? "task-selected" : ""}`} aria-label={row.title}>
           <input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} />
           <div className="task-content"><div className="task-heading"><h3>{row.title}</h3><div className="task-metrics"><div className="task-reference-cost"><strong>{usd(row.allocated_gpu_hours * referencePrice)}</strong><span>Reference cost · not savings</span></div><div className="task-exposure"><strong>{percent(row.allocated_share_pct)}</strong><span>of recorded GPU time</span></div></div></div><p>{row.fix}</p><span className="decision-owner">Owner: {row.owner} · {number(row.affected_jobs)} eligible jobs</span>{!row.affected_jobs && <p>No eligible jobs in this sample.</p>}
           <details><summary>Risk and safeguards</summary><p>{row.risk}</p><p>{row.excluded_cancelled_jobs} cancelled jobs excluded from this opportunity.</p></details>
+          {row.id === "cpu-placement" && <button className="secondary pilot-open" onClick={() => { if(!selected.includes(row.id)) choose([...selected,row.id]); setTimeout(() => document.getElementById("cpu-pilot-planner")?.focus(),0); }} disabled={sending}>Compare CPU pilot <ArrowRight size={14}/></button>}
+          {row.id === "idle-sessions" && <p className="small muted">Second investigation: verify checkpointing and owner consent. No recovery model assigned yet.</p>}
           <a className="text-button" href={datasetHref("findings",{query:row.rule})}>View {number(row.finding_count)} supporting findings <ArrowRight size={13} /></a></div>
         </article>)}</div>
-        <button className="text-button show-opportunities" onClick={() => setShowAll(!showAll)} aria-expanded={showAll}>{showAll ? "Show fewer opportunities" : `Show ${Math.max(0,visible.rows.length-3)} more opportunities`}</button>
+        <button className="text-button show-opportunities" onClick={() => setShowAll(!showAll)} aria-expanded={showAll}>{showAll ? "Show fewer opportunities" : `Show ${Math.max(0,visible.rows.length-2)} more opportunities`}</button>
         <p className="decision-footnote">Opportunity percentages overlap. Your selected total counts each job only once; it is not an estimate of savings.</p>
       </section>
+      {selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} />}
       <section className="panel optimization-action" aria-labelledby="selection-heading">
         <div className="optimization-selection"><span className="tile-icon blue"><SlidersHorizontal size={22} /></span><div><h2 id="selection-heading">{selected.length ? `${selected.length} ${selected.length === 1 ? "fix" : "fixes"} selected` : "Choose a fix to model"}</h2><p>{selectedRows.length ? selectedRows.map(r => r.title).join(" · ") : "Start with the CPU placement pilot, then compare other opportunities."}</p>
           {current && selected.length > 1 && <p className="overlap-note">{number(visible.selection.overlapping_gpu_hours)} duplicated GPU-hours removed from the combined exposure.</p>}</div></div>
         <div className="optimization-buttons"><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" onClick={optimize} disabled={!selected.length || !current || sending || !!receipt}>{sending ? "Sending request…" : receipt ? "Request accepted" : actionError ? "Retry optimization request" : "Model selected changes"}<ArrowRight size={16} /></button></div>
-        <p className="optimization-action-note">Requests a backend cost/performance model. It does not move jobs, terminate sessions or change scheduling. Financial results stay unmodeled until the analysis service provides them.</p>
+        <p className="optimization-action-note">Requests the separate backend model using selected fix IDs only. Local CPU planner assumptions are not submitted by this button. It does not approve or execute a pilot. Canonical financial results remain unavailable until the analysis service provides them.</p>
         {actionError && <div className="optimization-error" role="alert"><TriangleAlert size={18} /><div><strong>Optimization was not confirmed</strong><p>{actionError}</p><p>You can still inspect evidence and adjust your selection.</p><button className="text-button" onClick={reload}>Reload dataset</button></div></div>}
         {receipt && <div className="optimization-receipt" role="status"><CheckCircle2 size={19} /><div><strong>{receipt.synthetic ? "Synthetic example — request accepted" : "Backend accepted your modeling request"}</strong><p>Request {receipt.optimization_id}. Acceptance is not a completed optimization or verified savings.</p></div></div>}
       </section>
