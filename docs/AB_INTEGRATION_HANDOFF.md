@@ -23,7 +23,8 @@ main 5a8d995
     codex/product-integration
       5166afd                 v0.4 UI / CPU / production packaging
       a6bb59e                 preserves concurrent B commits through e24c78a
-      read-only integration   production Data explorer / Decisions / verification
+      4a260ae                 production Data explorer / Decisions / verification
+      2dbc7fc                 preserves B dialog update 788b5ad; read-only action guard
       PR #4 -> integration    pending independent cross-review / U05
   C d4fa017, PR #3            separately checked, not merged or enabled
 
@@ -40,7 +41,7 @@ The old local `manai-bootstrap` API was stopped while moving required ports to `
 
 ## To B's author
 
-Your CFO planner, task table, GPU/machine/findings navigation and commits through `e24c78a` are preserved. Fetch and merge/fast-forward from `origin/codex/product-integration`; do not reset or force-push over the integration commits. The branch contains A's v0.4 history, so a later merge into integration will preserve it.
+Your CFO planner, task table, GPU/machine/findings navigation and commits through `788b5ad` are preserved. Fetch and merge/fast-forward from `origin/codex/product-integration`; do not reset or force-push over the integration commits. The branch contains A's v0.4 history, so a later merge into integration will preserve it.
 
 Production serves :3000 using Node 22, with `dataset-prep` preparing a checksum-verified private snapshot. `tools/dataset-handler.ts` is shared by production and the Vite local-preview plugin. Production enables the read-only HTTP adapter; the multi-fix button is disabled with an explicit label. The separate cohort planner remains hypothetical and does not change A's claims. The explorer's initial search debounce no longer resets quick pagination.
 
