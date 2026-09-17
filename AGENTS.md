@@ -2,6 +2,8 @@
 
 ## Current mode
 
+FEATHERLESS WRAP-UP. Winston authorized finishing Featherless-backed backward review of the eight-action simulation, syncing newest main, and wrapping this slice within four minutes. C is explicitly excluded from this submission. The bounded implementation lives in A and requires no C package/service; preserve no-key base behavior. See docs/FEATHERLESS_WRAPUP.md for exact checks and remaining final publication work.
+
 CONNECTED PORTFOLIO — LOCAL IMPLEMENTATION. Winston authorized the shared Overview/Decisions/Model cost simulation on `codex/portfolio-simulation` from `605f4cc`, then explicitly expanded it to all eight options. Three detailed mechanisms and five assumption-only screening estimates must remain distinguished. Keep canonical v0.4 claims and manual pilot separate. Private evaluation and local commits are authorized; publication, merge, workload execution and C integration are not. See docs/PORTFOLIO_SIMULATION.md. Earlier narrower/deferred multi-fix wording is superseded only for this local simulation.
 
 BOUNDED HARDWARE SCENARIO — LOCAL FOLLOW-UP. Winston authorized a reproducible branch from merged PR #8/main `a7087eb` to place the bounded CPU hardware simulation in Decisions → Model and show its historical target contribution. Branch `codex/cpu-hardware-product` owns this narrow A/B follow-up. Preserve the manual pilot and active v0.4 claims; no C integration, workloads, publication or merge in this task. See docs/CPU_HARDWARE_HANDOFF.md and eval/analysis/HARDWARE_PRODUCT_RESULTS.md. Earlier publication authorizations below do not publish this new feature.

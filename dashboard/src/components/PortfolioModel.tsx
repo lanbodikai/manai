@@ -43,6 +43,7 @@ export function PortfolioSummary({model,compact=false}:{model:ModelState;compact
   {(model.dirty||model.busy&&r)&&<p role="status">Assumptions changed · showing previous calculation</p>}
   {model.error&&<p role="alert">{model.error} <button className="text-button" onClick={model.retry}>Reload simulation source</button></p>}
   <a className="text-button" href="#model">Model a scenario →</a>
+  {r&&<a className="text-button" href="#ask">Review this estimate →</a>}
  </section>;
 }
 

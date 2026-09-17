@@ -305,7 +305,7 @@ export function App({ runtime }: { runtime: Runtime }) {
               error || calcError || !audit ? <section className="panel error-state" role="alert">
                 <h1>Could not prepare the pilot assistant</h1><p>{error || calcError || "Pilot evidence is unavailable."}</p>
                 <button className="primary" onClick={() => setReload(x => x + 1)}>Retry connection</button>
-              </section> : <ChatPanel key={audit.audit_id} api={api} audit={audit} mock={mock} onEvidence={id => setDrawer({ evidence:id })} />}
+              </section> : <ChatPanel key={audit.audit_id} api={api} audit={audit} mock={mock} portfolio={portfolio} onEvidence={id => setDrawer({ evidence:id })} />}
           </div>
         ) : hash === "#optimization" && datasetAvailable ? (
           <CostOptimization

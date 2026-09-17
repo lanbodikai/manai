@@ -29,7 +29,7 @@ describe('documented hardware feature',()=>{
     const s=scenario();render(<DecisionOverview totalHours={32} price={2.5} windowLabel="Invented" outcomes={[]} hasOutcomes={false} review={null} hardware={s} onModel={()=>{}} onReview={()=>{}} disabled={false}/>);
     expect(screen.getByText('Simulated net reference benefit · full fitting population')).toBeVisible();
     expect(screen.getByText(/Successful replacement · unchanged runtime/)).toBeVisible();
-    expect(screen.getByText('Extra modeled cost if every fitting job needs a full GPU rerun')).toBeVisible();
+    expect(screen.getByText(/Extra modeled cost if every fitting job needs a full GPU rerun/)).toBeVisible();
   });
   it('renders source-linked fit evidence without scaling a small pilot',async()=>{
     const s=scenario();const api:HardwareApi={summary:vi.fn(),jobs:vi.fn().mockResolvedValue(page(s))};const select=vi.fn();

@@ -56,7 +56,7 @@ const server = createServer(async (req, res) => {
         });
         response.on('error', () => upstream.destroy(new Error('Upstream response failed')));
       });
-      const timer = setTimeout(() => upstream.destroy(new Error('Upstream deadline')), reviewer ? 31000 : 20000);
+      const timer = setTimeout(() => upstream.destroy(new Error('Upstream deadline')), reviewer || url.pathname.endsWith('/review') ? 31000 : 20000);
       upstream.on('error', () => {
         clearTimeout(timer);
         fail(res, 503, reviewer ? 'AGENT_UNAVAILABLE' : 'UPSTREAM_UNAVAILABLE',

@@ -55,3 +55,13 @@
   .assistant-text { font-size:13px; }
   .user-message { font-size:13px; }
 }
+.review-scope-tabs { display:flex; gap:10px; flex-wrap:wrap; padding:12px 0; }
+.review-scope-tabs [aria-pressed="true"] { background:#eaf0ff; border-color:#2856e8; }
+.simulation-review { max-width:960px; margin:0 auto; width:100%; box-sizing:border-box; }
+.simulation-review select { padding:10px; max-width:100%; margin:8px; }
+.simulation-review .conversation-suggestions { justify-content:flex-start; padding:16px 0; }
+.simulation-review .conversation-composer { margin:12px 0; width:100%; }
+.simulation-review-answer { overflow-wrap:anywhere; margin-top:24px; }
+.simulation-review-answer .assistant-text { white-space:pre-wrap; line-height:1.65; }
+.simulation-review-answer pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; }
+.simulation-review-answer details { padding:12px 0; }

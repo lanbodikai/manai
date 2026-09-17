@@ -1,0 +1,6 @@
+# Optional model configuration in A; no C service or dependency.
+services:
+  analysis:
+    environment:
+      FEATHERLESS_API_KEY: ${FEATHERLESS_API_KEY:-}
+      FEATHERLESS_MODEL: ${REVIEWER_MODEL:-Qwen/Qwen3-30B-A3B-Instruct-2507}

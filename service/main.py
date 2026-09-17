@@ -19,6 +19,7 @@ from service.audits import AuditStore
 from service.base_chat.chat import router as chat_router
 from service.hardware_routes import router as hardware_router
 from service.portfolio_routes import router as portfolio_router
+from service.simulation_review import router as simulation_review_router
 from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -134,6 +135,7 @@ app.include_router(router)
 app.include_router(chat_router)
 app.include_router(hardware_router)
 app.include_router(portfolio_router)
+app.include_router(simulation_review_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):
@@ -142,3 +144,4 @@ def reviewer_unavailable(audit_id: str, request: Request):
 @app.api_route("/api/{remaining:path}", methods=["GET","POST"])
 def not_implemented(remaining: str, request: Request):
     return error(request,503,"BOOTSTRAP_NOT_IMPLEMENTED","This capability belongs to the next workstream slice.")
+

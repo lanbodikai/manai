@@ -37,6 +37,7 @@ export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutco
       <h2>{cpu?.affected_jobs ? "Validate a CPU placement pilot" : "Investigate the evidence"}</h2>
       <p>{cpu?.affected_jobs ? "CPU placement pilot · platform + workload owner" : "No eligible CPU pilot jobs in this sample."}</p>
       <div className="decision-estimate"><span>{h ? "Simulated net reference benefit · full fitting population" : "Net reference benefit · CPU pilot only"}</span><strong>{h ? range(h.success_net_reference_usd.low,h.success_net_reference_usd.high) : r ? range(r.scenarios[0].net,r.scenarios[2].net) : "Estimate pending"}</strong><small>{h ? "Successful replacement · unchanged runtime · no added queue" : r ? "Assumption-based range · negative means extra cost" : "Replacement costs and performance need testing"}</small></div>
+      {h && <p>Extra modeled cost if every fitting job needs a full GPU rerun: {range(h.failure_extra_reference_usd.low,h.failure_extra_reference_usd.high)}.</p>}
       {h && hardware && <p className="small muted">{number(hardware.coverage.fitting_jobs)} resource-fitting jobs · CPU-price sensitivity, not a confidence interval. {number(h.target_contribution_pct.low)}%–{number(h.target_contribution_pct.high)}% of the 20% target.</p>}
       {r && <span className="evidence-status">Scenario modeled · not measured</span>}
       {review?.dirty && <p className="tile-draft" role="status">Assumptions changed · showing last calculation</p>}
