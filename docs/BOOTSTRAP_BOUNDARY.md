@@ -28,3 +28,7 @@ Recovery estimation, deduplication audit, final claims/report, production dashbo
 ## Branching and integration
 
 Baseline is verified implementation commit `7530865eeca4fe87daf91b5cc275af378bd42fb7` (all BASE gates passed); subsequent status-only commits do not change its code. A/C branch from it on codex/analysis-service and codex/evidence-review-service. B retains codex/product-integration and merges that baseline, preserving B0 work. PR target: codex/integration. No force push or default-branch change. B coordinates reviewed slice merges after acceptance conditions pass.
+
+## Subsequent CPU-pilot contract handoff
+
+The [v0.4 proposal](../contracts/proposals/v0.4/README.md) and [verifier review](VERIFIER_HANDOFF_REVIEW.md) are published for A/B adoption. Active schemas, bootstrap code, imports and runtime dependencies remain unchanged. This main-branch update carries the verified foundation and a proposed interface; it does not implement A's calculator or B's full product. Existing integration PR targets remain codex/integration until the lead coordinates any switch.

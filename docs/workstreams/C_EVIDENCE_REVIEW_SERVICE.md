@@ -12,6 +12,8 @@ Deliver one independently runnable explanation service. It retrieves an immutabl
 
 ## API and integration
 
+Follow [A downside and A–C bridge](A_C_DOWNSIDE_BRIDGE.md): read A's complete downside and scenario, distinguish evidence from hypothetical harm, and return read-only explanation/challenge using the existing schemas. Do not replace A's downside or gate its availability on your review. After proposed v0.4 adoption, explain its single-job cost/delay fields, distinguishing failure from extra validation and retaining signed results/unknowns; Explanation wire shape is unchanged.
+
 C serves `POST /api/audits/{audit_id}/explanations` on internal service `reviewer:8002`. B's same-origin proxy sends this route to C; other public `/api/*` routes go to A's `analysis:8001`. C calls A's read-only audit/evidence routes via `ANALYSIS_URL`; it never reads A's in-memory objects directly. An internal `GET /health` reports process, provider configuration and tool readiness without exposing secrets. Public health reports unconfigured or unavailable until C readiness is known, consistent with the schema.
 
 Use the existing OpenAPI ExplanationRequest/Explanation/Error schemas and original fixtures. A restart may invalidate an audit; propagate the documented 404 and let the UI offer recomputation. If source data changed since the audit, return 409; never combine current evidence with a stale calculation silently.

@@ -56,6 +56,8 @@ Commit the bootstrap and push `codex/integration`; share its exact SHA as `BASEL
 
 ## 3. Exact split
 
+Read [A downside and A–C bridge](docs/workstreams/A_C_DOWNSIDE_BRIDGE.md) for the v0.11 clarification and [v0.4 contract proposal](contracts/proposals/v0.4/README.md): A calculates downside; B displays it; C explains/challenges it without becoming a dependency. Active API and B0 remain v0.3 until A/B agree and promote the proposal. Existing assignments remain in effect.
+
 | Participant | Owns | Does not own | First reviewable slice |
 |---|---|---|---|
 | A | `analysis/`, `service/` including `service/base_chat/`, analysis/base-chat tests, methodology, canonical claims | React, root Compose, C's richer reviewer | Real audit → resolving evidence → claims; then minimum MCP chat |

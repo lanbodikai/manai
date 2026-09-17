@@ -1,0 +1,24 @@
+{
+  "audit_id": "synthetic-pilot-audit-001",
+  "client_request_id": "synthetic-pilot-explain-001",
+  "status": "ok",
+  "answer": "For synthetic J2 only, assuming successful CPU replacement: 48 vCPU-hours cost $4.80 at the supplied rate; net reference value is $45.20 and completion is 2 hours later if extra queue delay is zero. This is conditional, not a measured result or the cohort claim. Compatibility and stop enforcement remain untested.",
+  "supporting_evidence_ids": [
+    "job:J2"
+  ],
+  "limitations": [
+    "Example wording only; no agent has run."
+  ],
+  "tool_trace_ids": [
+    "synthetic-tool-trace-001"
+  ],
+  "usage": {
+    "tool_calls": 2,
+    "input_tokens": null,
+    "output_tokens": null,
+    "estimated_usd": null,
+    "latency_ms": 0,
+    "model": null,
+    "provider": null
+  }
+}

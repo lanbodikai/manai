@@ -70,3 +70,7 @@ User authorized B to start before bootstrap and fit back in afterward. Scope: is
 ## D14 — Common-base execution (DECIDED)
 
 Winston authorized executing the common bootstrap in goal mode through the split completion contract, with frozen code boundaries and minimal manual work. Work happens in an isolated codex/integration worktree; B0 remains independent, C begins after the shared base. Provider configuration does not gate bootstrap. Ignore rules and Docker-context exclusions cover local credentials and datasets. User requested a hackathon time budget; a 15-minute remaining-work target was announced at 18:05:44 UTC. Actual gate evidence is in BOOTSTRAP_STATUS.md.
+
+## D14 — CPU-pilot downside handoff (v0.11)
+
+User requested consideration of the independent verifier, selected API/fixtures plus A/B handoff rather than calculator implementation, and authorized direct publication to main after validation. Adopt the verifier's model as the proposed next A-owned downside slice; retain the approved broad cohort and show memory partitions only as investigation priorities. A complete proposed API v0.4 is staged separately for A/B agreement; active v0.3 and B0 remain compatible. C explains/challenges canonical results and remains optional. This decision does not authorize a real workload trial or claim observed savings.

@@ -4,12 +4,16 @@ Track 2: audit a completed zero-GPU-compute cohort for a bounded CPU-placement p
 
 **This branch is the common foundation, not a finished hackathon submission.** The page on :3000 is a labeled integration probe. See [actual gate results](docs/BOOTSTRAP_STATUS.md) and [frozen boundaries](docs/BOOTSTRAP_BOUNDARY.md).
 
+## CPU-pilot handoff update
+
+[Independent verifier review](docs/VERIFIER_HANDOFF_REVIEW.md) and [proposed API v0.4 with synthetic fixtures](contracts/proposals/v0.4/README.md) are ready for A/B review. A owns cost/delay calculations; B displays them; C remains optional. Active API v0.3 and the verified bootstrap are unchanged. This main-branch foundation does not include B's separate dashboard branch or a finished audit service.
+
 ## Setup
 
 Requires Git and Docker Desktop/Engine with Linux containers. No model key or host Python/Node installation is required for this bootstrap.
 
 ```sh
-git clone --branch codex/integration https://github.com/lanbodikai/manai.git
+git clone --branch main https://github.com/lanbodikai/manai.git
 cd manai
 ```
 

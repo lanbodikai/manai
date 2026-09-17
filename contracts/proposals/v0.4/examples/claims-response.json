@@ -1,0 +1,20 @@
+{
+  "team": "Example team \u2014 synthetic",
+  "recoverable_gpu_hours": {
+    "low": 6,
+    "point": 12,
+    "high": 18,
+    "basis": "30 unique eligible GPU-hours multiplied by stated recovery fractions.",
+    "interval_kind": "scenario"
+  },
+  "recoverable_usd": {
+    "low": 15,
+    "point": 30,
+    "high": 45,
+    "basis": "Same recovery bounds at $2.50 reference USD/GPU-hour.",
+    "interval_kind": "scenario"
+  },
+  "cancelled_is_waste": false,
+  "cancelled_rationale": "Cancelled jobs are outside the completed-job cohort.",
+  "notes": "Synthetic contract fixture; do not submit these values."
+}

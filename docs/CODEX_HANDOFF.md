@@ -15,3 +15,7 @@ Keep codex/product-integration and B0 work. Fetch origin, merge the verified int
 Branch codex/evidence-review-service from the verified baseline. Use contracts/examples for development until A exposes real immutable audits. Implement richer /explanations only; keep own dependencies/image under reviewer profile and coordinate root Compose changes with B. Featherless configuration is optional and local; no key was required or tested by bootstrap. Complete C1/C2 and G evaluation before enabling. PR to codex/integration; do not block A+B.
 
 Every handoff records actual commit, versions, checks and remaining work. No force pushes, final default-branch change or event submission is part of this baseline task.
+
+## CPU-pilot downside update
+
+Read [verifier review](VERIFIER_HANDOFF_REVIEW.md) and [v0.4 proposal](../contracts/proposals/v0.4/README.md) before implementing A's downside or B's pilot controls. The user selected API/fixture/handoff work only for this update. A/B agree the version, promote it and implement their owned paths. C remains optional; one-job reference value must not replace cohort recovery or official claims. Active runtime remains v0.3.
