@@ -81,3 +81,23 @@ For each final low/point/high recovery estimate, document the eligibility ceilin
 ## Proposed v0.4 CPU-pilot checks
 
 [Proposal validator and fixtures](../contracts/proposals/v0.4/README.md) extend C01 coverage only. A/B adoption adds success/failure/extra-validation, negative value, unknown price/queue, observed-allocation-versus-duration, pricing-boundary and immutable-identity cases to existing T05/T06/T07, C04/C06, U02/U03 and M02/M03. C uses them for G01–G05 when assigned. Schema/fixture passes and the offline verifier are not service/UI/MCP or operational acceptance. See [actual review results](VERIFIER_HANDOFF_REVIEW.md).
+
+
+## Pilot & Recovery feature — PR01–PR10
+
+This deterministic A+B simulation is separate from C's model grounding eval. See `eval/pilot_recovery/RESULTS.md` for actual outcomes; the conditions below do not imply a pass. Original synthetic fixtures are mandatory for committed test records.
+
+| ID | Condition | Required observation |
+| --- | --- | --- |
+| PR01 | Successful CPU replacement | Original minus trial/setup cost; signed net benefit and signed runtime change. No achieved-savings language. |
+| PR02 | Failed trial, full GPU rerun | Original GPU cost counted once in total; loss equals extra trial/setup cost; failed detail retained. |
+| PR03 | Recovery unavailable | Paused — owner action required; known spend separately visible; final benefit/cost/delay unknown. |
+| PR04 | Runtime/spending cap, exact boundary, setup above cap | Simulator truncates or prevents startup and records the limit trigger; unknown price never passes spending verification. No real enforcement claimed. |
+| PR05 | Missing observations, null price/queue/setup, invalid numbers | Unknown differs from zero; NaN/infinity and malformed requests fail clearly; no fabricated baseline. |
+| PR06 | Missing/unverified checkpoint | Full rerun only; client assertion cannot grant verified checkpoint recovery. |
+| PR07 | Revise/retry, late or mismatched response | Prior snapshots/failure detail retained, pending draft labelled, wrong identity rejected, export matches saved result. |
+| PR08 | Foreign evidence, changed source, same audit claims | Audit/evidence/source membership enforced; simulation does not mutate canonical audit or claims. |
+| PR09 | A response through B adapter/panel; C unavailable | Display canonical costs/statuses without frontend money recomputation; C is not invoked. Distinguish mocked UI tests from live integration. |
+| PR10 | Build/start, desktop/narrow keyboard flow | Live bundle excludes synthetic fixtures; default startup serves B; separately record Docker and human usability checks. |
+
+A future empirical recovery evaluation must use actual workload code/inputs, expected outputs, a tested stop mechanism, full-rerun/checkpoint restoration and failure injection. None of PR01–PR10 establishes operational recovery or actual cash savings.
