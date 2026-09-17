@@ -1,0 +1,65 @@
+import { test, expect } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+
+test("real decision percentages, checkbox selection, evidence and actual unavailable action", async ({page,request}) => {
+  const catalog = await (await request.get("/api/datasets/catalog")).json();
+  const table = await (await request.get("/api/datasets/decisions",{params:{version:catalog.version,selection:"cpu-placement,idle-sessions"}})).json();
+  expect(table.synthetic).toBe(false);
+  expect(table.total_gpu_hours).toBeCloseTo(catalog.summary.gpu_hours,6);
+  expect(table.rows).toHaveLength(8);
+  expect(table.rows.every((r: {allocated_share_pct:number}) => r.allocated_share_pct >= 0 && r.allocated_share_pct <= 100)).toBe(true);
+  expect(table.selection.overlapping_gpu_hours).toBeGreaterThan(0);
+  expect(table.selection.gpu_hours).toBeLessThan(table.rows.slice(0,2).reduce((n:number,r:{allocated_gpu_hours:number}) => n+r.allocated_gpu_hours,0));
+  await page.goto("/#optimization");
+  await expect(page.getByRole("heading",{name:"Cost decisions",exact:true})).toBeVisible();
+  const legend=page.getByRole("group",{name:"Explore recorded time by outcome"});
+  const cancelled=catalog.summary.outcomes.filter((o:{outcome:string}) => o.outcome === "CANCELLED").reduce((sum:number,o:{gpu_hours:number}) => sum+o.gpu_hours,0)/catalog.summary.gpu_hours*100;
+  const cancelledButton=legend.getByRole("button",{name:`Cancelled ${cancelled.toFixed(1)}%`});
+  await cancelledButton.focus();
+  await page.keyboard.press("Enter");
+  await expect(cancelledButton).toHaveAttribute("aria-pressed","true");
+  await expect(page.getByText(/Someone cancelled this work/)).toBeVisible();
+  await expect(page.getByRole("article")).toHaveCount(2);
+  await page.getByRole("button",{name:"Show 6 more opportunities"}).click();
+  await expect(page.getByRole("article")).toHaveCount(8);
+  await page.getByRole("button",{name:"Show fewer opportunities"}).click();
+  await expect(page.getByRole("table")).toBeHidden();
+  const cpu=page.getByRole("checkbox",{name:"Select CPU placement pilot",exact:true});
+  await expect(cpu).toBeEnabled();
+  await cpu.focus();
+  await page.keyboard.press("Space");
+  await expect(cpu).toBeChecked();
+  await page.getByRole("checkbox",{name:"Select Idle interactive sessions",exact:true}).check();
+  await expect(page.getByRole("button",{name:"Model selected changes"})).toBeEnabled();
+  await expect(page.getByLabel("Optimization context").getByText(`${table.selection.share_pct.toFixed(1)}%`,{exact:true})).toBeVisible();
+  await mkdir(".local-data/evidence",{recursive:true});
+  await page.screenshot({path:".local-data/evidence/optimization-desktop.png",fullPage:true});
+  const outbound=page.waitForRequest(r => r.url().endsWith("/api/optimizations") && r.method() === "POST");
+  await page.getByRole("button",{name:"Model selected changes"}).click();
+  expect((await outbound).postDataJSON()).toMatchObject({mode:"model_only",cancelled_policy:"exclude",expected_dataset_version:catalog.version,fix_ids:["cpu-placement","idle-sessions"]});
+  await expect(page.getByRole("alert")).toContainText("Optimization was not confirmed");
+  await expect(cpu).toBeChecked();
+  await expect(page.getByText("Not modeled",{exact:true})).toBeVisible();
+  await page.getByRole("article",{name:"CPU placement pilot",exact:true}).getByRole("link").click();
+  await expect(page.getByLabel("Search findings")).toHaveValue("rules::gpu-not-needed");
+  await expect(page.getByRole("cell",{name:"rules::gpu-not-needed",exact:true}).first()).toBeVisible();
+  await expect(page.getByLabel("Status",{exact:true}).getByRole("option",{name:"Historical",exact:true})).toBeAttached();
+});
+
+test("mobile decision cards keep fixes visible and accept a stubbed matching backend receipt", async ({page}) => {
+  await page.route("**/api/optimizations",async route => {
+    const input=route.request().postDataJSON();
+    await route.fulfill({json:{contract_version:input.contract_version,client_request_id:input.client_request_id,dataset_version:input.expected_dataset_version,mode:"model_only",fix_ids:input.fix_ids,status:"accepted",optimization_id:"browser-stub-only",synthetic:false}});
+  });
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("/#optimization");
+  await page.getByRole("checkbox",{name:"Select CPU placement pilot",exact:true}).check();
+  await expect(page.getByRole("button",{name:"Model selected changes"})).toBeEnabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("article",{name:"CPU placement pilot",exact:true}).getByText("Risk and safeguards",{exact:true}).click();
+  await page.screenshot({path:".local-data/evidence/optimization-mobile.png",fullPage:true});
+  await page.getByRole("button",{name:"Model selected changes"}).click();
+  await expect(page.getByText("Backend accepted your modeling request",{exact:true})).toBeVisible();
+  await expect(page.getByText("Not modeled",{exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Request accepted",exact:true})).toBeDisabled();
+});

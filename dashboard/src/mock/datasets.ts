@@ -170,7 +170,7 @@ const findings: DatasetRecord[] = [
       "An invented rule match. Another finding can describe the same physical job hours; do not add finding impacts together.",
     synthetic: true,
     values: {
-      rule,
+      rule: `rules::${rule}`,
       status,
       Node: job.values.primary_node,
       id_job: jobId,
@@ -233,6 +233,17 @@ const catalog: Catalog = catalogPayload({
     })),
   },
 });
+
+// The decisions demo uses this same invented dataset and denominator.
+export function demoDecisionSource() {
+  const state: Record<string,string> = {Finished:"COMPLETED",Cancelled:"CANCELLED","Timed out":"TIMEOUT",Failed:"FAILED",Other:"OTHER"};
+  return {
+    jobs: jobs.map(j => ({id:j.id,gpu_hours:Number(j.values.gpu_hours),outcome:state[String(j.values.state_name)],sm_avg:Number(j.values.sm_util_avg),sm_max:Number(j.values.sm_util_max)})),
+    // All records are invented. The enclosing decision response remains synthetic;
+    // these flags represent detector-generated incidents inside that fictional sample.
+    findings: findings.map(f => ({id:f.id,rule:String(f.values.rule),job_id:String(f.values.id_job),scope:"job",synthetic:0})),
+  };
+}
 
 export function createDemoDatasetApi(delay = 120): DatasetApi {
   const wait = () => new Promise((resolve) => setTimeout(resolve, delay));

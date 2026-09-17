@@ -1095,6 +1095,7 @@ footer {
   border: 0;
 }
 .skip-link {
+  opacity: 0;
   position: fixed;
   top: -80px;
   left: 20px;
@@ -1104,6 +1105,7 @@ footer {
   padding: 12px;
 }
 .skip-link:focus {
+  opacity: 1;
   top: 12px;
 }
 section[id] {
