@@ -1,4 +1,8 @@
-# Codex handoff — v0.8
+# Codex handoff — v0.9
+
+## Immediate B assignment
+
+User authorized B0 before bootstrap. Use [B_PREBOOTSTRAP.md](workstreams/B_PREBOOTSTRAP.md) for its prompt, owned paths, fixture tests and merge-back procedure. Earlier instructions to wait for a common implementation baseline do not apply to this isolated B0 slice.
 
 ## Current team entry point
 

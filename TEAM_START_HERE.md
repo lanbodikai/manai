@@ -1,4 +1,4 @@
-# Team start here — Track 2 / plan v0.8
+# Team start here — Track 2 / plan v0.9
 
 **This branch contains the agreed plan, API contract and synthetic examples. The application and official starter are not implemented/imported yet.** There is no working `docker compose up` here yet. Start with the shared bootstrap below; do not mistake planning fixtures for results.
 
@@ -18,9 +18,13 @@ Existing clone: save your own changes first, then `git fetch origin` and `git sw
 
 Read this page, [requirements](docs/REQUIREMENTS.md), [official-doc review](docs/TRACK2_REVIEW.md), and your workstream. The API is [OpenAPI v0.3](contracts/openapi.json); examples are synthetic. Proposed choices remain labeled; do not invent results.
 
-## 2. Shared bootstrap — B coordinates, before full split
+## B may start immediately
 
-B creates `codex/integration` from this published planning branch. This is the shared implementation/PR target, not the final judged branch yet. A helps inspect data and assumptions. C checks the MCP documentation/provider availability without blocking bootstrap.
+Winston authorized [B0 before bootstrap](docs/workstreams/B_PREBOOTSTRAP.md): isolated frontend, explicit synthetic fixtures, typed mock/HTTP adapters and focused UI tests. That file contains the prompt and exact integration steps. It overrides the wait-for-baseline instruction for B0 only. A lead/assigned bootstrap session prepares the shared baseline while B builds the UI. B later merges that baseline and resumes integration coordination.
+
+## 2. Shared bootstrap — lead/assigned session, before full split
+
+The assigned bootstrap session creates `codex/integration` from this published planning branch. This is the shared implementation/PR target, not the final judged branch yet. A helps inspect data and assumptions. C checks the MCP documentation/provider availability without blocking bootstrap.
 
 ```sh
 git switch -c codex/integration
@@ -82,6 +86,8 @@ Do not claim all checks passed just because a PR merges. End every handoff with 
 Final publishing into the judged default branch and event-form submission are separate lead-coordinated steps. Do not assume `main` exists in this initially empty remote. Before judging, ensure the intended final branch is the default or merge into the existing default with lead authorization; verify it on GitHub. No force pushes or automatic default-branch changes.
 
 ## 5. Copy-paste session prompts
+
+For immediate B work, use B_PREBOOTSTRAP.md instead of the post-bootstrap B prompt below.
 
 Each prompt below is an implementation assignment when supplied by the team lead to that session. It supersedes the historical planning-only mode only within that assignment. The current published branch itself does not prove implementation has begun.
 

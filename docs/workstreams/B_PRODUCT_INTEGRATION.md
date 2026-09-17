@@ -1,6 +1,6 @@
 # Workstream B — dashboard, packaging and integration
 
-Plan v0.6 / Contract v0.3. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.9 / Contract v0.3. Owner: Builder B, person/session TBD. B0 is authorized immediately before bootstrap: follow [B_PREBOOTSTRAP.md](B_PREBOOTSTRAP.md). B1/B2 real integration follows the shared baseline. No implementation is claimed by this document.
 
 ## Mission
 
@@ -25,7 +25,7 @@ Dashboard functions do formatting and interaction; A owns financial arithmetic. 
 
 ## Build order
 
-1. Import/bootstrap with shared gate; add port-3000 service and preserve official API/data mounts.
+1. Start B0 fixture UI now if assigned; a separate lead/assigned bootstrap session handles import and shared setup. After the verified baseline arrives, merge it and take over root Compose integration.
 2. Render complete three-view journey from original synthetic fixtures, labeled as development mode.
 3. Wire deterministic real API responses, source recommendation labels and evidence links.
 4. Integrate MCP explanation, failure states and scenario updates.

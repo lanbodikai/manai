@@ -62,3 +62,7 @@ See [TRACK2_REVIEW.md](TRACK2_REVIEW.md). The actual claims schema explicitly pe
 ## Team handoff update — v0.8
 
 User authorized publishing the plan/setup branch. See [TEAM_START_HERE.md](../TEAM_START_HERE.md) for bootstrap execution assignments, current phase, exact branch strategy and A/B/C ownership. No runtime bootstrap has yet been performed. Historical activation questions must not override an explicit subsequent session assignment.
+
+## D13 — B0 early frontend work (DECIDED, v0.9)
+
+User authorized B to start before bootstrap and fit back in afterward. Scope: isolated dashboard with original fixtures and typed mock/HTTP adapters; no shared import/backend/root Compose edits during B0. Separate bootstrap session establishes integration baseline, which B merges into its existing branch. B0 has its own completion checks and cannot substitute for real-data/MCP/packaging checks. See [B_PREBOOTSTRAP.md](workstreams/B_PREBOOTSTRAP.md).

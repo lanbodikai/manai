@@ -4,6 +4,8 @@
 
 TEAM HANDOFF. The user authorized committing and publishing the plan/setup branch for teammates. Publish `codex/planning` now. Runtime bootstrap has not run. TEAM_START_HERE.md provides explicit bootstrap and A/B/C assignment prompts: when the team lead supplies one to a session, execute that assignment and update its phase status; do not re-ask historical planning questions already resolved. Merely reading the roadmap does not launch work or other agents.
 
+B0 is explicitly authorized before the shared split gate: see docs/workstreams/B_PREBOOTSTRAP.md. A session assigned B0 may implement and publish the isolated fixture-driven frontend now, without waiting for bootstrap. Its file boundaries and mock-versus-live acceptance limits take precedence over earlier B wait instructions.
+
 User decisions in this conversation override this file. Keep this mode current when implementation is authorized.
 
 ## Read order

@@ -4,9 +4,13 @@
 
 Rounds 1 and 2 are complete. Finish Round 3 in QUESTIONS.md. Record explicit answers in DECISIONS.md. Revise thesis/cohort, stack and ownership without deleting earlier decisions. This document is not authorization to start implementation.
 
+## B0 — authorized early frontend work
+
+B can start now under [B_PREBOOTSTRAP.md](workstreams/B_PREBOOTSTRAP.md) using original fixtures and API v0.3. A lead/assigned bootstrap session prepares the baseline independently. B0 does not prove the real-data split gate or submission readiness. B later merges the verified baseline into the same branch and proceeds with B1/B2.
+
 ## Phase 1 — shared bootstrap before splitting
 
-Once activated, use Builder B as merge coordinator and proposed bootstrap integrator (A reviews data assumptions):
+The lead/assigned bootstrap session executes setup while B may work on B0; A reviews data assumptions. B coordinates product integration after the baseline:
 
 1. Import the minimal pinned starter using UPSTREAM.md; preserve notices and root judging layout.
 2. Get official data/preprocessing/generator/check-data/API working. Validate Docker on the intended demo machine. Verify one actual MCP tool call and the running official /docs payloads; C provider setup is not a prerequisite. If blocked for 15 minutes, request concrete technical help and narrow packaging work; do not silently waive the container requirement.

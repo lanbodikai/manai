@@ -1,4 +1,4 @@
-# manai — team handoff v0.8
+# manai — team handoff v0.9
 
 Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
 
@@ -7,6 +7,8 @@ Build a complete GPU-efficiency decision dashboard around one verified recommend
 ## Team setup and assignments
 
 **[Start here: clone, bootstrap, exact A/B/C split and copy-paste prompts](TEAM_START_HERE.md).** Published planning branch: `codex/planning`. B creates `codex/integration` for shared bootstrap; all three workstreams branch from its verified baseline. The application is not built yet.
+
+**B can start now:** [early frontend assignment and prompt](docs/workstreams/B_PREBOOTSTRAP.md). Build against fixtures while a separate bootstrap session prepares real data/services; merge the verified baseline into B's branch later.
 
 ## Planning reference
 

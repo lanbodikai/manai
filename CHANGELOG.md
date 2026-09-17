@@ -1,5 +1,11 @@
 # Plan changelog
 
+## v0.9 — 2026-09-17
+
+- Authorized immediate B0 frontend work before shared bootstrap.
+- Added exact file boundaries, typed mock/HTTP adapter plan, B0 tests, branch/PR and merge-back procedure, and copy-paste prompt.
+- Updated historical wait instructions; live-data/MCP/submission acceptance remains unchanged.
+
 ## v0.8 — 2026-09-17
 
 - User authorized publishing the team setup/planning branch.
