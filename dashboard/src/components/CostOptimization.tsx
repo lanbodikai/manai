@@ -25,7 +25,6 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pilotOpen, setPilotOpen] = useState(false);
   const [pilotReview, setPilotReview] = useState<PilotReview|null>(null);
-  const [reviewWhenReady, setReviewWhenReady] = useState(false);
   // Verified against the supplied API /v1/price-book (2026-Q3), 2026-09-17. Reference pricing, not an actual bill.
   const referencePrice = 2.5;
   const pending = useRef<OptimizeRequest | null>(null);
@@ -54,9 +53,6 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
   }, [api,catalog,selectionKey]);
   const visible = table?.dataset_version === catalog?.version ? table : null;
   const current = !!visible && sameFixes(visible.selection.fix_ids,selected) && !loading && !loadError;
-  useEffect(() => {
-    if(reviewWhenReady && current) {setConfirmOpen(true);setReviewWhenReady(false);}
-  },[reviewWhenReady,current]);
   const available = visible?.rows.filter(r => r.id === "cpu-placement" && r.affected_jobs > 0).map(r => r.id) ?? [];
   const selectedRows = visible?.rows.filter(r => selected.includes(r.id)) ?? [];
   const actionableRows = visible?.rows.filter((row) => row.affected_jobs > 0) ?? [];
@@ -65,7 +61,6 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     if (sending) return;
     setSelected(next);
     setConfirmOpen(false);
-    setReviewWhenReady(false);
     if(!next.includes("cpu-placement")) {setPilotOpen(false);setPilotReview(null);}
     setReceipt(null);
     setActionError("");
@@ -118,12 +113,6 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     setPilotOpen(true);
     setTimeout(() => document.getElementById("cpu-pilot-planner")?.focus(),0);
   }
-  function reviewPilot() {
-    const trigger=document.activeElement as HTMLElement|null;
-    if(!selected.includes("cpu-placement")) choose([...selected,"cpu-placement"]);
-    dialogTrigger.current=trigger;
-    setReviewWhenReady(true);
-  }
   function downloadReview() {
     if(!visible || !current) return;
     const file={kind:"decision-review-example",status:"not-approved-not-executed",dataset_version:visible.dataset_version,synthetic:visible.synthetic,
@@ -147,19 +136,7 @@ export function CostOptimization({ api, modelAvailable = true, onOpenAuditedPilo
     {error && <div className="panel error-state" role="alert"><TriangleAlert /><h2>Could not load the decision table</h2><p>{error}</p><button className="secondary" onClick={reload} disabled={sending}><RefreshCw size={15} /> Reload data</button></div>}
     {!visible && !error && <div className="panel" role="status">Reading verified findings and job hours…</div>}
     {visible && <>
-      <section className="panel decision-brief" aria-labelledby="decision-brief-title">
-        <div>
-          <span className="eyebrow">CURRENT RECOMMENDATION</span>
-          <h2 id="decision-brief-title">Do not change workloads yet.</h2>
-          <p>Authorize only a small, owner-reviewed pilot after the evidence, cost boundary, and rollback plan are checked.</p>
-        </div>
-        <ol>
-          <li><strong>1. Investigate</strong><span>Confirm the source records and eligible job scope.</span></li>
-          <li><strong>2. Model</strong><span>Price one evidence-linked CPU pilot and its downside.</span></li>
-          <li><strong>3. Authorize</strong><span>Set an owner, stop limits, and a rollback path.</span></li>
-        </ol>
-      </section>
-      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} onReview={reviewPilot} disabled={sending || loading || !!loadError}/>
+      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} disabled={sending || loading || !!loadError}/>
       <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
         <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
         {sending && !confirmOpen && <p className="decision-footnote" role="status">Sending your modeling request…</p>}

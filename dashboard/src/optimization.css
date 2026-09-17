@@ -7,7 +7,7 @@
 .decision-brief strong,.decision-brief span { display:block; }
 .decision-brief strong { color:#2f4b78; font-size:12px; }
 .decision-brief span { margin-top:5px; color:#71809a; font-size:10px; line-height:1.5; }
-.decision-overview { display:grid; grid-template-columns:1.05fr 1.1fr 1fr; gap:16px; margin-bottom:22px; }
+.decision-overview { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-bottom:22px; }
 .decision-tile { min-width:0; padding:23px; }
 .decision-tile-label { display:flex; align-items:center; gap:8px; color:#637ba5; font-size:10px; letter-spacing:.04em; font-weight:600; }
 .decision-tile-label svg { padding:6px; box-sizing:content-box; flex-shrink:0; background:#eef1ff; border-radius:7px; color:#5570d9; }
@@ -40,7 +40,7 @@
 .review-financials p,.review-financials details { font-size:12px; line-height:1.7; color:#637a9b; }
 .review-financials summary { cursor:pointer; }
 .review-download { margin-top:14px; }
-@media(max-width:1100px) and (min-width:651px) { .decision-overview { grid-template-columns:1fr 1fr; } .spend-tile { grid-column:1 / -1; } .spend-key { flex-direction:row; flex-wrap:wrap; gap:12px 24px; } .spend-key strong { margin-left:2px; } }
+@media(max-width:1100px) and (min-width:651px) { .decision-overview { grid-template-columns:1fr 1fr; } .spend-key { flex-direction:row; flex-wrap:wrap; gap:12px 24px; } .spend-key strong { margin-left:2px; } }
 @media(max-width:650px) { .decision-overview { grid-template-columns:1fr; gap:12px; } .decision-tile { padding:20px; } .decision-tile h2 { font-size:26px; margin-top:14px; } }
 .decision-caption { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:16px 26px; font-size:12px; color:#71809a; }
 .row-source-details { font-weight:400; }

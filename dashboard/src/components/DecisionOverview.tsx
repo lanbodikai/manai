@@ -1,13 +1,13 @@
-import {ArrowRight,ChartPie,FlaskConical,ShieldCheck} from "lucide-react";
+import {ArrowRight,ChartPie,FlaskConical} from "lucide-react";
 import type {DecisionRow} from "../api/optimization";
 import type {PilotReview} from "../pilot-model";
 import {number,range,usd} from "../format";
 import {datasetHref} from "./DataExplorer";
 
 export type OutcomeSlice={label:string;hours:number;color:string;note:string};
-export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutcomes,cpu,review,onModel,onReview,disabled}:{
+export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutcomes,cpu,review,onModel,disabled}:{
   totalHours:number;price:number;windowLabel:string;outcomes:OutcomeSlice[];hasOutcomes:boolean;cpu?:DecisionRow;
-  review:PilotReview|null;onModel:()=>void;onReview:()=>void;disabled:boolean;
+  review:PilotReview|null;onModel:()=>void;disabled:boolean;
 }) {
   const snapshot=review?.snapshot;
   const r=snapshot?.result;
@@ -31,14 +31,6 @@ export function DecisionOverview({totalHours,price,windowLabel,outcomes,hasOutco
       {review?.dirty && <p className="tile-draft" role="status">Assumptions changed · showing last calculation</p>}
       <div className="tile-actions"><button className="text-button" onClick={onModel} disabled={disabled || !cpu?.affected_jobs}>{r ? "Update pilot scenario" : "Open audited pilot"} <ArrowRight size={14}/></button></div>
       <details className="tile-details"><summary>Why start here?</summary><p>{cpu?.affected_jobs ? `${number(cpu.affected_jobs)} completed jobs recorded zero average and peak GPU compute. That gives us a specific cohort to test; it does not prove CPU compatibility.` : "A source-backed cohort is required before estimating a CPU pilot."}</p>{!!cpu?.affected_jobs && <p>The entire cohort accounts for {cpu.allocated_share_pct.toFixed(1)}% of sample allocation. Even removing all that allocation would not meet the 20% goal; replacement costs would reduce the benefit further.</p>}<p>Priority reflects a testable hypothesis, not the largest promised saving. Owner: {cpu?.owner ?? "Platform + workload owner"}.</p><a href={datasetHref("findings",{query:"rules::gpu-not-needed"})}>Inspect supporting records</a></details>
-    </article>
-    <article className="panel decision-tile downside-tile">
-      <div className="decision-tile-label"><ShieldCheck size={17}/><span>3 · COST IF WE ARE WRONG</span></div>
-      <h2>{r ? usd(r.extraSpend) : "Not yet priced"}</h2>
-      <p>{r ? "Modeled extra cost if the CPU pilot falls back to GPUs" : "Estimate the downside before approving a change"}</p>
-      <div className="decision-estimate"><span>Decision readiness</span><strong className="readiness-value">{r ? r.spendBreached || r.slowdownBreached ? "Limits exceeded" : "Owner review needed" : "Pilot evidence needed"}</strong><small>{r ? "Further retries can cost more. Research impact remains unpriced." : "No measured cash savings yet"}</small></div>
-      <button className="text-button" onClick={onReview} disabled={disabled || !cpu?.affected_jobs}>Review guardrails <ArrowRight size={14}/></button>
-      <details className="tile-details"><summary>What counts as verified?</summary><ol><li>Compare equivalent outputs, runtime and replacement cost.</li><li>Agree a pilot owner, stop limits and rollback.</li><li>Check actual billing after the change.</li></ol><p>Freed GPU capacity does not automatically reduce cash spending.</p></details>
     </article>
   </section>;
 }
