@@ -10,6 +10,7 @@
 - Active public contract: 0.3. Proposed 0.4 is read only behind `REVIEWER_ENABLE_PROPOSED_V04=true`; not promoted.
 - All C-authored changes are under `reviewer/`, `tests/reviewer/`, `eval/agent/`. A/B, root Compose, shared contracts, claims and official API/MCP files were not edited.
 - Requested draft PR target: `codex/integration`. At inspection it was `ee529ee`, behind main by existing commits `b42997d` and `ce6a44e`. The PR comparison may therefore show those inherited main documentation changes. They are not C-authored. B should align the integration baseline before merge, or explicitly agree on another target. C does not move shared branches or merge.
+- Publication is currently blocked: HTTPS Git has no configured login, the SSH agent has no identities, and the connected GitHub integration rejects repository writes with HTTP 403. These commits are local only; no PR exists yet. The prepared PR description is [PR_DESCRIPTION.md](PR_DESCRIPTION.md). Authenticate Git or grant connector write access, then push only this new branch and create the draft. Do not claim that publishing succeeded.
 
 ## What works
 
