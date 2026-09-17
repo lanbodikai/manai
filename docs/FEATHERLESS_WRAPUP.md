@@ -34,8 +34,15 @@ the decision banner and standalone downside card is preserved.
 First live attempt exposed route ordering behind the generic fallback. Fixed
 ordering and reran successfully. Final service and proxy files were copied into
 the isolated containers and restarted; a clean image rebuild of those last two
-fixes remains pending. Full new-provider fault matrix and independent review
-were not completed within the four-minute cutoff. No workloads were executed.
+fixes was initially pending at the four-minute cutoff. The subsequent authorized
+release pass rebuilt/recreated the stack from final images successfully.
+`python -m eval.analysis.verify_review_failures` passed five cases against real
+local data and actual MCP: no key (200, labeled deterministic), unavailable
+provider (503), malformed response (502), fabricated fact ID (502), timeout
+(504). Saved results remained identical, overview available, and chat capacity
+restored after each. Model faults use explicit transport doubles; they are not
+provider-outage observations. Independent human review remains pending.
+No workloads were executed.
 
 ## Run and ownership
 
