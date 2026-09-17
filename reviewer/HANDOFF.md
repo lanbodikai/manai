@@ -2,17 +2,18 @@
 
 ## State and exact revisions
 
-**PR #7 main is merged into C without conflicts; deterministic service/proxy
+**PR #8 main is merged into C without conflicts; deterministic service/proxy
 compatibility checks pass. PR #3 remains draft for canonical-data/container
 acceptance and final combined browser validation on the integration host.**
 No C merge into a shared branch or model-provider call was performed.
 
 - Existing branch: `codex/evidence-review-service`.
 - Existing PR: https://github.com/lanbodikai/manai/pull/3 → `codex/integration`.
-- Tested runtime baseline (merged PR #7): `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb`.
-- Current integration target: `982b40795a097624507eefc5d17dc266baf1f0f0`;
-  its runtime tree equals main. PR target remains `codex/integration`.
-- Latest main publication notes: `7197d03cd4b98813583e8eac86cd723417acfbb8`,
+- Previous runtime baseline (merged PR #7): `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb`.
+- Existing PR target remains `codex/integration` at `982b40795a097624507eefc5d17dc266baf1f0f0`.
+  Main now has newer B changes; retargeting the same PR to main would isolate the
+  C-only diff. Do not interpret the older integration target as the tested base.
+- Previous main publication notes: `7197d03cd4b98813583e8eac86cd723417acfbb8`,
   merged without conflicts at `cae5647efa36d6452543868e97fc91fa56fa0ec3`.
   Only six A/B documentation files changed; tested runtime files are identical.
 - Original pinned integration baseline: `db6f418f2cf4fb761eb560870814331b323eefd0`.
@@ -24,6 +25,9 @@ No C merge into a shared branch or model-provider call was performed.
 - Conflict-free PR #7 merge into C: `c5a9f5d98da0c53d9c6f5d0b7709d202726f1926`.
 - Tested C plus production-proxy harness: `a32af3e671a0ccd0a3f2c55c58e495f20b3a016b`.
   Subsequent handoff edits are documentation only. No A/B runtime edits were needed.
+- Latest tested main (PR #8): `a7087ebc1a6d08e10f43eb0b32e4c3ff432df5b9`.
+- Current tested C merge: `f16f7b370c4813a8cb431e26fd5d540b19406cb1`; no conflicts.
+  C runtime and test harness unchanged; newer B code was adopted from main only.
 
 ## Delivered
 
@@ -46,13 +50,15 @@ turns a scenario into verified cash savings, CPU safety or automatic rollback.
 
 ## Evidence from this pass
 
-After the PR #7 merge, the reviewer/contract/evaluation/socket checks below were
-rerun successfully. Additional merged-base checks:
+After the PR #8 merge, reviewer/contract/deterministic checks and nine production-
+proxy scenarios were rerun successfully. The direct-socket result below is from
+PR #7; the new run uses the same actual A/C processes through the production proxy.
+Current merged-base checks:
 
-- **54/54 dashboard tests PASS**; TypeScript and production build PASS, including
+- **56/56 dashboard tests PASS**; TypeScript and production build PASS, including
   live-bundle mock exclusion. Existing bundle-size warning remains non-blocking.
 - **9/9 production-proxy scenarios PASS** using B's actual built server and A/C
-  processes with original synthetic A inputs. Another 18 actual MCP operations;
+  processes with original synthetic A inputs. 18 actual MCP operations in this PR #8 run;
   scoped citations and immutable audit/claims verified through the proxy.
 - Stopping C gives normalized 503 while A audit/claims/health and the dashboard
   page remain available. This is an actual process/proxy test with synthetic data.
@@ -100,7 +106,7 @@ corroboration or full-source certification is claimed.
 
 ## B-owned integration checklist
 
-1. PR #7 sync is complete at the exact commits above. Keep this PR and branch;
+1. PR #8 sync is complete at the exact commits above. Keep this PR and branch;
    use the tested main baseline for the remaining integration-host checks.
 2. Build `reviewer/Dockerfile` from that checkout. Add service `reviewer:8002`
    under optional Compose profile `reviewer`; set `ANALYSIS_URL=http://analysis:8001`,

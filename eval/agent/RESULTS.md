@@ -1,3 +1,50 @@
+# PR #8 merged-main compatibility — 2026-09-17
+
+Latest tested main: `a7087ebc1a6d08e10f43eb0b32e4c3ff432df5b9` (PR #8).
+Conflict-free C merge/tested tree: `f16f7b370c4813a8cb431e26fd5d540b19406cb1`.
+A source remains `adfcd883edebfd8b7100179ab545cc4000fca479`; contract 0.4.
+This section supersedes the PR #7 current-baseline statements below.
+
+PR #8 changes B's CFO views, client contract guard, configurable API origin and
+chat retry. No changes to A, C runtime, shared contracts, official API/MCP,
+production server/Compose or package lock. C sync required no runtime fixes.
+A/B-owned files remain identical to main in C's checkout.
+
+| Repeated check on PR #8 | Result and boundary |
+|---|---|
+| Reviewer / active contract | **99/99 + 5/5 PASS** |
+| Deterministic eval | **24/24 PASS**, eight cases × three, `pr8-deterministic.json` |
+| Dashboard unit / production build | **56/56 PASS**, TypeScript and mock-exclusion PASS; existing bundle-size warning only |
+| Actual production proxy → A/C | **9/9 PASS**, 18 actual MCP operations; immutable audit/claims, resolving citations, CPU oracles and zero false FAILs. Original synthetic A inputs/readiness; `pr8-proxy.json`. |
+| Missing audit / stopped C | Six checks PASS: missing-audit 404, C-unavailable 503, unchanged base audit/claims, healthy A and available dashboard page |
+| Browser reviewer failure regressions | **3/3 PASS** in Chrome; explicit demo unavailable/timeout/malformed doubles. Not canonical-data UI or full real-timeout acceptance. |
+| Scope/diff | PASS; no A/B file edits beyond imported main, zero provider calls |
+
+Commands: same Python 3.12.14 and Node 22.14.0 environments as PR #7 below.
+
+```sh
+python -m unittest discover -s tests/reviewer -p 'test_*.py'
+python -m unittest discover -s tests/bootstrap -p 'test_contract.py'
+python -m eval.agent.run --mode deterministic --output reviewer/.private/pr8-deterministic.json
+cd dashboard
+npm test
+VITE_DATASET_API_ENABLED=true npm run build
+PLAYWRIGHT_CHANNEL=chrome MANAI_TEST_MOCK_PORT=19300 MANAI_TEST_HTTP_PORT=19301 CI=1 npm run test:browser -- --grep reviewer
+cd ..
+python -m eval.agent.http_smoke --dashboard-node /path/to/node22 --output reviewer/.private/pr8-proxy.json
+git diff --check
+git diff origin/main --exit-code -- analysis service contracts dashboard docker-compose.yml
+```
+
+No reinstall was needed: the dependency lock did not change. Direct-only sockets
+were not repeated separately; the updated run passes through the actual production
+proxy. Real-data Docker/image and full combined UI/Compose R01–R05 remain pending
+on the integration host. Previous receipts below retain their original scope;
+PR #8's separate B-host receipt does not certify this C image. C stays draft and
+disabled. Review baseline is now PR #8, not PR #7.
+
+---
+
 # PR #7 merged-main compatibility — 2026-09-17
 
 Main `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb` merged into the existing C
