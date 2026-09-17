@@ -1,10 +1,14 @@
-# manai — planning draft v0.7
+# manai — team handoff v0.8
 
 Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
 
 Build a complete GPU-efficiency decision dashboard around one verified recommendation: audit proposed savings, expose supporting evidence, and show the downside of acting on uncertain assumptions.
 
-## Start here
+## Team setup and assignments
+
+**[Start here: clone, bootstrap, exact A/B/C split and copy-paste prompts](TEAM_START_HERE.md).** Published planning branch: `codex/planning`. B creates `codex/integration` for shared bootstrap; all three workstreams branch from its verified baseline. The application is not built yet.
+
+## Planning reference
 
 1. [Decisions and confirmed requirements](docs/DECISIONS.md)
 2. [Short thesis](docs/THESIS.md)

@@ -13,7 +13,7 @@ Once activated, use Builder B as merge coordinator and proposed bootstrap integr
 3. Inspect the chosen cohort's available columns and coverage. Make a go/no-go decision: keep cohort or explicitly revise D05.
 4. Make the full product shell load one overview and a clearly labeled original synthetic audit fixture.
 5. Review draft Contract v0.3/OpenAPI and its existing synthetic fixtures, generate shared types if useful, and freeze the agreed version. Check one positive and one failure response end to end.
-6. Ensure a common committed baseline exists. If publishing is authorized, establish main before creating workstream PR branches; an empty remote has no useful PR base.
+6. Ensure a common committed baseline exists. Create and publish codex/integration as the shared bootstrap/PR base per TEAM_START_HERE.md. Do not assume main exists; the final judged default branch is a separate lead-coordinated step.
 
 **Split gate:** D05–D08 resolved; import/provenance complete; canonical data verified; one real API query and one actual MCP tool call work; official live /docs and MCP tool schemas inspected; owner assignments recorded; contract and fixtures committed; mandatory evaluation IDs agreed; remaining-time cutoffs updated. If data access remains blocked, B may scaffold against fixtures while A resolves setup, but call this partial parallel progress, not a passed gate or real-data validation.
 

@@ -63,3 +63,7 @@ Copying official files supplies infrastructure and obligations; it does not comp
 ## Mandatory base MCP inclusion
 
 Import the official `mcp_layer/` with API dependencies for A/B's minimum chatbot, independent of C. Preserve its name to avoid shadowing the `mcp` package. Pin the tested MCP client/server dependencies during bootstrap and build them into the base image. Use the documented stdio transport; no external model provider is needed for a template-based client. C's optional model/framework dependencies belong only in its own image.
+
+## Team handoff update — v0.8
+
+User authorized publishing the plan/setup branch. See [TEAM_START_HERE.md](../TEAM_START_HERE.md) for bootstrap execution assignments, current phase, exact branch strategy and A/B/C ownership. No runtime bootstrap has yet been performed. Historical activation questions must not override an explicit subsequent session assignment.

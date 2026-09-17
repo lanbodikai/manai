@@ -2,7 +2,7 @@
 
 ## Current mode
 
-PLANNING. The user requested several discussion rounds before implementation. Complete planning edits and local versioning; do not import the starter, download data, install dependencies, build features, dispatch builder sessions, or publish until the user activates the corresponding phase. Do not infer activation from a proposed roadmap.
+TEAM HANDOFF. The user authorized committing and publishing the plan/setup branch for teammates. Publish `codex/planning` now. Runtime bootstrap has not run. TEAM_START_HERE.md provides explicit bootstrap and A/B/C assignment prompts: when the team lead supplies one to a session, execute that assignment and update its phase status; do not re-ask historical planning questions already resolved. Merely reading the roadmap does not launch work or other agents.
 
 User decisions in this conversation override this file. Keep this mode current when implementation is authorized.
 

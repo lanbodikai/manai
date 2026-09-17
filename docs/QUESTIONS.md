@@ -1,4 +1,4 @@
-# Discussion queue — v0.6
+# Discussion queue — v0.8
 
 Answer decision questions before starting the dependent work. Data questions are answered by inspection, not by asking the user to guess.
 
@@ -19,8 +19,8 @@ Answer decision questions before starting the dependent work. Data questions are
 4. **Answered in part:** A = analysis/audit service; B = React/product/packaging/integration; C = MCP evidence-review service; B coordinates merges. Still identify the three sessions and final presenter.
 5. What is the current remaining time and is Docker working on the integration machine? If not, which teammate can host the required final container smoke test?
 6. What model/provider credentials are available for Track 2 agent calls? Never paste keys in this document. Are there event-specific Track 2 constraints to preserve?
-7. Approve the Contract v0.1 shape, A/B ownership and evaluation gates, or specify changes.
-8. Activate starter import and implementation? Authorize branch publishing/draft PRs now or keep local until review? This is a workflow boundary requested by the user, not an inferred need for extra approvals.
+7. Review/freeze current Contract v0.3 with the assigned A/B/C builders during bootstrap; do not revert to earlier v0.1 sketches.
+8. Publishing the plan/setup branch is now authorized. Bootstrap and workstream sessions receive their bounded implementation assignments through TEAM_START_HERE.md; runtime bootstrap has not yet run. Provider availability is a C-only concern and does not block A/B.
 
 ## Exact research questions for our one recommendation
 

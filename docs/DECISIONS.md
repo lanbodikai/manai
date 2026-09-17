@@ -58,3 +58,7 @@ User requires alignment with the quoted Track 2 slide, including its explicit MC
 ## Official documentation review — v0.7
 
 See [TRACK2_REVIEW.md](TRACK2_REVIEW.md). The actual claims schema explicitly permits scenario intervals and says recoverable_gpu_hours is assessed on reasoning and interval honesty, not one correct numeric answer. Keep scenario modeling, justify its assumptions (D06), and avoid implying that our chosen recovery estimate has a hidden numeric ground truth. The selected CPU-placement remedy already appears in the official rules. The repo calls chat an example; the stronger slide wording motivates our required base chatbot, whose template-based design remains our interpretation.
+
+## Team handoff update — v0.8
+
+User authorized publishing the plan/setup branch. See [TEAM_START_HERE.md](../TEAM_START_HERE.md) for bootstrap execution assignments, current phase, exact branch strategy and A/B/C ownership. No runtime bootstrap has yet been performed. Historical activation questions must not override an explicit subsequent session assignment.

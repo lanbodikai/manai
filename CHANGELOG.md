@@ -1,5 +1,11 @@
 # Plan changelog
 
+## v0.8 — 2026-09-17
+
+- User authorized publishing the team setup/planning branch.
+- Added TEAM_START_HERE.md with clone/bootstrap steps, precise ownership, baseline/PR branch strategy and complete A/B/C session prompts.
+- Updated historical phase/publishing questions to reflect the current authorization; runtime bootstrap remains unrun.
+
 ## v0.7 — 2026-09-17
 
 - Cross-checked Track 2 docs, setup, rules, schema and judging workflow.

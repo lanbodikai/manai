@@ -1,6 +1,10 @@
-# Codex handoff — v0.7
+# Codex handoff — v0.8
 
-## Planning continuation (use now)
+## Current team entry point
+
+Use [TEAM_START_HERE.md](../TEAM_START_HERE.md) for current bootstrap and A/B/C assignment prompts, branch commands and publishing scope. The prompts below preserve earlier planning context and must be read with that current assignment.
+
+## Historical planning continuation
 
 Work in `C:\Users\05mus\manai`, origin `https://github.com/lanbodikai/manai.git`. Read AGENTS.md and README.md. The user approved Track 2, one verified recommendation, savings/evidence/downside thesis, completed zero-compute jobs, official Python API + React/TypeScript, dashboard-first MCP agent and three builder sessions with B coordinating merges and C owning the MCP reviewer service. Continue the unanswered environment/provider and phase-activation questions in Round 3 from docs/QUESTIONS.md; edit decisions and contracts through new local commits. No implementation/import/publishing has been activated. Do not replace the approved research question. The official source snapshot and known doc/schema conflicts are in docs/DECISIONS.md. Record exact tests as NOT RUN until executed.
 
