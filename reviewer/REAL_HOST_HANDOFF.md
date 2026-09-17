@@ -1,3 +1,10 @@
+> **Next compatibility target:** main advanced during this acceptance pass to
+> `a6ee9f58c8b4556198d4e78cc5802e81f10f1ff3`, discovered by the final fetch.
+> Thirteen dashboard/runtime-test files changed, including App, ChatPanel and
+> chat styling. This pass certifies the pinned PR #8 runtime only. The new main
+> has not been merged or tested with C; preserve this deployment and use a
+> subsequent integration pass to sync and verify the changed browser workflow.
+
 # Real-data Docker integration — PASS
 
 2026-09-17. This supersedes the earlier missing-Docker/access blocker below.

@@ -1,3 +1,5 @@
+> Main advanced during testing: next target `a6ee9f5`; its new chat UI is unverified with C.
+
 > Latest: real-data Docker website and C failure-isolation acceptance passed.
 > See [REAL_HOST_HANDOFF.md](REAL_HOST_HANDOFF.md) for the current pinned receipt.
 > The isolated preview is http://127.0.0.1:13012; no main merge was performed.
