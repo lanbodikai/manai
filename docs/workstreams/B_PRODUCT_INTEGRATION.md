@@ -12,6 +12,8 @@ Ship the complete decision journey and required package while Builder A supplies
 
 ## Components and functions
 
+The [A downside and A–C bridge](A_C_DOWNSIDE_BRIDGE.md) clarifies existing v0.3 fields: display A's downside directly, unknown money as not quantified, and C's review separately. No B0 adapter/schema change is needed.
+
 - `loadOverview()` / `OverviewView`: sample/window, price book, spending breakdown, supplied caveats.
 - `loadRecommendations()` / `RecommendationList`: identify supplied judgments and the one audited recommendation; no invented rank labels.
 - `submitScenario(input)` / `ScenarioControls`: validate obvious form bounds, send server request, retain request identity, suppress stale responses.

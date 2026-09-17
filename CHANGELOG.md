@@ -14,6 +14,13 @@
 - Added resolved team lock, ignored data/secrets/build outputs, setup script, boundary and actual completion evidence.
 
 
+## v0.10 — 2026-09-17
+
+- Clarified A's existing downside analysis: concrete risks, explicit unknowns, pilot measurements and stop/rollback conditions; unknown harm remains unquantified.
+- Defined the A–C handoff using immutable audit/evidence reads and the existing Explanation response. C challenges but cannot mutate canonical analysis or block A/B.
+- Linked the clarification from all workstreams, shared contract and team handoff. API v0.3 and fixtures unchanged; B0 can continue without adapter changes.
+- Reused existing evaluation IDs; this documentation update does not claim implementation or runtime checks.
+
 ## v0.9 — 2026-09-17
 
 - Authorized immediate B0 frontend work before shared bootstrap.

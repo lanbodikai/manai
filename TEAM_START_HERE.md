@@ -56,6 +56,8 @@ Commit the bootstrap and push `codex/integration`; share its exact SHA as `BASEL
 
 ## 3. Exact split
 
+Read [A downside and A–C bridge](docs/workstreams/A_C_DOWNSIDE_BRIDGE.md) for the v0.10 planning clarification: A supplies canonical downside; C explains/challenges it through existing v0.3 routes; B can render it without C. Existing assignments and B0 boundaries remain in effect.
+
 | Participant | Owns | Does not own | First reviewable slice |
 |---|---|---|---|
 | A | `analysis/`, `service/` including `service/base_chat/`, analysis/base-chat tests, methodology, canonical claims | React, root Compose, C's richer reviewer | Real audit → resolving evidence → claims; then minimum MCP chat |

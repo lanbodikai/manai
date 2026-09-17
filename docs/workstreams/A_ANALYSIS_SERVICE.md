@@ -8,6 +8,8 @@ Deliver one deterministic, reproducible audit from source data to cohort, recove
 
 ## Functions and order
 
+For the minimum downside analysis and its handoff to C/B, follow [A downside and A–C bridge](A_C_DOWNSIDE_BRIDGE.md). A owns the canonical risk, assumptions and pilot stop conditions; C is not required to produce them. Existing API v0.3 fields suffice.
+
 Read CONTRACT.md and API_SPEC.md. Implement `load_tables`, `fetch_source_context`, `select_cohort`, `audit_impacts`, `estimate_recovery`, `assess_downside`, `build_audit`, `resolve_evidence` and `export_claims`. Serve all public data/audit/evidence/claims routes on internal `analysis:8001`. Immutable audit IDs let B display and C explain the same result. Implement minimal `answer_base_chat`, `classify_supported_question`, `call_mcp_evidence`, and `render_supported_answer`; do not implement C's richer explanation logic or independently change the OpenAPI payloads.
 
 First inspect actual columns/coverage; then determine exact eligibility, reconcile source overlaps, compute scenario bounds and preserve evidence. Use official tooling; do not rebuild ingestion. Unknown CPU compatibility stays unknown. A value is never measured merely because our service calculated it.
