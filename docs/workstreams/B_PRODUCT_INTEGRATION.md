@@ -1,10 +1,10 @@
 # Workstream B — dashboard, packaging and integration
 
-Plan v0.4 / Contract v0.2. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.6 / Contract v0.3. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
 
 ## Mission
 
-Ship the complete decision journey and required package while Builder A supplies canonical analysis. Make the evidence chain and consequences understandable in a short demo.
+Ship the complete decision journey and required package while Builder A supplies canonical analysis and C supplies the reviewer service. Make the evidence chain and consequences understandable in a short demo.
 
 ## Owned paths
 
@@ -18,7 +18,7 @@ Ship the complete decision journey and required package while Builder A supplies
 - `renderAudit(result)` / `AuditDetail`: action, owner role, eligible versus recoverable quantities, range and interval kind.
 - `renderDownside(result)` / `DownsidePanel`: assumptions and unmeasured consequences; do not manufacture dollars for unknown harm.
 - `openEvidence(id)` / `EvidenceDrawer`: source ID, calculation grain, relevant fields, provenance, synthetic label and error state.
-- `askExplanation(question,auditId)` / `ExplainPanel`: invoke A's service, show tool-backed citations and status; never substitute canned text for a failed live call.
+- `askExplanation(question,auditId)` / `ExplainPanel`: use A's required `/chat` route by default and offer C's `/explanations` route only when available, show tool-backed citations and status; never substitute canned text for a failed live call.
 - `downloadClaims(auditId)`: get server export; compare displayed scenario to exported audit ID.
 
 Dashboard functions do formatting and interaction; A owns financial arithmetic. Favor one clean view with drill-downs over many disconnected pages.
@@ -36,12 +36,16 @@ Dashboard functions do formatting and interaction; A owns financial arithmetic. 
 
 **B1 product slice:** U01 fixture path, U02–U04 pass; three views present; errors/empty states tested; :3000 container responds. Mock mode cannot satisfy real-data acceptance.
 
-**B2 integrated slice:** U01 on real data, U05 recorded, P01–P03 pass; claims and UI agree; A's agent/analysis results linked; one complete reproducible flow; REPORT.md and disclosure finished; no unsupported extra claims.
+**B2 integrated slice:** U01 on real data, U05 recorded, P01–P03 and M01–M04 pass; claims and UI agree; A's analysis results linked; C status reported separately; one complete reproducible flow; REPORT.md and disclosure finished; no unsupported extra claims.
 
 ## PR and merge
 
-Branch `codex/product-integration` from common baseline, own worktree. If publishing is authorized, open draft B1 after the complete synthetic journey works. Mark ready after B1 contract; A cross-reviews units, labels, scenario/export consistency. Lead merges compatible A1/B1; B integrates subsequent A2 and prepares B2. Final merge only after full actual test results and lead authorization. Publishing the repository does not submit the event form.
+Branch `codex/product-integration` from common baseline, own worktree. If publishing is authorized, open draft B1 after the complete synthetic journey works. Mark ready after B1 contract; A cross-reviews units, labels, scenario/export consistency. Lead merges compatible A1/B1; B integrates A2 and prepares B2 independently of C. Integrate C1/C2 only after its checks pass; base must not wait for C. Final merge only after full actual test results and lead authorization. Publishing the repository does not submit the event form.
 
 ## Final report to lead
 
 Commit, running URL, startup command, checks actually run, current data mode, agent provider/config needs, presentation outline, outstanding limitations, submission-ready yes/no with reason. Do not say ready if a missing API key is hidden by mock responses.
+
+## Optional-service acceptance
+
+B owns R01–R05 resilience tests. Default Compose excludes reviewer build/startup via profile. Minimal live MCP chatbot, deterministic summary, all evidence paths, scenario calculations and export work with C stopped and no model key. C can be integrated later without changing these base guarantees. Mark base complete independently of C; explicitly report agent status and its optional profile command.

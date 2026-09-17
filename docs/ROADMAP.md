@@ -1,4 +1,4 @@
-# Engineering roadmap — discussion to two workstreams
+# Engineering roadmap — discussion to three workstreams
 
 ## Phase 0 — current: converge and version
 
@@ -12,25 +12,24 @@ Once activated, use Builder B as merge coordinator and proposed bootstrap integr
 2. Get official data/preprocessing/generator/check-data/API working. Validate Docker on the intended demo machine. If blocked for 15 minutes, request concrete technical help and narrow packaging work; do not silently waive the container requirement.
 3. Inspect the chosen cohort's available columns and coverage. Make a go/no-go decision: keep cohort or explicitly revise D05.
 4. Make the full product shell load one overview and a clearly labeled original synthetic audit fixture.
-5. Review draft Contract v0.2/OpenAPI and its existing synthetic fixtures, generate shared types if useful, and freeze the agreed version. Check one positive and one failure response end to end.
+5. Review draft Contract v0.3/OpenAPI and its existing synthetic fixtures, generate shared types if useful, and freeze the agreed version. Check one positive and one failure response end to end.
 6. Ensure a common committed baseline exists. If publishing is authorized, establish main before creating workstream PR branches; an empty remote has no useful PR base.
 
 **Split gate:** D05–D08 resolved; import/provenance complete; canonical data verified; one API query works; owner assignments recorded; contract and fixtures committed; mandatory evaluation IDs agreed; remaining-time cutoffs updated. If data access remains blocked, B may scaffold against fixtures while A resolves setup, but call this partial parallel progress, not a passed gate or real-data validation.
 
-## Phase 2 — parallel slices
+## Phase 2 — parallel slices (three participants)
 
-| Builder A | Builder B |
-|---|---|
-| Canonical cohort, overlap audit, recovery/downside model | Complete overview → recommendation → detail → evidence journey |
-| Actual service responses and claim export | Scenario controls, clear provenance/uncertainty/error states |
-| MCP explanation and grounding eval | Compose :3000 startup, browser integration and demo package |
-| Independent recomputation and report methodology | End-to-end test, report assembly and four-minute story |
+| A — analysis/audit service | B — product/integration | C — reviewer service |
+|---|---|---|
+| Cohort, deduplication, scenarios | Full three-view product journey | MCP evidence retrieval and bounded explanation |
+| Immutable audit/evidence/claims API | Same-origin routing to A and C | Read A's immutable audit via HTTP |
+| Arithmetic and source verification | Containers, UI tasks, report/demo | Grounding, tool-failure and budget eval |
 
 First mergeable slices should land before feature expansion. Keep one recommendation complete. An unfamiliar agent framework, a second cohort or a richer estimator is optional work requiring a scope decision.
 
 ## Phase 3 — integration and final evaluation
 
-Merge A's deterministic slice and B's shell, run shared contract tests, then integrate the agent. Freeze a final scenario and regenerate claims/report numbers from the canonical result. Run real-data checks, grounding eval, UI tasks and clean Compose startup. Cross-review one another's diffs and evidence. Ship only claims backed by a recorded run.
+Merge A's deterministic slice and B's shell, run shared contract tests, then integrate C's reviewer only if ready; the base proceeds independently. Freeze a final scenario and regenerate claims/report numbers from the canonical result. Run real-data checks, base MCP checks, optional C grounding eval, UI tasks and clean Compose startup. Cross-review one another's diffs and evidence. Ship only claims backed by a recorded run.
 
 ## Relative budget proposal
 
@@ -38,8 +37,12 @@ Recompute against 15:00 PDT. Preserve at least 20 minutes for submission/access 
 
 ## Scope-cut order
 
-Cut extra cohorts, optional charts, animation, broad free-form chat and extra model comparisons first. Preserve the three views, one evidence chain, a functioning bounded agent if feasible, correct claims, source labeling, and required startup. If the agent cannot run, expose that limitation and tell the lead that a desired/possibly expected part is missing; do not label canned text as live tool use.
+Cut extra cohorts, optional charts, animation, broad free-form chat and extra model comparisons first. Preserve the three views, one evidence chain, the required minimal live MCP chatbot, correct claims, source labeling, and required startup. If the base chatbot cannot run, mark the slide-aligned submission incomplete and tell the lead that a required part is missing; do not label canned text as live tool use.
 
 ## PR/merge sequence
 
-P0: approved baseline/contract/import. A1: deterministic audit + tests. B1: complete fixture-backed UI + container service. Merge A1/B1 after cross-review and passing compatible contracts. A2: real MCP explanation + eval. B2: integrated UI, packaging, report/demo. Final integrated checks and lead-authorized merge to judged default branch before the submission buffer. No remote action is automatic while planning.
+P0: approved baseline/contract/import. A1: deterministic audit + tests. B1: complete fixture-backed UI + container service. Merge A1/B1 after cross-review and passing compatible contracts. A2: real-data sensitivity and contract integration. C1: reviewer service/tool integration. C2: MCP explanation plus grounding eval. B2: integrated UI, packaging, report/demo. Final integrated checks and lead-authorized merge to judged default branch before the submission buffer. No remote action is automatic while planning.
+
+## Release independence
+
+A+B base completion is not gated on C. Finish deterministic summary, required minimal MCP chatbot and M01–M04/R01–R05; keep C behind its optional profile. If C misses the feature freeze, ship the honest base package with its working minimal chatbot and mark the richer reviewer unavailable. The one-command base remains executable regardless of C's dependencies/provider state.

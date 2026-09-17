@@ -1,6 +1,6 @@
-# Tests and evaluation contract — proposed v0.2
+# Tests and evaluation contract — proposed v0.3
 
-These are explicit team acceptance gates, not organizer grading thresholds. Nothing has run yet. Test fixtures are original synthetic examples; real organizer data stay local. Freeze prompts/cases before tuning. Report denominator, failures and exclusions.
+These are explicit team acceptance gates, not organizer grading thresholds. Runtime tests have not run. C01 synthetic schema validation has passed; this does not establish analytical correctness. Test fixtures are original synthetic examples; real organizer data stay local. Freeze prompts/cases before tuning. Report denominator, failures and exclusions.
 
 ## Deterministic tests: required for A1
 
@@ -26,7 +26,7 @@ These are explicit team acceptance gates, not organizer grading thresholds. Noth
 | D04 | Inspect five eligible records and three excluded/boundary records, or all if fewer | Every inclusion/exclusion follows documented rule; retain private review log, no raw records in Git. |
 | D05 | Recovery and price sensitivity, at least three recovery settings and two prices | Monotonicity holds; physical eligible hours unchanged by price; recovery never exceeds eligible hours; no claim of realized savings. |
 
-## Agent evaluation: required for A2
+## Agent evaluation: required for C2
 
 Fixed eight-case suite: (1) explain included cohort; (2) support headline hours; (3) explain overlap removal; (4) challenge recovery assumptions; (5) distinguish reference dollars from cash; (6) ask about the synthetic storage incident; (7) request unsupported individual blame or a causal claim absent evidence; (8) unavailable tool/unknown evidence. Use synthetic context first; repeat relevant cases against the actual local audited result.
 
@@ -53,4 +53,23 @@ Record results in `eval/RESULTS.md` with test ID, source/fixture version, config
 
 ## API-specific conditions
 
-C01–C06 are specified in [API_SPEC.md](API_SPEC.md). Builder A owns backend shape/error/identity tests; B owns superseded-response and displayed-audit/export consistency tests. Schema/example validation can pass before runtime implementation; it does not satisfy the integration conditions.
+C01–C06 are specified in [API_SPEC.md](API_SPEC.md). A owns analysis API shape/identity tests; C owns explanation error/grounding tests; B owns proxy routing, superseded-response and displayed-audit/export consistency tests. Schema/example validation can pass before runtime implementation; it does not satisfy the integration conditions.
+
+## Optional-service resilience — required for base release
+
+- R01: default clean Compose startup with C profile disabled and no LLM key; overview, scenario, downside, deterministic summary, real MCP chatbot, evidence and claims all work. No C build or install occurs.
+- R02: C process unavailable/crashed; same base flow succeeds and explanation panel shows unavailable state.
+- R03: C request hangs; bounded frontend timeout occurs, UI remains interactive and claims export still works.
+- R04: C returns malformed JSON or another audit's ID; response rejected without overwriting canonical audit or misleading citations.
+- R05: optional C profile fails to build/start; base default command still independently starts and passes P01. Use B-owned failure stubs if C is absent. B documents recovery by returning to the default profile; do not require fixing C to judge the base.
+
+B owns these tests; C assists with failure injection if available. Final readiness has two statuses: base ready (T/D/U/P/R/M and applicable API gates) and agent enhancement ready (C1/C2/G gates). An absent enhancement is disclosed; it is never reported as successful MCP evaluation.
+
+## Required minimal MCP chatbot — A/B, independent of C
+
+- M01: with C disabled and no provider key, the UI question produces a successful actual official MCP call and a cited answer tied to the displayed audit; retain tool trace. Direct HTTP alone is insufficient.
+- M02: four supported question classes (source support, eligibility, assumptions, downside) preserve canonical numbers, valid citations and fact/judgment/simulated labels; unsupported causal or CPU-compatibility certainty is declined. Compare each answer to source records.
+- M03: missing tool, malformed output, stale fingerprint and wrong-audit evidence yield clear non-success/insufficient-evidence states without fabricated citations or changed claims; enforce 3-call/10-second budget.
+- M04: C crash, hang and malformed answers leave the base chatbot usable. MCP runtime failure is separately visible and makes the chatbot requirement NOT READY, even if dashboard works. Run with B-owned stubs if C is unfinished.
+
+These are required for slide-aligned base completion. A owns MCP/client correctness; B owns UI, container and resilience proof. C's more extensive G evaluation remains optional only because the required narrower chatbot is already included.

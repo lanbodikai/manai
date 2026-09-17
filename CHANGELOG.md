@@ -1,5 +1,21 @@
 # Plan changelog
 
+## v0.6 — 2026-09-17
+
+- Reconciled C independence with the slide: real minimal MCP chatbot is mandatory in A/B; C supplies optional richer review.
+- Added requirement matrix, 20% target-gap framing, M01–M04 acceptance and API v0.3 `/chat` route.
+- Preserved separate startup/dependencies and added optional DNS/environment failure conditions.
+- Planning only; no runtime completion claimed.
+
+## v0.5 — 2026-09-17
+
+- User approved third participant for the MCP evidence-review/explanation service.
+- Split A into deterministic analysis/audit service and C into reviewer service; B retains UI/packaging/merge coordination.
+- Added C handoff, path ownership, service routing, function plan, completion gates and PR/evaluation conditions.
+- A handoff renamed to A_ANALYSIS_SERVICE.md; history retained in prior commits.
+- User required base independence: C is an optional Compose profile; A+B work without it or model keys. Added R01–R05 failure-isolation gates.
+- Validated six synthetic examples and official claims-schema compatibility; runtime checks remain NOT RUN.
+
 ## v0.4 — 2026-09-17
 
 - Added an explicit frontend/backend API, OpenAPI 3.1 schema and six original synthetic examples.

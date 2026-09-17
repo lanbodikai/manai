@@ -1,6 +1,6 @@
-# Decision and evidence ledger — v0.3
+# Decision and evidence ledger — v0.6
 
-Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED = editable design; OPEN = unresolved; DEFERRED = outside current scope.
+Statuses: SUPERSEDED = retained historical decision; CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED = editable design; OPEN = unresolved; DEFERRED = outside current scope.
 
 ## Explicit user choices
 
@@ -8,13 +8,15 @@ Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED 
 |---|---|---|
 | D01 | DECIDED | Track 2; complete GPU-efficiency dashboard with one deeply verified recommendation. |
 | D02 | DECIDED | Thesis: audit proposed savings and show evidence plus downside. |
-| D03 | DECIDED | Two builders/Codex sessions, one per workstream. |
+| D03 | SUPERSEDED | Initially two builders; D10 adds a third participant. |
 | D04 | DECIDED | Several discussion rounds before implementation; create versioned planning documents now. |
 | D05 | DECIDED | Completed zero-compute jobs as first cohort; CPU-placement pilot is the proposed action, compatibility remains unverified. |
 | D06 | DECIDED | Official Python API plus React/TypeScript dashboard. |
 | D07 | DECIDED | Dashboard first; bounded MCP agent explains/challenges evidence. |
-| D08 | DECIDED | Builder A: analysis/service/MCP agent; Builder B: React dashboard/packaging/integration; B coordinates merges. Individual session identities remain unassigned. |
+| D08 | DECIDED | Builder A: analysis/audit service; Builder B: React dashboard/packaging/integration; B coordinates merges. Enhanced MCP explanation moves to C under D10; the mandatory minimal MCP chatbot remains in A/B under D12. Individual identities remain unassigned. |
 | D09 | DECIDED | Include a specific checklist for importing official Track 2 code plus agreement/license/attribution. Import execution is not yet activated. |
+| D10 | DECIDED | Third participant owns the enhanced MCP evidence-review/explanation service; separate workstream C. |
+| D11 | DECIDED | A+B must remain fully functional if C is disabled, unavailable or unstable. C is an optional enhancement, never a base startup dependency. |
 
 ## Official requirements
 
@@ -48,3 +50,7 @@ Track 1; live remediation; training a router; optimizing all 24 rules; identifyi
 ## Local environment observation
 
 Docker CLI is present. A read-only check from the restricted session could not access Docker configuration and found no docker_engine pipe. This does not establish readiness on the actual demo machine; engine access remains UNVERIFIED. No application/data/evaluation checks were run. Clarify the active machine/provider and execution phase before setup.
+
+## D12 — slide alignment (user requirement; implementation design proposed)
+
+User requires alignment with the quoted Track 2 slide, including its explicit MCP chatbot/agent deliverable. A+B therefore include a minimal template-based chatbot making real MCP calls; C adds richer review. This reconciles D07/D10/D11 without dropping a required feature. Static summaries do not satisfy chatbot acceptance. The 20% cut is a business target, not a result we may assert; show audited contribution and unmet gap with a matching denominator. See REQUIREMENTS.md.

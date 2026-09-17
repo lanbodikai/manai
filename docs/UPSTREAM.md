@@ -56,6 +56,10 @@ Mark these only after performing them. Reviewed does not mean imported or execut
 - [ ] Download data only after activation; run prep, generate and canonical-data check.
 - [ ] Add the dashboard/service to a single root Compose project; keep the official API service.
 - [ ] Test API readiness and a complete fixture-backed page; record actual outcomes.
-- [ ] Freeze shared contract/fixtures and baseline commit before both builders branch.
+- [ ] Freeze shared contract/fixtures and baseline commit before all three builders branch.
 
 Copying official files supplies infrastructure and obligations; it does not complete our contribution or its evaluation.
+
+## Mandatory base MCP inclusion
+
+Import the official `mcp_layer/` with API dependencies for A/B's minimum chatbot, independent of C. Preserve its name to avoid shadowing the `mcp` package. Pin the tested MCP client/server dependencies during bootstrap and build them into the base image. Use the documented stdio transport; no external model provider is needed for a template-based client. C's optional model/framework dependencies belong only in its own image.

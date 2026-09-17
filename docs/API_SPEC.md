@@ -1,14 +1,14 @@
-# Frontend/backend API — draft v0.2
+# Frontend/backend API — draft v0.3
 
 Review artifact, not an implemented server. Canonical machine-readable shapes: [OpenAPI](../contracts/openapi.json). [Examples](../contracts/examples/manifest.json) are original synthetic fixtures, not organizer data or measured results. This contract revises the earlier route sketch in CONTRACT.md.
 
 ## Architecture and ownership
 
-Browser → React dashboard :3000 → same-origin `/api/*` proxy → team Python service → our analysis functions and provided MantisGrid API/MCP → local data.
+Browser → React dashboard :3000 → same-origin proxy → A's analysis service for data/audits/claims, or C's reviewer service for explanations. Both use the agreed audit/evidence contract and provided API/MCP resources.
 
-Builder A owns team service routes, deterministic calculations, data access, evidence resolution and agent orchestration. Builder B owns the React API client, components, loading/error states and Compose/proxy wiring. Both review schema changes. The official `api` service stays intact on its documented port; team endpoints are not claimed to be MantisGrid product endpoints.
+Builder A owns data/audit/evidence/claims and base MCP chat routes and deterministic calculations. C owns the explanations route, tool use and grounding evaluation. B owns the React API client, components and Compose/proxy wiring. All affected owners review schema changes. The official `api` service stays intact on its documented port; team endpoints are not claimed to be MantisGrid product endpoints.
 
-No browser-side provider keys or direct LLM calls. In Compose, use service names rather than host localhost. Internal service port can be 8001; it need not be published to the host. The proposed local judging application has no account/login flow. This is not authorization to expose it publicly on the internet.
+No browser-side provider keys or direct LLM calls. In Compose, use service names rather than host localhost. Internal services are `analysis:8001` and `reviewer:8002`; they need not be published to the host. B proxies only `POST /api/audits/{audit_id}/explanations` to reviewer; other public `/api/*` routes, including `/chat`, go to analysis. Reviewer retrieves audit/evidence from analysis over HTTP and uses the supplied MCP tool layer. Its internal `/health` reports tool/provider readiness. The public health body reports `unconfigured` or `unavailable` until optional readiness is known; it must not infer readiness from a configured URL or wait for C during base startup. The proposed local judging application has no account/login flow. This is not authorization to expose it publicly on the internet.
 
 ## Endpoint list
 
@@ -21,6 +21,7 @@ No browser-side provider keys or direct LLM calls. In Compose, use service names
 | GET `/api/audits/{audit_id}` | `getAudit(id)` | `get_audit(id)` | Read immutable result |
 | GET `/api/audits/{audit_id}/evidence?limit=25&cursor=...` | `listEvidence(id,page)` | `list_evidence(id,page)` | Paginated supporting records |
 | GET `/api/audits/{audit_id}/evidence/{evidence_id}` | `getEvidence(id,ref)` | `resolve_evidence(id,ref)` | Evidence drawer |
+| POST `/api/audits/{audit_id}/chat` | `askBaseChat(id,request)` | `answer_base_chat(id,request)` | Required template-based MCP chatbot |
 | POST `/api/audits/{audit_id}/explanations` | `explainAudit(id,request)` | `explain_audit(id,request)` | MCP-backed question/challenge |
 | GET `/api/audits/{audit_id}/claims?team=...` | `exportClaims(id,team)` | `export_claims(id,team)` | Same-scenario claims download |
 
@@ -30,7 +31,7 @@ The only create operation creates a calculation snapshot. No route moves a workl
 
 Input fields: `client_request_id`, `expected_data_fingerprint`, fixed initial `recommendation_id="cpu-placement-pilot"`, and `scenario`.
 
-Scenario contains explicit `recovery_fraction.{low,point,high}`, positive `usd_per_gpu_hour`, `cancelled_policy="exclude"`, `interval_kind="scenario"`, and `assumption_note`. The first cohort is completed zero-compute jobs only; expanding cancellation policy is not a free UI toggle in v0.2. Do not silently introduce a broader cohort.
+Scenario contains explicit `recovery_fraction.{low,point,high}`, positive `usd_per_gpu_hour`, `cancelled_policy="exclude"`, `interval_kind="scenario"`, and `assumption_note`. The first cohort is completed zero-compute jobs only; expanding cancellation policy is not a free UI toggle in v0.3. Do not silently introduce a broader cohort.
 
 Example request and full response are in [audit request](../contracts/examples/audit-request.json) and [audit response](../contracts/examples/audit-response.json). They use two invented jobs totaling 30 GPU-hours and explicitly assumed 20/40/60% recovery. The resulting 6/12/18 GPU-hour range is arithmetic, not a benchmark.
 
@@ -91,4 +92,20 @@ Health returns 200 for a live service even if data or agent are unready; its bod
 - C05: framework validation and provider failures use the documented error envelope/status; health remains distinguishable from readiness.
 - C06: every implemented operation matches OpenAPI requiredness/types; export is raw claims JSON, not wrapped.
 
-Only C01 can be checked before implementation. C02–C06 remain NOT RUN. After API freeze, both builders work against these fixtures. Any breaking route/field change requires a new contract version, fixtures and cross-review.
+Only C01 can be checked before implementation. C02–C06 remain NOT RUN. After API freeze, all three builders work against these fixtures. Any breaking route/field change requires a new contract version, fixtures and cross-review.
+
+## Optional reviewer and failure isolation — approved
+
+Default `docker compose up` runs the base only. The `reviewer` service uses the optional Compose profile `reviewer`; default startup must not build its image or resolve its dependencies. No base service has `depends_on: reviewer`. The optional path is `docker compose --profile reviewer up --build`, after C's tests pass; base startup remains the judged fallback.
+
+Overview/audit/evidence/downside/claims, the minimal live MCP chatbot and a deterministic evidence summary require neither C nor provider credentials. Base health reports data readiness without waiting for C. The public explanations route stays reserved: when disabled/unreachable it returns the existing `503 AGENT_UNAVAILABLE` envelope, normalized by B's proxy adapter. The button can be visibly disabled with a reason or fail locally with a retry option; page rendering never awaits it.
+
+Set an independent frontend explanation timeout (proposed 35 seconds, above C's 30-second internal bound). Reject malformed or wrong-audit-ID replies. Preserve the immutable audit and evidence even if C hangs or restarts. The fixed summary uses canonical fields from A and is labeled “Evidence summary — deterministic,” while successful C responses are labeled tool-backed agent explanations.
+
+Claims export, final report numeric values and submission validation cannot depend on a C answer. Missing C is a declared feature limitation, not a failure of the base application or a reason to fabricate an agent demo.
+
+## Base MCP route and startup details
+
+`POST /api/audits/{audit_id}/chat` is always routed to A, with the existing ExplanationRequest/Explanation/Error schemas and audit identity checks. B offers supported questions and labels template-based answers clearly. Each supported answer uses actual MCP tool retrieval; static summaries remain a separate feature. Initial bound: at most 3 tool calls, 10 seconds server-side and 12 seconds client-side. Unknown question: insufficient_evidence, never speculative free-form synthesis. Invalid/down tools: visible error, never fake success. B can always return to this route after C fails; switching modes is explicit.
+
+A owns the MCP client adapter under `service/base_chat/`, using the official `mcp_layer` stdio transport with dependencies installed during the base image build. B wires its read-only data mount and process cleanup. Keep C dependencies in its own image. Do not resolve optional C DNS at proxy startup, or require its environment variables during Compose interpolation; lazy route resolution must allow an absent host. C failures must not stop the required base MCP runtime. Optional-service resilience can be tested with B-owned stubs, without waiting for C implementation.

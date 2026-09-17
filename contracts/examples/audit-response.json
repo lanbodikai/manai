@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.2",
+  "contract_version": "0.3",
   "audit_id": "synthetic-audit-001",
   "client_request_id": "fixture-request-001",
   "recommendation_id": "cpu-placement-pilot",

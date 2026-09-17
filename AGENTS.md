@@ -27,7 +27,7 @@ Read README.md, docs/DECISIONS.md, docs/QUESTIONS.md and docs/ROADMAP.md. For as
 - Reuse the pinned official API, preprocessing and generator. Preserve file structure needed by their tools. Log imported provenance and modifications.
 - Use deterministic code for cohorts, joins, money, intervals and claims. An LLM may select evidence tools and explain verified outputs; it must not become the numeric source of truth.
 - A failure or missing evidence is an explicit UI state, never a fabricated successful response. A mock is visibly synthetic and cannot satisfy real-data acceptance.
-- Scope ownership is in the two workstream files. Propose shared-contract changes first, update its version and fixture, and obtain agreement from the other builder before dependent edits.
+- Scope ownership is in the three workstream files. Propose shared-contract changes first, update its version and fixture, and obtain agreement from the other builder before dependent edits.
 - Do not add dependencies/architecture for speculative later features. No model training, generalized autonomous remediation or broad paper reproduction in the initial scope.
 
 ## Tests, evaluation and completion
@@ -38,8 +38,18 @@ A completion report must state commit, implemented scope, test/eval IDs and outc
 
 ## Branches and handoffs
 
-Use `codex/analysis-agent` and `codex/product-integration` after a common baseline exists. Prefer separate worktrees for concurrent sessions. Builder B owns integration files; Builder A owns computation and agent files. Neither silently edits the other's paths.
+Use `codex/analysis-service`, `codex/product-integration` and `codex/evidence-review-service` after a common baseline exists. Prefer separate worktrees for concurrent sessions. B owns product/integration files; A owns computation/audit service; A also owns the minimal MCP chatbot; C owns the enhanced explanation service. Do not silently edit another owner's paths.
 
 Local commits are appropriate for authorized work. Push/create PR only when the active task authorizes publishing. Open a draft PR after the first coherent working slice; mark ready after the workstream completion contract passes. Merge only after cross-review, shared checks and lead authorization; never force-push a shared branch or bypass a failed material check.
 
 Use new commits for plan revisions; preserve earlier reasoning in CHANGELOG.md. Do not overwrite an approved decision with an assumption. No subagents or separate tasks are started merely by reading these handoff documents.
+
+## Base product independence — explicit user requirement
+
+A+B must operate without C. Default `docker compose up` builds/starts only the base services and required official dependencies. Put C behind an optional Compose `reviewer` profile; do not add it to the base build, readiness checks or startup dependency chain. Enable it separately with one documented profile command when it is validated.
+
+Every base function works without a model key: overview, scenario calculation, downside, evidence drill-down, deterministic evidence summary, minimal live MCP chatbot and claims export. Label the deterministic summary as such; never call it a live agent answer. A+C failure must not be conflated: if A/data fail, show an actual data failure; if C fails, preserve all existing results.
+
+C errors/timeouts/malformed outputs affect only the optional explanation panel. Do not block page load or claim export waiting for C. Execute R01–R05 resilience tests before final base completion; M01–M04 are required for the base MCP chatbot; G01–G05 are required before marking C complete/enabled. Report slide-aligned base readiness and enhanced reviewer readiness separately.
+
+The deck explicitly requests a chatbot or agent using MCP. Keep a small template-based chatbot in A/B with real MCP calls and no model key. Static text, API-only calls or synthetic fixtures cannot satisfy this gate. C remains optional; the required MCP tool runtime is part of the base. See docs/REQUIREMENTS.md.

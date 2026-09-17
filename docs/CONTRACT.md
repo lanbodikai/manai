@@ -1,6 +1,6 @@
-# Shared contract v0.2 — PROPOSED, freeze before split
+# Shared contract v0.3 — PROPOSED, freeze before split
 
-Purpose: both sessions can work against one original synthetic fixture and interface without sharing unfinished code. This is our contract, not MantisGrid's API schema.
+Purpose: all three sessions can work against one original synthetic fixture and interface without sharing unfinished code. This is our contract, not MantisGrid's API schema.
 
 ## Types
 
@@ -11,7 +11,7 @@ Purpose: both sessions can work against one original synthetic fixture and inter
 
 `interval_kind=scenario` means sensitivity to assumptions, not a statistical confidence interval. Do not populate confidence probabilities without a defensible basis; schema permits omission. Counts may have exact zero; missing values are null/unknown, never silently zero.
 
-## Functions — Builder A owns implementations
+## Functions — Builder A owns analysis/service/base chat; C owns enhanced explain_audit
 
 | Signature (language-neutral) | Responsibility / failure behavior |
 |---|---|
@@ -30,7 +30,7 @@ Recovery model for the first version: `eligible_unique_gpu_hours * explicitly_as
 
 ## Team service and UI boundary
 
-Authoritative draft route/payload definitions are in [API_SPEC.md](API_SPEC.md) and [OpenAPI](../contracts/openapi.json). The v0.1 singular `/api/audit`, global evidence and global claims sketches are superseded by immutable audit-scoped routes in v0.2. Original synthetic fixtures now exist under `contracts/examples/`.
+Authoritative draft route/payload definitions are in [API_SPEC.md](API_SPEC.md) and [OpenAPI](../contracts/openapi.json). The v0.1 singular `/api/audit`, global evidence and global claims sketches are superseded by immutable audit-scoped routes in v0.3. Original synthetic fixtures now exist under `contracts/examples/`.
 
 The first completed-job cohort fixes `cancelled_policy=exclude`; changing that requires a cohort/contract decision. Explanation success is `ok` or `insufficient_evidence`; provider unavailability and timeout use structured error responses rather than a fabricated successful explanation.
 
@@ -40,4 +40,12 @@ The first completed-job cohort fixes `cancelled_policy=exclude`; changing that r
 
 ## Freeze gate
 
-Stack and cohort are approved. Before branching: verify precise column mappings against actual data, review the v0.2 OpenAPI schema and synthetic fixtures, agree rounding/display rules and have both sessions acknowledge the same commit. The schema/examples exist and can be validated; the API server and generated TypeScript client do not yet exist.
+Stack and cohort are approved. Before branching: verify precise column mappings against actual data, review the v0.3 OpenAPI schema and synthetic fixtures, agree rounding/display rules and have all three sessions acknowledge the same commit. The schema/examples exist and can be validated; the API server and generated TypeScript client do not yet exist.
+
+## Base versus enhancement
+
+D11 makes C optional. Core routes, including the required minimal MCP chat, are implemented by A and served through B independently. Explanation request/response schemas remain the same when C is enabled; otherwise the route returns 503 with a clear unavailable state. See API_SPEC.md for profile and timeout behavior.
+
+## Base chatbot — contract v0.3
+
+`answer_base_chat(audit_id, request) -> Explanation` belongs to A. Use a bounded intent allowlist (support for this recommendation, rule eligibility, recovery assumptions, what could go wrong), call actual official MCP tools, verify audit/data identity, and render supported templates. Unsupported questions return `insufficient_evidence`; tool failures return structured errors. No provider key or C code is required. `POST /api/audits/{audit_id}/chat` uses existing ExplanationRequest/Explanation/Error shapes. B labels it "MCP evidence chatbot — template-based". Its source numbers remain A's canonical audit; source tool outputs are labeled fact/judgment/simulated. The separate `/explanations` endpoint is C's optional richer review.

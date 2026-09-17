@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "manai team API \u2014 planning contract",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Draft contract. No server implemented. Example values are original synthetic test data, not MantisGrid results."
   },
   "servers": [
@@ -568,6 +568,114 @@
           }
         ]
       }
+    },
+    "/api/audits/{audit_id}/chat": {
+      "post": {
+        "operationId": "answerBaseChat",
+        "summary": "Required template-based chatbot using real official MCP tools; independent of optional reviewer",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Explanation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "See documented error-code table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExplanationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "audit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -987,7 +1095,7 @@
         "additionalProperties": false,
         "properties": {
           "contract_version": {
-            "const": "0.2"
+            "const": "0.3"
           },
           "audit_id": {
             "type": "string"
@@ -1151,7 +1259,7 @@
             ]
           },
           "contract_version": {
-            "const": "0.2"
+            "const": "0.3"
           },
           "data_status": {
             "type": "string",
