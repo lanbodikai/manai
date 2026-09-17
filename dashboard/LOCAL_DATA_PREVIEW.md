@@ -1,3 +1,5 @@
+> Current integration update (2026-09-17): production Compose now serves the v0.4 audit flow and the existing read-only explorer/decision routes on :3000. `dataset-prep` builds the verified private snapshot automatically; `tools/dataset-handler.ts` is shared with the local preview. These browsing routes remain B-owned and are not additions to A's v0.4 contract. Multi-fix modeling is disabled in production. The historical local/B0 instructions below remain useful for development; their production-unavailable statements are superseded by [current root instructions](../README.md) and [integration results](../eval/integration/RESULTS.md).
+
 # Real local dataset preview
 
 This temporary frontend development mode supplies the requested real-data charts and database browser before A exposes general dataset endpoints. It is explicit and read-only. It does not replace the analysis service, calculate savings, generate claims, or call a model/MCP. Featherless is not required.

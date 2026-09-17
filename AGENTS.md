@@ -2,6 +2,14 @@
 
 ## Current mode
 
+MAIN BASELINE MERGED. Winston approved publishing validated A+B snapshot 5c4fd83 through integration to main (runtime merge 610f89d), explicitly deferring independent cross-review and U05. Those checks remain pending, not passed. New B revisions target main separately. C must first merge/read the new main and validate compatibility; C remains disabled by default. See docs/MAIN_BASELINE_HANDOFF.md. This status supersedes earlier candidate-only wording below.
+
+A+B INTEGRATION CANDIDATE. This session is authorized to finish and publish A/B integration, including the existing read-only Data explorer and Decisions in the production dashboard. Preserve B history and keep multi-fix backend modeling deferred. C stays disabled. See docs/AB_INTEGRATION_HANDOFF.md and eval/integration/RESULTS.md for current checks and remaining release gates. Earlier narrower assignments below are historical.
+
+INTEGRATION EXECUTION AUTHORIZED. Winston approved this session to review/publish the shared A+B baseline, finish B's v0.4 CPU-pilot UI and Compose integration, validate C separately, and prepare the final release for review. Preserve B's explorer history; defer the proposed multi-fix modeling backend. A is merged into integration at db6f418. Final main publication remains subject to the concrete release review. This authorization supersedes historical no-implementation/no-merge notes within this bounded scope.
+
+WORKSTREAM A ACTIVE in this isolated checkout, explicitly assigned by Winston. Implement and publish A1 then A2 on codex/analysis-service targeting codex/integration; never merge or push to main. BASE gates passed. Winston confirmed B agreement to exact ce6a44e proposal; A accepted and recorded adoption in PR #2 before implementation. Active API is now v0.4 on this branch; B must regenerate its strict client before switching. Preserve B/C ownership. See eval/analysis/RESULTS.md for actual checks, not historical readiness wording.
+
 CPU-PILOT HANDOFF UPDATE. User authorized API/fixtures and A/B handoff, plus direct publication of the validated base update to main. The v0.4 proposal is staged under contracts/proposals/v0.4 for coordinated A/B adoption; active v0.3 remains unchanged. No calculator or other workstream implementation is authorized by merely reading this update. See docs/VERIFIER_HANDOFF_REVIEW.md.
 
 COMMON BASE VERIFIED. Worktree: manai-bootstrap, branch codex/integration. BASE-01 through BASE-07 passed on implementation baseline 7530865. The bootstrap assignment stops here; subsequent A/B/C implementation requires the corresponding session assignment. Preserve B's dashboard files. Read docs/BOOTSTRAP_STATUS.md for actual gate results and docs/BOOTSTRAP_BOUNDARY.md for ownership. Historical planning activation questions do not override this authorization.

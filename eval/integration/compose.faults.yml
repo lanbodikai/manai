@@ -1,0 +1,11 @@
+# Test-only optional reviewer. Never part of default startup.
+services:
+  dashboard:
+    environment:
+      REVIEWER_URL: http://reviewer:8002
+  reviewer:
+    profiles: [reviewer]
+    image: python:3.12-slim
+    volumes:
+      - ./eval/integration/reviewer_stub.py:/app/reviewer_stub.py:ro
+    command: [python, /app/reviewer_stub.py]

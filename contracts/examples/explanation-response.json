@@ -1,10 +1,9 @@
 {
-  "audit_id": "synthetic-audit-001",
-  "client_request_id": "fixture-explain-001",
+  "audit_id": "synthetic-pilot-audit-001",
+  "client_request_id": "synthetic-pilot-explain-001",
   "status": "ok",
-  "answer": "The synthetic cohort contains 30 eligible GPU-hours. At the assumed 40% recovery fraction, the point scenario is 12 GPU-hours. CPU compatibility remains untested.",
+  "answer": "For synthetic J2 only, assuming successful CPU replacement: 48 vCPU-hours cost $4.80 at the supplied rate; net reference value is $45.20 and completion is 2 hours later if extra queue delay is zero. This is conditional, not a measured result or the cohort claim. Compatibility and stop enforcement remain untested.",
   "supporting_evidence_ids": [
-    "job:J1",
     "job:J2"
   ],
   "limitations": [

@@ -1,10 +1,9 @@
 // MANAI_MOCK_ONLY: this module must never enter the live build.
 import { createDemoDatasetApi } from "./datasets";
 import { createMockOptimizationApi } from "./optimization";
-import auditFixture from "../../../contracts/proposals/v0.4/examples/audit-without-pilot.json";
-import cpuPilotAuditFixture from "../../../contracts/proposals/v0.4/examples/audit-response.json";
-import evidenceFixture from "../../../contracts/proposals/v0.4/examples/baseline-evidence.json";
-import claimsFixture from "../../../contracts/proposals/v0.4/examples/claims-response.json";
+import auditFixture from "../../../contracts/examples/audit-without-pilot.json";
+import evidenceFixture from "../../../contracts/examples/baseline-evidence.json";
+import claimsFixture from "../../../contracts/examples/claims-response.json";
 import type { Audit, DashboardApi, Schemas, Overview } from "../api/types";
 import { ApiError, parse, validateAuditRequest } from "../api/validation";
 
@@ -18,8 +17,10 @@ export type Fault =
   | "reviewer-unavailable"
   | "reviewer-timeout"
   | "reviewer-malformed";
-export const initialAudit = parse("Audit", auditFixture);
-const cpuPilotAudit = parse("Audit", cpuPilotAuditFixture);
+export const initialAudit = parse("Audit", structuredClone(auditFixture));
+delete initialAudit.scenario.cpu_pilot;
+initialAudit.downside.cpu_pilot = null;
+initialAudit.downside.status = "unmeasured";
 export const overviewFixture: Overview = parse("Overview", {
   provenance: initialAudit.provenance,
   price_book_version: "synthetic-price-v1",
@@ -93,7 +94,7 @@ export function createMockApi(
       join_keys: { id_job: member.source_id },
       observations: record.observations.map((o) => ({
         ...o,
-        value: o.unit === "gpu_hours" ? (ref === "job:J1" ? 10 : 20) : o.value,
+        value: o.column === "gpu_hours" ? (ref === "job:J1" ? 10 : 20) : o.value,
       })),
     });
   }
@@ -177,6 +178,8 @@ export function createMockApi(
     },
     async createAudit(input) {
       const body = validateAuditRequest(input);
+      if (body.scenario.cpu_pilot)
+        throw new ApiError("SYNTHETIC_PILOT_UNAVAILABLE", "This synthetic demo models cohort recovery only. Use the live service for CPU pilot results.", 422);
       await wait(options.auditDelay?.(body) ?? options.delay ?? 350);
       if (
         fault === "conflict" ||
@@ -194,9 +197,7 @@ export function createMockApi(
           "Demo validation rejected this scenario.",
           422,
         );
-      const audit = structuredClone(
-        body.scenario.cpu_pilot ? cpuPilotAudit : initialAudit,
-      );
+      const audit = structuredClone(initialAudit);
       audit.audit_id = `demo-audit-${++counter}`;
       audit.client_request_id = body.client_request_id;
       audit.scenario = structuredClone(body.scenario);

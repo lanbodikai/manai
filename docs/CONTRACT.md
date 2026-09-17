@@ -1,4 +1,6 @@
-# Shared contract v0.3 — PROPOSED, freeze before split
+# Shared contract v0.4 — adopted A/B CPU-pilot extension
+
+Adoption: Winston confirmed B acceptance of the exact ce6a44e proposal; A accepted and recorded this in PR #2 before promotion. `contracts/openapi.json` now matches that proposal. Existing routes, Claims and Explanation shapes remain unchanged. Scenario optionally adds `cpu_pilot`; Downside requires nullable `cpu_pilot`; eligibility may include memory partitions. See contracts/proposals/v0.4/README.md for formulas and units. Historical v0.3 discussion below describes the base; v0.4 adoption supersedes its pending-version statements. B must regenerate its strict client before deploying this branch.
 
 Purpose: all three sessions can work against one original synthetic fixture and interface without sharing unfinished code. This is our contract, not MantisGrid's API schema.
 

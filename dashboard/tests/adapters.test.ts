@@ -8,14 +8,18 @@ import {
 import { createHttpApi } from "../src/api/http";
 import { parse } from "../src/api/validation";
 import type { Schemas } from "../src/api/types";
-import requestFixture from "../../contracts/proposals/v0.4/examples/audit-request.json";
-import auditFixture from "../../contracts/proposals/v0.4/examples/audit-response.json";
-import evidenceFixture from "../../contracts/proposals/v0.4/examples/baseline-evidence.json";
-import explanationFixture from "../../contracts/proposals/v0.4/examples/explanation-response.json";
-import claimsFixture from "../../contracts/proposals/v0.4/examples/claims-response.json";
+import requestFixture from "../../contracts/examples/audit-request.json";
+import auditFixture from "../../contracts/examples/audit-response.json";
+import evidenceFixture from "../../contracts/examples/baseline-evidence.json";
+import explanationFixture from "../../contracts/examples/explanation-response.json";
+import claimsFixture from "../../contracts/examples/claims-response.json";
 import errorFixture from "../../contracts/examples/error-response.json";
 
-const request = () => structuredClone(parse("AuditRequest", requestFixture));
+const request = () => {
+  const value = structuredClone(parse("AuditRequest", requestFixture));
+  delete value.scenario.cpu_pilot;
+  return value;
+};
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -46,6 +50,7 @@ describe("v0.4 contract", () => {
       { low: 0.8, point: 0.4, high: 0.9 },
       { low: 0.2, point: 0.4, high: 1.1 },
       { low: NaN, point: 0.4, high: 0.6 },
+      { low: 0, point: 0.4, high: Infinity },
     ]) {
       const r = request();
       r.scenario.recovery_fraction = invalid;
@@ -59,7 +64,7 @@ describe("v0.4 contract", () => {
     await expect(api.createAudit(r)).rejects.toMatchObject({
       code: "INVALID_SCENARIO",
     });
-    const capped = request();
+    const capped = structuredClone(parse("AuditRequest", requestFixture));
     capped.scenario.cpu_pilot!.trial_cap_hours = 1;
     await expect(api.createAudit(capped)).rejects.toMatchObject({
       code: "INVALID_SCENARIO",
@@ -109,9 +114,7 @@ describe("mock snapshots and export", () => {
       api.listEvidence(first.audit_id, { cursor: "nonsense" }),
     ).rejects.toMatchObject({ status: 422 });
     expect(
-      (await api.getEvidence(first.audit_id, "job:J2")).observations.find(
-        (observation) => observation.unit === "gpu_hours",
-      )?.value,
+      (await api.getEvidence(first.audit_id, "job:J2")).observations.find(o => o.column === "gpu_hours")?.value,
     ).toBe(20);
   });
   it("handles empty cohorts and stale data explicitly", async () => {

@@ -13,7 +13,7 @@ import { taskSummary } from "../optimization-options";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
 
-export function CostOptimization({ api }: { api: DashboardApi }) {
+export function CostOptimization({ api, modelAvailable = true }: { api: DashboardApi; modelAvailable?: boolean }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const [table, setTable] = useState<DecisionTable | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -78,7 +78,7 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
     retry();
   }
   async function optimize() {
-    if (!current || !selected.length || !api.optimization || sending || receipt) return;
+    if (!modelAvailable || !current || !selected.length || !api.optimization || sending || receipt) return;
     const sequence = ++submitSequence.current;
     const request: OptimizeRequest = pending.current ?? {
       contract_version:"optimization-preview-1", client_request_id:crypto.randomUUID(),
@@ -176,7 +176,7 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
         {!!inactiveRows.length && <details className="inactive-opportunities"><summary>{inactiveRows.length} checks have no eligible cohort in this snapshot</summary><div>{inactiveRows.map((row) => <article key={row.id}><strong>{row.title}</strong><span>No eligible jobs in this source window.</span><a href={datasetHref("findings",{query:row.rule})}>Inspect findings <ArrowRight size={13}/></a></article>)}</div></details>}
         <details className="decision-footnote"><summary>About the numbers</summary><p>Percentages use all recorded GPU-hours as the denominator. Task hours exclude cancellation and synthetic findings. Each selected job is counted once. Reference value uses $2.50/GPU-hour for the sample window; it is not a bill or savings estimate.</p></details>
       </section>
-      {confirmOpen && <OptimizeDialog rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
+      {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
       {pilotOpen && selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
       <details className="panel technical-decisions"><summary>About the optional 20% spending goal</summary><div className="optional-goal"><h2>What does a 20% cut mean?</h2><p>The hackathon brief asks for 20% lower spending: spend $80 for every $100 previously spent, while preserving research performance. This is an example, not the cluster’s bill. You can investigate opportunities without choosing a target first.</p><p>The pilot model compares against 20% of the historical sample’s reference value. It does not forecast next-quarter savings.</p></div></details>
     </>}

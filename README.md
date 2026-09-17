@@ -1,56 +1,45 @@
-# manai — verified common-base bootstrap
+# manai — integrated A+B baseline
 
-Track 2: audit a completed zero-GPU-compute cohort for a bounded CPU-placement pilot. Our contribution is the accounting, assumptions, downside and evidence story; CPU placement is already suggested upstream. Real intervention savings remain unproven.
+Track 2: a bounded CPU-placement pilot with traceable evidence, explicit assumptions and downside. The running base uses API v0.4. It does not establish CPU compatibility or realized savings.
 
-**This branch is the common foundation, not a finished hackathon submission.** The page on :3000 is a labeled integration probe. See [actual gate results](docs/BOOTSTRAP_STATUS.md) and [frozen boundaries](docs/BOOTSTRAP_BOUNDARY.md).
+**Validated A+B is merged to main.** Independent cross-review and timed usability were explicitly deferred by Winston for this baseline merge; final submission readiness is not claimed. See [the new-main B/C handoff](docs/MAIN_BASELINE_HANDOFF.md). See [actual checks](eval/integration/RESULTS.md), [A/B author handoff](docs/AB_INTEGRATION_HANDOFF.md) and [report/demo](REPORT.md). C remains disabled; multi-fix modeling remains deferred.
 
-## CPU-pilot handoff update
+## Run
 
-[Independent verifier review](docs/VERIFIER_HANDOFF_REVIEW.md) and [proposed API v0.4 with synthetic fixtures](contracts/proposals/v0.4/README.md) are ready for A/B review. A owns cost/delay calculations; B displays them; C remains optional. Active API v0.3 and the verified bootstrap are unchanged. This main-branch foundation does not include B's separate dashboard branch or a finished audit service.
+Use Git and Docker Desktop/Engine with Linux containers. No host Node/Python or model key is required to run the product. Check out `main` for the validated baseline. New B revisions are reviewed separately against main.
 
-## Setup
-
-Requires Git and Docker Desktop/Engine with Linux containers. No model key or host Python/Node installation is required for this bootstrap.
+Provision the organizer data using [data setup](data/README.md). On Windows, `powershell -ExecutionPolicy Bypass -File tools/bootstrap/setup.ps1` downloads/prepares/generates and verifies it. This is data provisioning; app startup is one command:
 
 ```sh
-git clone --branch main https://github.com/lanbodikai/manai.git
-cd manai
+docker compose up --build
 ```
 
-Windows PowerShell: run `powershell -ExecutionPolicy Bypass -File tools/bootstrap/setup.ps1`. It verifies generator hashes, downloads missing raw data, prepares/generates the five files and checks their canonical contents. It does not modify machine execution policy. Read [data setup](data/README.md) for equivalent non-Windows steps and source terms.
+Open http://localhost:3000 for the dashboard and http://localhost:8000/docs for the official API. Default services are api, analysis/MCP and dashboard, plus a one-shot dataset-prep job. That job uses the pinned official preprocessing and verifies the source checksums before publishing a private SQLite snapshot into a named volume. The dashboard reads that volume read-only. No source records are baked into the image or browser bundle. Recreate dataset-prep and dashboard when changing source data.
 
-After data provisioning, the judged startup shape is one unattended command:
+For an existing data directory set `MANAI_DATA_DIR` to its absolute path. `MANAI_SUBNET` can select an unused local subnet; ports 3000/8000 must be free. Stop only your previous manai stack when changing checkouts. `docker compose down` stops this checkout without deleting its data volume.
+
+## What works
+
+- Overview, immutable recovery scenarios, one-job CPU cost/delay cases, evidence and claims come from A v0.4.
+- Data explorer and Decisions share B's read-only dataset routes with its local preview. These are B-owned `preview-1` / `optimization-preview-1` interfaces, separate from A's audit contract. Selections show deduplicated observed exposure; they do not approve or execute changes.
+- Multi-fix modeling is visibly disabled. B's preserved cohort CPU planner is a hypothetical comparison, separate from the audited single-job scenario and claims.
+- The required template chatbot makes real official MCP calls without a model key. A deterministic summary is separately labeled.
+- No C installation, build, health check or provider key is required. Optional explanation errors preserve the base. C is not ready to enable; see the handoff.
+
+A 503 on Overview means an actual data/upstream failure, not normal operation. Inspect `docker compose ps` and the api/analysis logs. A dataset preparation error appears in `docker compose logs dataset-prep`; fix the missing or mismatched source files before restarting. Obsolete development URLs such as :13010 may point at a different stack. Use :3000 for this candidate.
+
+## Verification and claims
 
 ```sh
-docker compose up
+docker compose exec -T analysis python -m unittest discover -s tests/analysis -v
+docker compose exec -T analysis python -m unittest discover -s tests/base_chat -v
+docker compose exec -T analysis python -m eval.analysis.verify_live
 ```
 
-Open http://localhost:3000 for the temporary page and http://localhost:8000/docs for the official API. Only api, analysis and the temporary dashboard start by default. Notebook uses the optional notebook profile; reviewer does not exist yet. Stop this checkout with `docker compose down` (no global cleanup commands).
-
-If another local checkout already uses our subnet, set MANAI_SUBNET to a verified unused subnet before starting (PowerShell example: `$env:MANAI_SUBNET='10.254.198.0/24'`). Ports 3000/8000 must be free; stop only your previous manai stack when moving checkouts.
-
-## Reproduce bootstrap checks
-
-```sh
-docker compose run --rm prep python scripts/checksum_data.py
-docker compose exec -T analysis python -m unittest discover -s tests/bootstrap -v
-docker compose exec -T analysis python -m tools.bootstrap.cohort_check
-docker compose exec -T analysis python -m tools.bootstrap.mcp_probe
-docker compose exec -T analysis python -m tools.bootstrap.verify_live
-```
-
-The MCP probe makes actual local tool calls; it is not a model-backed chatbot. The claims schema check uses an explicitly synthetic example and does not generate submission claims.
-
-## Team split
-
-- **A:** analysis, audit/evidence/claims APIs and REQUIRED minimum MCP chatbot; inherit service skeleton and MCP utility.
-- **B:** dashboard, routing, Compose, report/demo and integration. Keep your existing B0 branch; merge the verified baseline and replace the temporary page.
-- **C:** optional richer model-backed reviewer, isolated from base startup. Featherless belongs only here.
-
-Read [current handoffs](docs/CODEX_HANDOFF.md), [team guide](TEAM_START_HERE.md), [B early-work contract](docs/workstreams/B_PREBOOTSTRAP.md), [API v0.3](docs/API_SPEC.md), [evaluation conditions](docs/EVALUATION.md) and [Git/secrets policy](docs/GIT_AND_SECRETS.md). No full workstream is completed by this bootstrap.
+Frontend checks and real browser commands are in [integration results](eval/integration/RESULTS.md). Local export: `python eval/integration/export_final.py --url http://localhost:3000`. This writes ignored root `claims.json` and a private matching audit using the documented default 0/0/1 fractions. Do not copy example claims. Generated-claims publication and default-branch selection remain explicit release tasks; no final submission is claimed.
 
 ## Sources and disclosure
 
 Imported official commit: `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`; [manifest and modifications](UPSTREAM_PROVENANCE.md). Preserve [license](docs/upstream/LICENSE), [attribution](docs/upstream/ATTRIBUTION.md) and [participant agreement](docs/upstream/PARTICIPANT_AGREEMENT.md). Source/prepared/generated data are local and excluded from Git and image contexts.
 
-AI assistance: OpenAI Codex (GPT-6, as identified in this session) generated planning documents, the bootstrap service/probe/page and verification code, and performed recorded tool-based checks. The team supplied product choices and scope constraints. Official API/data tooling and MCP server are organizer-provided. No provider model has yet powered the product. Update this disclosure with actual A/B/C models/frameworks and human modifications before final submission.
+AI assistance: OpenAI Codex (GPT-6, as identified in this integration session) generated planning, integration code, production packaging, tests and handoff documentation, and performed the recorded tool-based checks. The team supplied product choices and scope constraints. Official API/data tooling and MCP server are organizer-provided. No provider model has yet powered the product. Update this disclosure with actual A/B/C models/frameworks and human modifications before final submission.

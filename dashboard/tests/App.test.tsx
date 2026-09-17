@@ -9,6 +9,8 @@ import { describe, expect, it } from "vitest";
 import { App } from "../src/App";
 import { createMockApi, initialAudit, type Fault } from "../src/mock/api";
 import type { Runtime } from "../src/api/types";
+import cpuAuditFixture from "../../contracts/examples/audit-response.json";
+import { parse } from "../src/api/validation";
 
 function runtime(fault: Fault = "none"): Runtime {
   return {
@@ -67,6 +69,13 @@ describe("CFO journey", () => {
         assumption_note: "Synthetic test scenario only.",
       },
     };
+    // A declared fixture response exercises rendering; the demo adapter does
+    // not pretend to calculate arbitrary CPU pilot inputs.
+    rt.api.createAudit = async request => ({
+      ...structuredClone(parse("Audit", cpuAuditFixture)),
+      client_request_id: request.client_request_id,
+      scenario: request.scenario,
+    });
     render(<App runtime={rt} />);
     expect(await screen.findByRole("heading", { name: "CPU pilot scenario" })).toBeVisible();
     expect(screen.getByText("Scenario estimate · not verified")).toBeVisible();

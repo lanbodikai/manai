@@ -85,7 +85,7 @@ test("mobile decision cards keep fixes visible and accept a stubbed matching bac
   });
   await page.setViewportSize({width:390,height:844});
   await page.goto("/#optimization");
-  const summaryReview=page.getByRole("button",{name:"Review pilot risks",exact:true});
+  const summaryReview=page.getByRole("button",{name:"Review guardrails",exact:true});
   await summaryReview.click();
   await expect(page.getByRole("dialog").getByText("2.0%",{exact:true})).toBeVisible();
   await page.getByRole("dialog").getByRole("button",{name:"Return",exact:true}).click();

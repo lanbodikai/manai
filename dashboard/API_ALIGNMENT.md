@@ -1,3 +1,5 @@
+> Merge review update: A/B have already adopted active v0.4 on main. The merged frontend reads `contracts/openapi.json` and `contracts/examples/`, with successful-duration/cap validation and main's live CPU controls preserved. The proposal paths and deployment-pending descriptions below record the earlier B review; they are not the current runtime configuration. See `docs/MAIN_BASELINE_HANDOFF.md` and the PR #8 acceptance record.
+
 # API v0.4 frontend integration — B alignment review
 
 Reviewed 17 September 2026 against `5a8d995a624dcd188101de802f75263a512bcc48`, following the user's request to check alignment and acknowledge both versions as official where possible.

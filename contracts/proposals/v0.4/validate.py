@@ -22,7 +22,9 @@ def require(condition, message):
 def main():
     spec = read(HERE / "openapi.json")
     active = read(ROOT / "contracts/openapi.json")
-    require(active["info"]["version"] == "0.3.0", "Active v0.3 changed")
+    require(active["info"]["version"] in {"0.3.0", "0.4.0"}, "Unexpected active version")
+    if active["info"]["version"] == "0.4.0":
+        require(active == spec, "Adopted contract differs from agreed v0.4 proposal")
     require(spec["info"]["version"] == "0.4.0", "Proposal version missing")
 
     def validator(name):

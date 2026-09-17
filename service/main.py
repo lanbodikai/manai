@@ -1,4 +1,4 @@
-"""Bootstrap-only API skeleton. A owns subsequent audit/chat implementation."""
+"""Analysis API; deterministic base independent of the optional reviewer."""
 from contextlib import asynccontextmanager
 from pathlib import Path
 import asyncio
@@ -14,6 +14,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from service.source import inspect_data, current_status
+from service.analysis_routes import router, ServiceError
+from service.audits import AuditStore
+from service.base_chat.chat import router as chat_router
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -22,6 +25,11 @@ SPEC = json.loads((ROOT/"contracts/openapi.json").read_text())
 
 @asynccontextmanager
 async def lifespan(app):
+    app.state.data_dir = DATA
+    app.state.audits = AuditStore(capacity=128)
+    app.state.analysis_context = None
+    app.state.context_lock = asyncio.Lock()
+    app.state.chat_slots = asyncio.Semaphore(2)
     app.state.source = await asyncio.to_thread(inspect_data, DATA)
     app.state.job_count = None
     if app.state.source["status"] == "ready":
@@ -31,7 +39,7 @@ async def lifespan(app):
         app.state.upstream = client
         yield
 
-app = FastAPI(title="manai bootstrap service", version="0.3.0", lifespan=lifespan)
+app = FastAPI(title="manai analysis service", version="0.4.0", lifespan=lifespan)
 
 def error(request, status, code, message, retryable=False):
     return JSONResponse(status_code=status, content={"error": {
@@ -47,7 +55,16 @@ async def identify(request, call_next):
 
 @app.exception_handler(RequestValidationError)
 async def invalid(request, exc):
-    return error(request, 422, "INVALID_REQUEST", "Request does not match the contract.")
+    code = "INVALID_CURSOR" if request.url.path.endswith("/evidence") else "INVALID_REQUEST"
+    return error(request, 422, code, "Request does not match the contract.")
+
+@app.exception_handler(ServiceError)
+async def service_error(request, exc):
+    return error(request, exc.status, exc.code, exc.message, exc.retryable)
+
+@app.exception_handler(Exception)
+async def unexpected_error(request, exc):
+    return error(request, 500, "INTERNAL_ERROR", "The analysis service could not complete this request.")
 
 @app.exception_handler(HTTPException)
 async def http_error(request, exc):
@@ -57,7 +74,7 @@ async def http_error(request, exc):
 def health(request: Request):
     snapshot = request.app.state.source
     status = current_status(DATA, snapshot)
-    return {"service": "ok", "contract_version": "0.3", "data_status": status,
+    return {"service": "ok", "contract_version": "0.4", "data_status": status,
             "data_fingerprint": snapshot["fingerprint"] if status == "ready" else None,
             "agent_status": "unconfigured", "mode": "real"}
 
@@ -69,7 +86,7 @@ def map_overview(summary, waste, prices, job_count, fingerprint):
         raise ValueError("Invalid source price")
     caveats = [summary["provenance"]["caveat"], waste["provenance"]["caveat"],
         "Source outcome totals are rounded to 0.1 GPU-hour; reference dollars are not verified cash savings.",
-        "Bootstrap only: audit, claims and required MCP chatbot are not implemented yet."]
+        "Recovery scenarios are hypothetical; CPU compatibility and realized savings are unproven."]
     result = {"provenance": {"data_fingerprint": fingerprint,
         "sample_label": "MIT SuperCloud four-month job sample; not whole-fleet utilization",
         "window_label": summary["window"]["start"] + " to " + summary["window"]["end"],
@@ -104,9 +121,8 @@ async def overview(request: Request):
     except (KeyError, TypeError, ValueError, jsonschema.ValidationError):
         return error(request,502,"UPSTREAM_RESPONSE_INVALID","Official response did not match the expected overview contract.")
 
-@app.get("/api/audits/{audit_id}")
-def get_audit(audit_id: str, request: Request):
-    return error(request,404,"AUDIT_NOT_FOUND","No audit snapshot exists in this bootstrap service.")
+app.include_router(router)
+app.include_router(chat_router)
 
 @app.post("/api/audits/{audit_id}/explanations")
 def reviewer_unavailable(audit_id: str, request: Request):

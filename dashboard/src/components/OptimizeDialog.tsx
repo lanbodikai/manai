@@ -6,8 +6,8 @@ import {taskSummary} from "../optimization-options";
 import type {PilotReview} from "../pilot-model";
 import {datasetHref} from "./DataExplorer";
 
-export function OptimizeDialog({rows,share,hours,jobs,overlap,sending,error,receipt,ready,review,restoreFocus,onDownload,onProceed,onReturn}:{
-  rows:DecisionRow[];share:number;hours:number;jobs:number;overlap:number;sending:boolean;error:string;
+export function OptimizeDialog({modelAvailable = true,rows,share,hours,jobs,overlap,sending,error,receipt,ready,review,restoreFocus,onDownload,onProceed,onReturn}:{
+  modelAvailable?:boolean;rows:DecisionRow[];share:number;hours:number;jobs:number;overlap:number;sending:boolean;error:string;
   receipt:OptimizeReceipt|null;ready:boolean;onProceed:()=>void;onReturn:()=>void;
   review?:PilotReview|null;onDownload:()=>void;
   restoreFocus?:HTMLElement|null;
@@ -29,7 +29,7 @@ export function OptimizeDialog({rows,share,hours,jobs,overlap,sending,error,rece
   }} onCancel={e => {e.preventDefault();onReturn();}}>
     <header><div><span className="eyebrow">DECISION REVIEW</span><h2 id="optimize-dialog-title">Review {rows.length} selected {rows.length===1 ? "action" : "actions"}</h2></div><button className="icon-button" aria-label="Return to decisions" onClick={onReturn}><X size={20}/></button></header>
     <div className="optimize-dialog-body">
-      <p id="optimize-dialog-description">Sending this request asks the backend to model the selected actions. It never changes workloads.</p>
+      <p id="optimize-dialog-description">{modelAvailable ? "Sending this request asks the backend to model the selected actions. It never changes workloads." : "Read-only review. Multi-fix modeling is not yet available. Use Scenario for the audited CPU pilot."}</p>
       <p className="optimize-scope"><strong>{share>0 && share<.1 ? "<0.1" : share.toFixed(1)}%</strong> of recorded GPU time affected · not savings</p>
       <section className="review-financials" aria-label="Decision financial review">
         <div><span>Net benefit · {rows.length>1 ? "combined plan" : "selected task"}</span><strong>{rows.length===1 && rows[0]?.id==="cpu-placement" && review?.snapshot ? range(review.snapshot.result.scenarios[0].net,review.snapshot.result.scenarios[2].net) : "Estimate pending"}</strong></div>
@@ -46,6 +46,6 @@ export function OptimizeDialog({rows,share,hours,jobs,overlap,sending,error,rece
       {receipt && <div className="optimization-receipt" role="status"><CheckCircle2 size={19}/><div><strong>{receipt.synthetic ? "Synthetic example — request accepted" : "Backend accepted your modeling request"}</strong><p>Request {receipt.optimization_id}. No workload change or savings has been verified.</p></div></div>}
       {sending && <p role="status">Sending request… Returning does not cancel a request already sent.</p>}
     </div>
-    <footer><button ref={returnButton} className="secondary" onClick={onReturn}>Return</button><button className="primary" disabled={!ready || sending || !!receipt} onClick={onProceed}>{sending ? "Sending…" : receipt ? "Request accepted" : error ? "Retry request" : "Request modeling review"}</button></footer>
+    <footer><button ref={returnButton} className="secondary" onClick={onReturn}>Return</button><button className="primary" disabled={!modelAvailable || !ready || sending || !!receipt} onClick={onProceed}>{!modelAvailable ? "Multi-fix modeling not yet available" : sending ? "Sending…" : receipt ? "Request accepted" : error ? "Retry request" : "Request modeling review"}</button></footer>
   </dialog>;
 }

@@ -23,7 +23,7 @@ for(const mobile of [false,true]) test(`CPU pilot comparison, downside and immut
   await page.getByLabel("Implementation cost ($)",{exact:true}).fill("999");
   await expect(result.getByRole("status")).toContainText("Unsaved assumptions");
   await expect(overview.getByRole("status")).toContainText("showing last calculation");
-  await page.getByRole("button",{name:"Review pilot risks",exact:true}).click();
+  await page.getByRole("button",{name:"Review guardrails",exact:true}).click();
   const popup=page.getByRole("dialog");
   await popup.getByText("CPU pilot benefit and downside",{exact:true}).click();
   await expect(popup).toContainText("Proposed limits exceeded");
