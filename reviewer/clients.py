@@ -83,6 +83,8 @@ class AnalysisClient:
         for name, value in (("max_pages", max_pages), ("max_evidence", max_evidence), ("max_bytes", max_bytes)):
             if not isinstance(value, int) or isinstance(value, bool) or value < 1:
                 raise ValueError(name + " must be a positive integer")
+        if max_pages > 4 or max_evidence > 100:
+            raise ValueError("Evidence limits must not exceed 100 records / 4 pages")
         self.base_url = str(url).rstrip("/")
         self.timeout = timeout
         self.max_pages = max_pages
@@ -157,10 +159,41 @@ class AnalysisClient:
         if any(not audit["provenance"][key].strip() for key in ("data_fingerprint", "source_version")):
             raise _mismatch("Audit source identity is unknown.")
         total = audit["evidence_count"]
-        refs, evidence, reasons = {}, [], []
+        refs, details, reasons = {}, {}, []
+
+        async def detail_for(eid, ref=None, *, baseline=False):
+            if eid in {".", ".."}:
+                raise _invalid("Analysis returned an invalid evidence identity.")
+            if eid not in details:
+                detail = await self._get(client, path + "/evidence/" + quote(eid, safe=""))
+                self._validate(detail, "EvidenceDetail", version)
+                actual_ref = detail["evidence"]
+                if detail["audit_id"] != audit_id or actual_ref["id"] != eid:
+                    raise _mismatch("Evidence detail does not match its audit-scoped identity.")
+                for key in ("data_fingerprint", "source_version", "sample_label", "window_label"):
+                    if detail["provenance"][key] != audit["provenance"][key]:
+                        raise _mismatch("Evidence provenance differs from the immutable audit.")
+                if detail["provenance"]["synthetic"] != actual_ref["synthetic"]:
+                    raise _mismatch("Evidence reference and detail disagree on the synthetic label.")
+                details[eid] = detail
+            detail = details[eid]
+            if ref is not None and detail["evidence"] != ref:
+                raise _mismatch("Evidence detail does not match its paginated reference.")
+            if baseline and detail["evidence"]["kind"] != "job":
+                raise _mismatch("The selected CPU baseline must resolve to job evidence.")
+            if len(details) > total:
+                raise _invalid("Fetched evidence exceeds the immutable audit total.")
+
+        # Reserve one slot for the selected job. Finding/aggregate pages can precede
+        # that job, and a bounded sample must still review this individual pilot.
+        pilot = audit["scenario"].get("cpu_pilot")
+        baseline_id = pilot["baseline_evidence_id"] if pilot is not None else None
+        if baseline_id is not None:
+            await detail_for(baseline_id, baseline=True)
+
         cursor, cursors, pages, ended = None, set(), 0, False
-        while pages < self.max_pages and len(refs) < self.max_evidence:
-            limit = min(100, self.max_evidence - len(refs))
+        while pages < self.max_pages and len(details) < self.max_evidence:
+            limit = min(100, self.max_evidence - len(details))
             params = {"limit": limit}
             if cursor is not None:
                 params["cursor"] = cursor
@@ -175,17 +208,8 @@ class AnalysisClient:
                 if ref["id"] in refs:
                     raise _invalid("Evidence pagination contains duplicate references.")
                 refs[ref["id"]] = ref
-                detail = await self._get(client, path + "/evidence/" + quote(ref["id"], safe=""))
-                self._validate(detail, "EvidenceDetail", version)
-                if detail["audit_id"] != audit_id or detail["evidence"] != ref:
-                    raise _mismatch("Evidence detail does not match its audit-scoped reference.")
-                for key in ("data_fingerprint", "source_version", "sample_label", "window_label"):
-                    if detail["provenance"][key] != audit["provenance"][key]:
-                        raise _mismatch("Evidence provenance differs from the immutable audit.")
-                if detail["provenance"]["synthetic"] != ref["synthetic"]:
-                    raise _mismatch("Evidence reference and detail disagree on the synthetic label.")
-                evidence.append(detail)
-            if len(refs) > total:
+                await detail_for(ref["id"], ref)
+            if len(set(refs) | set(details)) > total:
                 raise _invalid("Evidence count exceeds the immutable audit total.")
             cursor = page["next_cursor"]
             if cursor is None:
@@ -195,22 +219,25 @@ class AnalysisClient:
                 raise _invalid("Evidence pagination does not make progress.")
             cursors.add(cursor)
         if not ended:
-            if len(refs) >= self.max_evidence:
+            if len(details) >= self.max_evidence:
                 reasons.append("max_evidence")
             if pages >= self.max_pages:
                 reasons.append("max_pages")
         elif len(refs) != total:
             reasons.append("source_ended_before_total")
         for ref in audit["evidence_preview"]:
-            if ref["id"] in refs and refs[ref["id"]] != ref:
-                raise _mismatch("Evidence preview differs from the paginated reference.")
+            known = refs.get(ref["id"]) or (details[ref["id"]]["evidence"] if ref["id"] in details else None)
+            if known is not None and known != ref:
+                raise _mismatch("Evidence preview differs from the fetched reference.")
             if ended and len(refs) == total and ref["id"] not in refs:
                 raise _invalid("Evidence preview cannot be resolved in the complete page listing.")
-        complete = ended and len(evidence) == total
-        return audit, evidence, {"listed_count": len(refs), "fetched_count": len(evidence),
-                                  "total": total, "complete": complete,
-                                  "truncated": not complete, "reasons": reasons,
-                                  "pages_fetched": pages}
+        targeted = sorted(set(details) - set(refs))
+        complete = ended and not reasons and not targeted and len(refs) == len(details) == total
+        return audit, list(details.values()), {
+            "listed_count": len(refs), "fetched_count": len(details), "total": total,
+            "targeted_count": len(targeted), "targeted_evidence_ids": targeted,
+            "complete": complete, "truncated": not complete, "reasons": reasons,
+            "pages_fetched": pages}
 
 
 def _nested_review_error(exc):

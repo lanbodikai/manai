@@ -60,7 +60,8 @@ class AnalysisTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(audit, self.audit)
         self.assertEqual(len(details), 2)
         self.assertEqual(coverage, {"listed_count": 2, "fetched_count": 2, "total": 2,
-                                    "complete": True, "truncated": False, "reasons": [], "pages_fetched": 1})
+                                    "complete": True, "truncated": False, "reasons": [], "pages_fetched": 1,
+                                    "targeted_count": 0, "targeted_evidence_ids": []})
         self.assertEqual(len(self.requests), 4)
 
     async def test_pagination_cursor_and_stable_total(self):

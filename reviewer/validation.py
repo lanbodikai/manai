@@ -21,8 +21,8 @@ _UNITS = {
     "state_name": None,
     "sm_util_avg": "percent",
     "sm_util_max": "percent",
-    "gpu_hours": "gpu_hours",
-    "gpu_count": "gpus",
+    "gpu_hours": ("gpu_hours", "GPU-hours"),
+    "gpu_count": ("gpus", "GPUs"),
     "walltime_sec": "seconds",
     "max_gpu_mem_used": "bytes",
 }
@@ -176,7 +176,7 @@ def _evidence(report: _Report, audit: dict, details: list, coverage: dict) -> tu
         kind = ref.get("kind")
         if ref.get("synthetic") is True and isinstance(eid, str):
             synthetic_refs.append(eid)
-        identity_ok = identity_ok and kind in ("job", "gpu", "finding", "rule")
+        identity_ok = identity_ok and kind in ("job", "gpu", "finding", "rule", "aggregate")
         if isinstance(eid, str) and eid in seen_ids:
             duplicate_ids.add(eid)
         if preview_complete:
@@ -204,16 +204,30 @@ def _evidence(report: _Report, audit: dict, details: list, coverage: dict) -> tu
         if not isinstance(raw_observations, list):
             units_ok = False
             raw_observations = []
+        aggregate_names = set()
         for observation in raw_observations:
             observation = _mapping(observation)
             column = observation.get("column")
+            if kind == "aggregate" and column is None:
+                name = observation.get("name")
+                value = observation.get("value", _MISSING)
+                valid = isinstance(name, str) and bool(name.strip()) and name not in aggregate_names
+                valid = valid and value is not _MISSING and (value is None or isinstance(value, (str, bool)) or _number(value))
+                valid = valid and (observation.get("unit") is None or isinstance(observation.get("unit"), str))
+                units_ok = units_ok and valid
+                if isinstance(name, str):
+                    aggregate_names.add(name)
+                # Derived aggregate values are not raw columns or job measurements.
+                continue
             if not isinstance(column, str) or not column or column in observations:
                 units_ok = False
                 continue
             value = observation.get("value", _MISSING)
             observations[column] = value
             if column in _UNITS:
-                units_ok = units_ok and observation.get("unit", _MISSING) == _UNITS[column]
+                expected_units = _UNITS[column]
+                allowed_units = expected_units if isinstance(expected_units, tuple) else (expected_units,)
+                units_ok = units_ok and observation.get("unit", _MISSING) in allowed_units
                 if column != "state_name" and value is not None:
                     units_ok = units_ok and _number(value, minimum=0)
         report.add(f"evidence.units:{key}", "pass" if units_ok else "fail", "Known source columns must use their documented units and finite nonnegative measurements; duplicate columns are ambiguous.", sources)
@@ -244,11 +258,18 @@ def _evidence(report: _Report, audit: dict, details: list, coverage: dict) -> tu
 
     counts = [coverage.get(k, _MISSING) for k in ("listed_count", "fetched_count", "total")]
     consistent = all(_integer(v) for v in counts)
-    consistent = consistent and counts[1] == len(details) and counts[1] <= counts[0] <= counts[2]
+    targeted = coverage.get("targeted_evidence_ids", [])
+    targeted_count = coverage.get("targeted_count", 0)
+    baseline_id = _mapping(_mapping(audit.get("scenario")).get("cpu_pilot")).get("baseline_evidence_id")
+    target_valid = isinstance(targeted, list) and all(isinstance(eid, str) for eid in targeted)
+    target_valid = target_valid and _integer(targeted_count) and targeted_count == len(targeted) <= 1
+    target_valid = target_valid and all(eid == baseline_id and eid in records for eid in targeted)
+    consistent = consistent and target_valid
+    consistent = consistent and counts[1] == len(details) and counts[1] <= counts[0] + targeted_count <= counts[2]
     report.add("evidence.coverage_counts", "pass" if consistent else "fail", "Coverage counts must describe the supplied details and pagination, not inferred cohort size.", observed=coverage)
     manifest_status = report.compare("evidence.manifest_count", coverage.get("total", _MISSING), audit.get("evidence_count", _MISSING), "Pagination totals must match the immutable audit's evidence manifest.")
     complete = consistent and coverage.get("complete") is True and coverage.get("truncated") is False
-    complete = complete and manifest_status == "pass" and not coverage.get("reasons") and counts[0] == counts[1] == counts[2]
+    complete = complete and manifest_status == "pass" and not coverage.get("reasons") and targeted_count == 0 and counts[0] == counts[1] == counts[2]
     report.add("evidence.coverage", "pass" if complete else "unknown", "Full-source verification requires complete, untruncated, internally consistent pagination.")
     if not complete:
         report.limit("Evidence coverage is incomplete; sampled records cannot verify exact cohort totals or memory partitions.")
