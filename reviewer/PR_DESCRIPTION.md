@@ -1,33 +1,40 @@
-C now reviews A's active Contract 0.4 audits by default. It fixes false failures
-from A's documented GPU units and aggregate records, fetches the selected CPU
-baseline before bounded pagination, and produces concise reviews that retain
-failure/unknown categories. A's audit, arithmetic and claims remain canonical.
+C reviews A's active Contract 0.4 audits deterministically. It accepts documented
+GPU units and aggregate evidence, prioritizes the selected CPU baseline within
+bounded pagination, and reports concise calculation checks, coverage, risks and
+unknown assumptions. A's audit and claims remain canonical; public API shapes
+are unchanged. No model-provider call is required or was made in this pass.
 
-This continues the existing C branch/PR and merges integration `db6f418` without
-rewriting history. C-authored changes stay in reviewer, tests and evaluation files.
-The explanations endpoint and public request/response shapes are unchanged. A+B
-startup remains independent; B owns optional-profile/proxy integration.
+PR #7 main `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb` is merged into this
+existing C branch without conflicts (`c5a9f5d`). Tested C/harness: `a32af3e`;
+A runtime: `adfcd883`. Later handoff edits are documentation only. No A/B runtime
+compatibility edits were needed; the diff against main contains only C-owned
+reviewer, tests and evaluation files. History and PR #3 are preserved, with the
+agreed `codex/integration` target (same base tree as merged main).
 
-Validation on C runtime `ebdc00a`, harness `e48e57e`, A `adfcd883`:
+Checks actually run after synchronizing main:
 - 99 reviewer tests and 5 active contract tests passed.
-- Eight deterministic cases × three repetitions: 24/24 passed.
-- Nine actual A→C socket scenarios passed using explicitly synthetic A inputs,
-  with 18 actual official MCP operations, resolving citations and unchanged audits
-  and claims. Missing audit returned 404. No false FAIL checks; unknown lineage
-  remains visible. The A test peer replaces source readiness/context and is not
-  a canonical-data test or part of the reviewer image.
-- Python compilation, dependency checks and scoped diff checks passed.
+- Eight deterministic cases repeated three times: 24/24 passed.
+- 9 direct A→C scenarios and the same 9 through B's actual production proxy
+  passed, with 36 total actual official MCP operations. Inputs are explicitly
+  original synthetic data; A's readiness/context is replaced only in the test
+  peer. Resolving citations, immutable audits/claims, CPU calculation oracles and
+  zero false FAILs were verified. Unknown lineage remains `insufficient_evidence`.
+- Stopped C returns normalized 503 through the production proxy, while A's audit,
+  claims, health and dashboard page remain available. Missing audits return 404.
+- 54 dashboard tests, TypeScript and production build/mock-exclusion passed.
+- 3 Chrome browser tests for unavailable/slow/malformed reviewer responses passed;
+  these use explicit demo doubles, not canonical data or the real full timeout.
+- Python compile/dependency checks and scoped diff checks passed.
 
-Keep draft. This revision's Docker build/run and canonical real-data A→C check
-remain unrun: the C Mac has no Docker, no reachable local A service and lacks the
-three generated canonical files. Final merged-A+B UI/proxy/resilience is pending.
-Live model evaluation is explicitly deferred; zero paid provider calls. No actual
-workload optimization, rollback or savings is claimed.
+Keep draft: this C image's Docker build/run, canonical-data A→C review, combined
+real-data browser checks and full Compose R01–R05 remain pending on the integration
+host. This Mac has no Docker or complete generated data bundle. No C profile is
+enabled; base startup remains independent. Live model evaluation is deferred.
 
-Next candidate observed: `codex/ab-validated` at `5c4fd8376380b95ff09560ab7a688a5306ed5072`;
-shared integration remains `db6f418`. Do not merge C in this pass. Handoff and
-reproduction: `reviewer/HANDOFF.md`, `reviewer/README.md`, `eval/agent/RESULTS.md`.
-A read-only `eval.agent.live_review` runner is supplied for the integration host.
+Handoff: `reviewer/HANDOFF.md`, `reviewer/README.md`, `eval/agent/RESULTS.md`.
+`eval.agent.live_review --explanations-url` now checks the public proxy using an
+existing audit while retaining direct internal C health validation. No workload
+optimization, rollback or realized savings is claimed. Do not merge C in this pass.
 
 AI disclosure: C implementation, tests and documentation were generated and
 reviewed with OpenAI Codex; human integration review remains required.

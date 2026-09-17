@@ -1,4 +1,59 @@
-# Contract 0.4 deterministic C verification — 2026-09-17
+# PR #7 merged-main compatibility — 2026-09-17
+
+Main `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb` merged into the existing C
+branch without conflicts at `c5a9f5d98da0c53d9c6f5d0b7709d202726f1926`.
+Tested C/harness: `a32af3e671a0ccd0a3f2c55c58e495f20b3a016b`; A runtime still
+`adfcd883edebfd8b7100179ab545cc4000fca479`. Active contract: 0.4.
+No C runtime compatibility fixes or A/B-owned edits were necessary. Subsequent
+handoff edits are documentation-only. This section supersedes earlier next-base
+and unrun-proxy statements; historical receipts below remain scoped to their runs.
+
+| Check on merged tree | Result and scope |
+|---|---|
+| Reviewer regression / active contract | **99/99 + 5/5 PASS** |
+| Deterministic eval | **24/24 PASS**, eight cases × three; `pr7-deterministic.json` |
+| Direct A→C sockets | **9/9 PASS**, 18 actual MCP operations; `pr7-socket.json` |
+| Actual production B proxy → A/C | **9/9 PASS**, 18 additional actual MCP operations; `pr7-proxy.json`. Audit identity, resolving citations, unchanged audits/claims, CPU oracles and zero false FAILs verified. Original synthetic A source context; not canonical-data acceptance. |
+| C process stopped | Production proxy returns `503 AGENT_UNAVAILABLE`; A audit, claims, health and static dashboard remain available and unchanged. Six negative/base checks including missing-audit 404 passed. |
+| Dashboard tests/build | **54/54 PASS**; TypeScript, production build and no-mock live-bundle check PASS. Existing >500 kB bundle warning only. |
+| Browser reviewer-failure regressions | **3/3 PASS**, Chrome; unavailable/timeout/malformed explicit demo doubles. Base chat/evidence work and download stays enabled. No claim of actual full-timeout or canonical-data browser acceptance. |
+| Python dependency/compile and diff scope | PASS; zero A/B runtime differences against merged main; no paid provider calls. |
+| Still pending | Standalone Docker build/run, canonical five-file data review and combined real-data browser/Compose R01–R05 on the integration host. No C profile enabled. |
+
+Commands from repository root, Python 3.12.14 environment and Node 22.14.0:
+
+```sh
+python -m unittest discover -s tests/reviewer -p 'test_*.py'
+python -m unittest discover -s tests/bootstrap -p 'test_contract.py'
+python -m eval.agent.run --mode deterministic --output reviewer/.private/pr7-deterministic.json
+python -m eval.agent.http_smoke --output reviewer/.private/pr7-socket.json
+cd dashboard
+npm ci --ignore-scripts
+npm test
+VITE_DATASET_API_ENABLED=true npm run build
+PLAYWRIGHT_CHANNEL=chrome MANAI_TEST_MOCK_PORT=19300 MANAI_TEST_HTTP_PORT=19301 CI=1 npm run test:browser -- --grep reviewer
+cd ..
+python -m eval.agent.http_smoke --dashboard-node /path/to/node22 --output reviewer/.private/pr7-proxy.json
+python -m compileall -q reviewer eval/agent tests/reviewer
+python -m pip check
+git diff --check
+```
+
+Actual executables: `/private/tmp/manai-c-isolated/bin/python` and
+`/private/tmp/node-v22.14.0-darwin-arm64/bin/node` (Node's bin on PATH for npm).
+Receipts are private/ignored. Both socket runs preserve `insufficient_evidence`
+for unknown MCP-to-audit lineage; passing transport/calculation checks does not
+prove whole-source coverage or measured savings. PR #3 remains draft, targeting
+`codex/integration` (same base tree as PR #7 main).
+
+Fresh environment check (`pr7-environment.json`): no Docker executable or Docker
+app, no listener on local ports 3000/8000/8001/8002/18001, and generated resources,
+edges and findings absent from the available source directory. These prevent
+claiming canonical-data/container acceptance here.
+
+---
+
+# Earlier Contract 0.4 deterministic C verification — 2026-09-17
 
 This record supersedes the earlier bootstrap-based current-state statements below.
 Baseline integration: `db6f418f2cf4fb761eb560870814331b323eefd0`.

@@ -2,22 +2,25 @@
 
 ## State and exact revisions
 
-**Deterministic C implementation is reviewed and tested within the scopes below.
-PR #3 remains draft; final merged-A+B/source-data/container acceptance is pending.**
+**PR #7 main is merged into C without conflicts; deterministic service/proxy
+compatibility checks pass. PR #3 remains draft for canonical-data/container
+acceptance and final combined browser validation on the integration host.**
 No C merge into a shared branch or model-provider call was performed.
 
 - Existing branch: `codex/evidence-review-service`.
 - Existing PR: https://github.com/lanbodikai/manai/pull/3 → `codex/integration`.
-- Pinned integration baseline: `db6f418f2cf4fb761eb560870814331b323eefd0`.
+- Current pinned main (merged PR #7): `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb`.
+- Current integration target: `982b40795a097624507eefc5d17dc266baf1f0f0`;
+  its tree equals the published main tree. PR target remains `codex/integration`.
+- Original pinned integration baseline: `db6f418f2cf4fb761eb560870814331b323eefd0`.
 - A implementation exercised over sockets: `adfcd883edebfd8b7100179ab545cc4000fca479`.
 - Baseline merge into C: `261254e`; contract adoption: `7fb356b`; reviewer fixes:
   `ebdc00a`; evaluation/real-host runner: `e48e57edecd3fd6745387bbef2f9d894a6e95674`.
 - This handoff is a subsequent documentation commit. The exact published head is
   on PR #3; `git rev-parse HEAD` resolves it without a self-referential file hash.
-- Latest fetched integration still points at `db6f418`. A+B candidate
-  `origin/codex/ab-validated` is `5c4fd8376380b95ff09560ab7a688a5306ed5072`.
-  Record the lead-approved merged A+B commit at the next integration pass; the
-  candidate was inspected, not merged into C or declared accepted by this pass.
+- Conflict-free PR #7 merge into C: `c5a9f5d98da0c53d9c6f5d0b7709d202726f1926`.
+- Tested C plus production-proxy harness: `a32af3e671a0ccd0a3f2c55c58e495f20b3a016b`.
+  Subsequent handoff edits are documentation only. No A/B runtime edits were needed.
 
 ## Delivered
 
@@ -39,6 +42,22 @@ steps. Detailed checks remain in private reports. C never replaces A's claims or
 turns a scenario into verified cash savings, CPU safety or automatic rollback.
 
 ## Evidence from this pass
+
+After the PR #7 merge, the reviewer/contract/evaluation/socket checks below were
+rerun successfully. Additional merged-base checks:
+
+- **54/54 dashboard tests PASS**; TypeScript and production build PASS, including
+  live-bundle mock exclusion. Existing bundle-size warning remains non-blocking.
+- **9/9 production-proxy scenarios PASS** using B's actual built server and A/C
+  processes with original synthetic A inputs. Another 18 actual MCP operations;
+  scoped citations and immutable audit/claims verified through the proxy.
+- Stopping C gives normalized 503 while A audit/claims/health and the dashboard
+  page remain available. This is an actual process/proxy test with synthetic data.
+- **3/3 existing Chrome browser failure tests PASS**, covering unavailable,
+  timeout and malformed reviewer responses. These use B's explicit demo doubles;
+  they are not a combined real-data browser or Compose resilience acceptance.
+- Contract, A/service, MCP and API source are identical to the previously tested
+  A baseline. The dashboard and root Compose remain byte-identical to merged main.
 
 - **99/99 reviewer tests PASS**: includes ten new v0.4 compatibility/budget/output
   cases; existing numeric, identity, timeout, provider-double and failure checks.
@@ -70,36 +89,38 @@ localhost ports 8000/8001/18001/8002. The available source directory contains on
 `synthetic/findings.json` are absent. Do not relabel old-version checks from B's
 host as acceptance of this updated C image.
 
-Remaining: real-data A→C check at this C revision, image build/run, final proxy/UI
-checks and R01–R05 on the approved merged A+B base. Live-model evaluation is
+Remaining: real-data A→C check at this C revision, image build/run, combined
+real-data UI checks and full R01–R05 (including Compose startup/build failure).
+Production proxy compatibility is now checked with synthetic A inputs. Live-model evaluation is
 explicitly deferred, not a deterministic-mode dependency. No finding/causal
 corroboration or full-source certification is claimed.
 
 ## B-owned integration checklist
 
-1. Keep this PR and branch. First approve/merge the A+B candidate into the agreed
-   integration branch; record that exact commit. In the later C integration pass,
-   merge it into C normally, preserving history and rerun affected C checks.
+1. PR #7 sync is complete at the exact commits above. Keep this PR and branch;
+   use the tested main baseline for the remaining integration-host checks.
 2. Build `reviewer/Dockerfile` from that checkout. Add service `reviewer:8002`
    under optional Compose profile `reviewer`; set `ANALYSIS_URL=http://analysis:8001`,
    `REVIEWER_MODE=deterministic`, `REVIEWER_MCP_CONTEXT=price_only`. Do not add a C
    dependency or provider requirement to base startup/health/build.
-3. Route only the explanations POST to C. Use optional/lazy proxy resolution,
-   preserve audit/client-request identity, keep the base result on C errors and
-   use a 35-second browser timeout. All other A routes remain on A.
+3. The merged production server already has optional `REVIEWER_URL` routing,
+   a 31-second proxy deadline and a 35-second browser deadline. Configure the
+   reviewer origin only when enabling it. Keep existing base independence and
+   request identity checks; verify the public route in the deployment.
 4. On the host with the verified five-file data, create/select a valid A audit
    and run the existing-audit check (substitute the actual service URLs and ID):
 
    ```sh
    python -m eval.agent.live_review --analysis-url http://127.0.0.1:3000 \
-     --reviewer-url http://127.0.0.1:8002 --audit-id AUDIT_ID \
+     --reviewer-url http://127.0.0.1:8002 --explanations-url http://127.0.0.1:3000 \
+     --audit-id AUDIT_ID \
      --output reviewer/.private/merged-ab-real-review.json
    ```
 
    This runner needs direct access to C's internal `/health` as well as its
-   explanations route. Run it inside the integration network when C is not
-   host-exposed. Check the public proxy separately; do not add public health
-   routes merely for this test.
+   explanations route. `--explanations-url` exercises the public proxy while
+   checking deterministic mode via direct internal C health. Run inside the
+   integration network when needed; do not expose health merely for this test.
 5. Recheck no-pilot, successful replacement, failed trial/full rerun and extra
    validation; inspect signed/null output and zero false compatibility failures.
    A partial cohort review remains UNKNOWN. Run R01–R05 for absent, crashed,
@@ -107,5 +128,5 @@ corroboration or full-source certification is claimed.
 6. Keep PR #3 draft until those combined checks are recorded and the lead reviews
    the exact head. Deterministic and future model readiness must stay separate.
 
-**Stop here:** this pass prepared C and its PR; it did not enable C, change B's
+**Stop here:** this pass synchronized and checked C against merged main; it did not enable C, change B's
 Compose/UI, move shared branches, submit the event form or alter the default branch.

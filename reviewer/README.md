@@ -77,8 +77,11 @@ python -m unittest discover -s tests/reviewer -p 'test_*.py' -v
 python -m unittest discover -s tests/bootstrap -p 'test_contract.py' -v
 python -m eval.agent.run --mode deterministic --output reviewer/.private/deterministic.json
 python -m eval.agent.http_smoke --output reviewer/.private/socket.json
+# After building dashboard/dist, include the actual production proxy:
+python -m eval.agent.http_smoke --dashboard-node /path/to/node22 --output reviewer/.private/proxy.json
 python -m eval.agent.live_review --analysis-url http://127.0.0.1:3000 \
-  --reviewer-url http://127.0.0.1:8002 --audit-id AUDIT_ID \
+  --reviewer-url http://127.0.0.1:8002 --explanations-url http://127.0.0.1:3000 \
+  --audit-id AUDIT_ID \
   --output reviewer/.private/real-a-review.json
 ```
 
@@ -87,6 +90,9 @@ its A data/context is explicitly synthetic. It exercises no-pilot and all eight
 CPU scenarios; it does not pass canonical-data acceptance. `live_review` instead
 reads a supplied audit from the team's actual A endpoint, checks every returned
 citation and compares audit/claims before and after. It refuses model-mode C.
+The optional `--explanations-url` is the public proxy origin; deterministic-mode
+health is still checked directly on `--reviewer-url`. Without that option,
+explanations also use the direct reviewer service.
 Its exit code validates transport/schema/identity/non-mutation; inspect the
 reported FAIL/UNKNOWN counts before making an evidence-quality claim.
 
@@ -108,7 +114,9 @@ because Docker is absent. C's image contains its runtime, active contracts and
 unchanged official API/MCP files; it excludes evaluation test peers/private data.
 
 B owns root Compose and proxy changes. Add C only under optional profile
-`reviewer`; route only the explanations POST to `reviewer:8002`. Keep base startup
+`reviewer`; configure the existing production proxy with
+`REVIEWER_URL=http://reviewer:8002`. PR #7 already includes this optional routing
+and the 31-second proxy/35-second browser deadlines. Keep base startup
 and readiness independent of C. Use a browser timeout above 30 seconds (35 seconds)
 and lazy/optional routing so absent C cannot prevent startup. Run R01–R05 against
 the actual merged product before enabling it. No new root Compose file is needed.
