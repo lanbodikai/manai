@@ -1,3 +1,68 @@
+# Contract 0.4 deterministic C verification — 2026-09-17
+
+This record supersedes the earlier bootstrap-based current-state statements below.
+Baseline integration: `db6f418f2cf4fb761eb560870814331b323eefd0`.
+Tested A runtime source: `adfcd883edebfd8b7100179ab545cc4000fca479`.
+C runtime: `ebdc00a` after `7fb356b`; test harness:
+`e48e57edecd3fd6745387bbef2f9d894a6e95674`. Later handoff edits are documentation-only.
+Runtime: isolated Python 3.12.14, unchanged reviewer dependency lock.
+
+| Check | Actual result and limit |
+|---|---|
+| Reviewer regression | **99/99 PASS**; includes ten new v0.4 unit/aggregate, targeted baseline, deduplication, cap, missing/wrong evidence and grouped-output cases. Existing mocked model tests remain mock-only. |
+| Active contract tests | **5/5 PASS**, using inherited bootstrap contract tests. |
+| Deterministic evaluation | **24/24 PASS**, eight cases repeated three times. Synthetic HTTP/MCP doubles are explicit; private final receipt `v04-deterministic-final.json`. |
+| Actual A→C HTTP sockets | **9/9 PASS**, no-pilot plus eight CPU scenarios. Both services run as real processes; A's source context/readiness is explicitly replaced with original synthetic data by the C-owned test peer. This does not verify organizer telemetry. |
+| MCP in socket run | **18 actual operations** (two per review); no provider calls, resolving A citations, unchanged audit/claims, zero false FAIL results. Unknown source lineage remains visible. Receipt `v04-socket-1.json`. |
+| Negative/failure cases | Actual socket missing audit gives 404. Regression suite covers normalized 409, A/MCP unavailable, malformed responses, identity conflicts, bounded timeouts, slot cleanup and unsupported versions. |
+| Arithmetic | All eight hand-worked CPU cases plus H≠gT, failure double-charge mutation, negative values and unknown prices/delays pass. A and C compare independently; C does not import A's calculators. Only the isolated evaluation peer invokes actual A code. |
+| Packaging/dependency inspection | Python compile and `pip check` PASS; C diff restricted to reviewer/tests/evaluation. Image definition unchanged; excludes test peer/private data. **Image build/run NOT RUN: Docker absent on this Mac.** |
+| Canonical real-data A→C review | **NOT RUN** at this C revision. No local A endpoint is reachable; three generated canonical files are absent. The new read-only `live_review` runner is supplied for B's host. |
+| Final merged-A+B proxy/React/R01–R05 | **NOT RUN in this C pass**. B owns integration. Do not substitute old C or fixture-only checks. |
+| Live model/G semantic evaluation | **DEFERRED by user**. Zero paid provider calls. Deterministic fixture checks do not establish live model quality. |
+| Workload replay/rollback/savings | **NOT RUN**; no workload execution exists in C. |
+
+Commands actually run from repository root (the isolated interpreter was
+`/private/tmp/manai-c-isolated/bin/python`):
+
+```sh
+python -m unittest discover -s tests/reviewer -p 'test_*.py'
+python -m unittest discover -s tests/bootstrap -p 'test_contract.py'
+python -m eval.agent.run --mode deterministic --output reviewer/.private/v04-deterministic-final.json
+python -m eval.agent.http_smoke --output reviewer/.private/v04-socket-1.json
+python -m compileall -q reviewer eval/agent tests/reviewer
+python -m pip check
+git diff --check
+```
+
+Actual socket replies were 3,357–4,555 characters. With complete synthetic
+pagination, no-pilot had 46 PASS / 0 FAIL / 2 UNKNOWN; each CPU case had
+72 PASS / 0 FAIL / 1 UNKNOWN. HTTP 200 plus `insufficient_evidence` is expected
+because `price_only` does not corroborate an audit fingerprint. It must not be
+changed to an all-clear solely to satisfy a test.
+
+The first adoption run found eight fixture errors and one assertion failure:
+active evidence examples have a different audit ID from the no-pilot fixture.
+C-owned fixture builders were corrected to use matching audit identity, preserving
+strict validation; 89/89 then passed. The later compatibility suite passed 99/99.
+Initial failed logs and all evaluation receipts remain private; none were erased.
+A default-sandbox Git fetch failed DNS, then the authorized network fetch succeeded;
+the baseline was confirmed unchanged. No failed checks were silently waived.
+
+`reviewer/.private/v04-environment.json` records Docker absence, local endpoint
+connection failures and exact missing generated files. Only the two prepared
+parquet files are available here. The pre-existing 12-check offline data receipt
+below was not rerun or promoted into a five-file/current C acceptance result.
+
+Current next base candidate observed: `codex/ab-validated` at
+`5c4fd8376380b95ff09560ab7a688a5306ed5072`; shared integration is still `db6f418`.
+C stays draft. Complete the merged-base checks from `reviewer/HANDOFF.md` on the
+integration host before declaring deterministic enhancement integration complete.
+
+---
+
+## Historical receipt — pre-0.4 C baseline
+
 # Part C evaluation receipt — 2026-09-17
 
 Starting source: `ce6a44e2a2eb2e66c42cf7372ff2628164f930c5` on main.

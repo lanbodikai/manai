@@ -1,3 +1,23 @@
+# Current adoption status — Contract 0.4
+
+The historical proposals below were written against bootstrap `ce6a44e` and are
+not a new backlog or release gate for A/B. This C pass uses integration `db6f418`
+and A `adfcd88`. A already implements audit/evidence routes, predicate observations,
+scoped pagination, memory partitions and all eight CPU downside cases.
+
+C fixes its own active-schema selection, unit spellings, aggregate handling and
+selected-baseline retrieval. Do not modify A's valid payloads to accommodate the
+old C validator. Regression and socket receipts are in `eval/agent/RESULTS.md`.
+
+Still needed on the merged-base host: real-data C review, image/startup, proxy/UI
+and C-failure isolation checks. MCP price-book connectivity does not resolve the
+provenance proposal: finding/audit lineage stays UNKNOWN. No new public contract,
+full-cohort certification or workload-control feature was added.
+
+---
+
+## Historical proposals
+
 # Findings for A/B review — no shared files changed
 
 Baseline: `ce6a44e2a2eb2e66c42cf7372ff2628164f930c5`, active contract 0.3.
