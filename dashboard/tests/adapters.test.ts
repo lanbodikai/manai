@@ -8,11 +8,11 @@ import {
 import { createHttpApi } from "../src/api/http";
 import { parse } from "../src/api/validation";
 import type { Schemas } from "../src/api/types";
-import requestFixture from "../../contracts/examples/audit-request.json";
-import auditFixture from "../../contracts/examples/audit-response.json";
-import evidenceFixture from "../../contracts/examples/evidence-response.json";
-import explanationFixture from "../../contracts/examples/explanation-response.json";
-import claimsFixture from "../../contracts/examples/claims-response.json";
+import requestFixture from "../../contracts/proposals/v0.4/examples/audit-request.json";
+import auditFixture from "../../contracts/proposals/v0.4/examples/audit-response.json";
+import evidenceFixture from "../../contracts/proposals/v0.4/examples/baseline-evidence.json";
+import explanationFixture from "../../contracts/proposals/v0.4/examples/explanation-response.json";
+import claimsFixture from "../../contracts/proposals/v0.4/examples/claims-response.json";
 import errorFixture from "../../contracts/examples/error-response.json";
 
 const request = () => structuredClone(parse("AuditRequest", requestFixture));
@@ -22,7 +22,7 @@ const json = (body: unknown, status = 200) =>
     headers: { "Content-Type": "application/json" },
   });
 
-describe("v0.3 contract", () => {
+describe("v0.4 contract", () => {
   it("checks every shared example and dashboard-specific fixtures", () => {
     for (const [name, data] of [
       ["AuditRequest", requestFixture],
@@ -58,6 +58,12 @@ describe("v0.3 contract", () => {
     r.scenario.usd_per_gpu_hour = 0;
     await expect(api.createAudit(r)).rejects.toMatchObject({
       code: "INVALID_SCENARIO",
+    });
+    const capped = request();
+    capped.scenario.cpu_pilot!.trial_cap_hours = 1;
+    await expect(api.createAudit(capped)).rejects.toMatchObject({
+      code: "INVALID_SCENARIO",
+      status: 422,
     });
   });
 });
@@ -103,7 +109,9 @@ describe("mock snapshots and export", () => {
       api.listEvidence(first.audit_id, { cursor: "nonsense" }),
     ).rejects.toMatchObject({ status: 422 });
     expect(
-      (await api.getEvidence(first.audit_id, "job:J2")).observations[0].value,
+      (await api.getEvidence(first.audit_id, "job:J2")).observations.find(
+        (observation) => observation.unit === "gpu_hours",
+      )?.value,
     ).toBe(20);
   });
   it("handles empty cohorts and stale data explicitly", async () => {
@@ -145,6 +153,29 @@ describe("mock snapshots and export", () => {
 });
 
 describe("HTTP adapter never substitutes fixtures", () => {
+  it("uses a configured v0.4 origin and reports a stale service clearly", async () => {
+    const health = {
+      service: "ok",
+      contract_version: "0.4",
+      data_status: "ready",
+      data_fingerprint: "fixture-v1",
+      agent_status: "unconfigured",
+      mode: "synthetic_fixture",
+    };
+    const fetcher = vi.fn().mockResolvedValue(json(health));
+    await expect(
+      createHttpApi({ fetcher, baseUrl: "http://127.0.0.1:8014" }).getHealth(),
+    ).resolves.toMatchObject({ contract_version: "0.4" });
+    expect(fetcher).toHaveBeenCalledWith(
+      "http://127.0.0.1:8014/api/health",
+      expect.objectContaining({ method: "GET" }),
+    );
+    await expect(
+      createHttpApi({
+        fetcher: vi.fn().mockResolvedValue(json({ ...health, contract_version: "0.3" })),
+      }).getHealth(),
+    ).rejects.toMatchObject({ code: "UNSUPPORTED_CONTRACT_VERSION", status: 426 });
+  });
   it.each([404, 409, 422, 429, 502, 503, 504])(
     "preserves structured HTTP %s errors",
     async (status) => {
@@ -178,16 +209,22 @@ describe("HTTP adapter never substitutes fixtures", () => {
     const api = createHttpApi({
       fetcher: vi
         .fn()
-        .mockImplementation(() => Promise.resolve(json(evidenceFixture))),
+        .mockImplementation(() =>
+          Promise.resolve(
+            json({ ...evidenceFixture, audit_id: initialAudit.audit_id }),
+          ),
+        ),
     });
     await expect(
       api.getEvidence("another-audit", "job:J1"),
     ).rejects.toMatchObject({ code: "AUDIT_ID_MISMATCH" });
     await expect(
-      api.getEvidence(initialAudit.audit_id, "job:J2"),
+      api.getEvidence(initialAudit.audit_id, "job:J1"),
     ).rejects.toMatchObject({ code: "EVIDENCE_ID_MISMATCH" });
     const chat = createHttpApi({
-      fetcher: vi.fn().mockResolvedValue(json(explanationFixture)),
+      fetcher: vi.fn().mockResolvedValue(
+        json({ ...explanationFixture, audit_id: initialAudit.audit_id }),
+      ),
     });
     await expect(
       chat.askBaseChat(initialAudit.audit_id, {
@@ -196,7 +233,9 @@ describe("HTTP adapter never substitutes fixtures", () => {
       }),
     ).rejects.toMatchObject({ code: "REQUEST_ID_MISMATCH" });
     const wrongAuditChat = createHttpApi({
-      fetcher: vi.fn().mockResolvedValue(json(explanationFixture)),
+      fetcher: vi.fn().mockResolvedValue(
+        json({ ...explanationFixture, audit_id: initialAudit.audit_id }),
+      ),
     });
     await expect(
       wrongAuditChat.askBaseChat("another-audit", {
@@ -214,6 +253,7 @@ describe("HTTP adapter never substitutes fixtures", () => {
       return Promise.resolve(
         json({
           ...explanationFixture,
+          audit_id: initialAudit.audit_id,
           client_request_id: body.client_request_id,
         }),
       );

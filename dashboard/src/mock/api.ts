@@ -1,9 +1,10 @@
 // MANAI_MOCK_ONLY: this module must never enter the live build.
 import { createDemoDatasetApi } from "./datasets";
 import { createMockOptimizationApi } from "./optimization";
-import auditFixture from "../../../contracts/examples/audit-response.json";
-import evidenceFixture from "../../../contracts/examples/evidence-response.json";
-import claimsFixture from "../../../contracts/examples/claims-response.json";
+import auditFixture from "../../../contracts/proposals/v0.4/examples/audit-without-pilot.json";
+import cpuPilotAuditFixture from "../../../contracts/proposals/v0.4/examples/audit-response.json";
+import evidenceFixture from "../../../contracts/proposals/v0.4/examples/baseline-evidence.json";
+import claimsFixture from "../../../contracts/proposals/v0.4/examples/claims-response.json";
 import type { Audit, DashboardApi, Schemas, Overview } from "../api/types";
 import { ApiError, parse, validateAuditRequest } from "../api/validation";
 
@@ -18,6 +19,7 @@ export type Fault =
   | "reviewer-timeout"
   | "reviewer-malformed";
 export const initialAudit = parse("Audit", auditFixture);
+const cpuPilotAudit = parse("Audit", cpuPilotAuditFixture);
 export const overviewFixture: Overview = parse("Overview", {
   provenance: initialAudit.provenance,
   price_book_version: "synthetic-price-v1",
@@ -158,7 +160,7 @@ export function createMockApi(
       await wait();
       return parse("Health", {
         service: "ok",
-        contract_version: "0.3",
+        contract_version: "0.4",
         data_status: "ready",
         data_fingerprint: "synthetic-fixture-v1",
         agent_status: "unconfigured",
@@ -192,7 +194,9 @@ export function createMockApi(
           "Demo validation rejected this scenario.",
           422,
         );
-      const audit = structuredClone(initialAudit);
+      const audit = structuredClone(
+        body.scenario.cpu_pilot ? cpuPilotAudit : initialAudit,
+      );
       audit.audit_id = `demo-audit-${++counter}`;
       audit.client_request_id = body.client_request_id;
       audit.scenario = structuredClone(body.scenario);

@@ -1,8 +1,8 @@
 import Ajv2020 from "ajv/dist/2020";
-import contract from "../../../contracts/openapi.json";
+import contract from "../../../contracts/proposals/v0.4/openapi.json";
 import type { Schemas } from "./types";
 
-const ajv = new Ajv2020({ allErrors: true, strict: false });
+const ajv = new Ajv2020({ allErrors: true, strict: false, strictNumbers: true });
 ajv.addSchema({ $id: "manai-contract", components: contract.components });
 export class ApiError extends Error {
   constructor(
@@ -46,7 +46,34 @@ export function validateAuditRequest(value: unknown) {
       "Recovery must be ordered: low ≤ point ≤ high.",
       422,
     );
+  const pilot = request.scenario.cpu_pilot;
+  if (
+    pilot?.trial_cap_hours !== null &&
+    pilot?.trial_cap_hours !== undefined &&
+    pilot.cpu_hours > pilot.trial_cap_hours
+  )
+    throw new ApiError(
+      "INVALID_SCENARIO",
+      "CPU hours cannot exceed the pilot time cap.",
+      422,
+    );
   return request;
+}
+
+/**
+ * v0.4 is deliberately not wire-compatible with v0.3.  Keep this check close
+ * to the parser so a stale service is reported as a connection issue instead
+ * of being rendered as partial data.
+ */
+export function assertV04<T extends { contract_version: string }>(value: T): T {
+  if (value.contract_version !== "0.4")
+    throw new ApiError(
+      "UNSUPPORTED_CONTRACT_VERSION",
+      `This dashboard requires API v0.4; received v${value.contract_version}.`,
+      426,
+      true,
+    );
+  return value;
 }
 export function assertAuditId<T extends { audit_id: string }>(
   value: T,

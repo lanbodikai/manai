@@ -61,7 +61,7 @@ for(const mobile of [false,true]) test(`CPU pilot comparison, downside and immut
   await expect(result.getByRole("heading",{name:"Candidate for an owner-reviewed pilot"})).toBeVisible();
   await expect(overview.getByText("Owner review needed",{exact:true})).toBeVisible();
   await page.getByRole("checkbox",{name:"Select Idle interactive sessions",exact:true}).check();
-  await page.getByRole("button",{name:"Optimize selected"}).click();
+  await page.getByRole("button",{name:"Review selected actions"}).click();
   await expect(page.getByRole("dialog").getByRole("region",{name:"Decision financial review"})).toContainText("combined plan");
   await expect(page.getByRole("dialog").getByText("Estimate pending",{exact:true})).toBeVisible();
   await page.getByRole("dialog").getByRole("button",{name:"Return",exact:true}).click();

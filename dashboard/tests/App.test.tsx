@@ -51,6 +51,27 @@ describe("CFO journey", () => {
     expect(await screen.findByText("Source and joins")).toBeVisible();
     expect(screen.getByText("Not source-data-derived.")).toBeVisible();
   });
+  it("renders a v0.4 CPU pilot result separately from cohort recovery", async () => {
+    const rt = runtime();
+    rt.initialScenario = {
+      ...initialAudit.scenario,
+      cpu_pilot: {
+        mode: "replacement_success",
+        baseline_evidence_id: "job:J2",
+        cpu_vcpus: 4,
+        cpu_hours: 12,
+        cpu_vcpu_hour_usd: 0.1,
+        extra_queue_hours: 0,
+        trial_cap_hours: null,
+        baseline_host_costs_included: true,
+        assumption_note: "Synthetic test scenario only.",
+      },
+    };
+    render(<App runtime={rt} />);
+    expect(await screen.findByRole("heading", { name: "CPU pilot scenario" })).toBeVisible();
+    expect(screen.getByText("Scenario estimate · not verified")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Inspect selected job" })).toBeEnabled();
+  });
   it("ignores delayed superseded results and keeps pending inputs separate", async () => {
     const rt = runtime();
     rt.api = createMockApi({
