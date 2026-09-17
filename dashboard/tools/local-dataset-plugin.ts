@@ -5,6 +5,8 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { collectionInfo } from "../src/dataset-fields.ts";
 import type { Catalog, Collection, DatasetRecord } from "../src/api/dataset.ts";
+import { buildDecisionTable, type FindingMeasure, type JobMeasure } from "./decision-summary.ts";
+import { fixIds } from "../src/optimization-options.ts";
 
 type Row = {
   id: string;
@@ -17,6 +19,7 @@ type Row = {
 export function localDatasetPlugin(): Plugin {
   let db: DatabaseSync | undefined;
   let catalog: Catalog;
+  let decisionSource: { jobs: JobMeasure[]; findings: FindingMeasure[] } | undefined;
   const decode = (r: Row): DatasetRecord => ({
     id: r.id,
     title: r.title,
@@ -64,6 +67,24 @@ export function localDatasetPlugin(): Plugin {
           if (url.pathname === "/catalog") return send(200, catalog);
           if (url.searchParams.get("version") !== catalog.version)
             return fail(409, "Dataset version mismatch. Reload the explorer.");
+          if (url.pathname === "/decisions") {
+            if (!catalog.collections.find(c => c.key === "findings")?.available)
+              return fail(503, "Generate and verify the official findings before opening cost optimization.");
+            const selection = (url.searchParams.get("selection") ?? "").split(",").filter(Boolean);
+            if (selection.some(id => !fixIds.includes(id)) || new Set(selection).size !== selection.length)
+              return fail(422, "Unknown or repeated optimization selection.");
+            if (!decisionSource) {
+              decisionSource = {
+                jobs: db.prepare(`SELECT id, outcome, json_extract(values_json,'$.gpu_hours') AS gpu_hours,
+                  json_extract(values_json,'$.sm_util_avg') AS sm_avg, json_extract(values_json,'$.sm_util_max') AS sm_max
+                  FROM records WHERE collection='jobs'`).all() as JobMeasure[],
+                findings: db.prepare(`SELECT id, synthetic, json_extract(values_json,'$.rule') AS rule,
+                  json_extract(values_json,'$.id_job') AS job_id, json_extract(values_json,'$.impact_scope') AS scope
+                  FROM records WHERE collection='findings'`).all() as FindingMeasure[],
+              };
+            }
+            return send(200, buildDecisionTable(decisionSource.jobs, decisionSource.findings, catalog.version, selection));
+          }
           const [collectionRaw, idRaw, ...extra] = url.pathname
             .split("/")
             .filter(Boolean);

@@ -30,6 +30,7 @@ import { number, range, usd } from "./format";
 import { ScenarioForm } from "./components/ScenarioForm";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
+import { CostOptimization } from "./components/CostOptimization";
 import {
   DataExplorer,
   DatasetHome,
@@ -199,6 +200,7 @@ export function App({ runtime }: { runtime: Runtime }) {
   );
   const nav = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "optimization", label: "Decisions", icon: Wallet },
     { id: "data", label: "Data explorer", icon: Database },
     { id: "scenario", label: "Scenario", icon: SlidersHorizontal },
     { id: "evidence", label: "Evidence", icon: Database },
@@ -219,7 +221,7 @@ export function App({ runtime }: { runtime: Runtime }) {
         <p className="nav-label">WORKSPACE</p>
         <nav aria-label="Main navigation">
           {nav
-            .filter((n) => !local || ["overview", "data"].includes(n.id))
+            .filter((n) => !local || ["overview", "optimization", "data"].includes(n.id))
             .map(({ id, label, icon: Icon }) => (
               <a
                 href={`#${id}`}
@@ -281,7 +283,9 @@ export function App({ runtime }: { runtime: Runtime }) {
             <span>No live monitoring, savings audit or MCP</span>
           </div>
         )}
-        {dataOpen ? (
+        {hash === "#optimization" ? (
+          <CostOptimization api={api} />
+        ) : dataOpen ? (
           <DataExplorer api={api} hash={hash} />
         ) : local ? (
           <DatasetHome api={api} />

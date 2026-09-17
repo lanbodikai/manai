@@ -28,13 +28,13 @@ import {
   pagePayload,
   detailPayload,
 } from "../api/dataset";
-import { collectionInfo, displayValue } from "../dataset-fields";
+import { collectionInfo, displayValue, findingStatusLabel } from "../dataset-fields";
 import { errorMessage } from "../api/validation";
 import { number } from "../format";
 
 export function datasetHref(
   collection: Collection,
-  filters: { outcome?: string; node?: string; id?: string; gpu?: string } = {},
+  filters: { outcome?: string; node?: string; id?: string; gpu?: string; query?: string } = {},
 ) {
   const params = new URLSearchParams(
     Object.entries(filters).filter(([, value]) => value),
@@ -212,8 +212,8 @@ export function DatasetHome({ api }: { api: DashboardApi }) {
           <h1>GPU data overview</h1>
           <p>Understand the sample. Explore the work behind each number.</p>
         </div>
-        <a className="primary" href={datasetHref("jobs")}>
-          Explore the dataset <ArrowRight size={16} />
+        <a className="primary" href="#optimization">
+          Review cost opportunities <ArrowRight size={16} />
         </a>
       </header>
       {error ? (
@@ -280,6 +280,7 @@ export function DataExplorer({
       initialNode={params.get("node") ?? ""}
       initialId={params.get("id") ?? undefined}
       initialGpu={params.get("gpu") ?? ""}
+      initialQuery={params.get("query") ?? ""}
     />
   );
 }
@@ -290,6 +291,7 @@ function ExplorerTable({
   initialNode,
   initialId,
   initialGpu,
+  initialQuery,
 }: {
   api: DashboardApi;
   collection: Collection;
@@ -297,12 +299,13 @@ function ExplorerTable({
   initialNode: string;
   initialId?: string;
   initialGpu: string;
+  initialQuery: string;
 }) {
   const { catalog, error: catalogError, retry } = useDatasetCatalog(api);
   const info = collectionInfo[collection];
   const [gpu, setGpu] = useState(initialGpu);
-  const [query, setQuery] = useState("");
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+  const [search, setSearch] = useState(initialQuery);
   const [outcome, setOutcome] = useState(initialOutcome);
   const [node, setNode] = useState(initialNode);
   const [sort, setSort] = useState(info.fields[0].key);
@@ -510,7 +513,7 @@ function ExplorerTable({
                       All {collection === "jobs" ? "outcomes" : "statuses"}
                     </option>
                     {stateOptions.map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s} value={s}>{collection === "findings" ? findingStatusLabel(s) : s}</option>
                     ))}
                   </select>
                 </label>
@@ -614,7 +617,7 @@ function ExplorerTable({
                                         })
                                       }
                                     >
-                                      {displayValue(r.values[f.key], f.unit)}
+                                      {f.key === "status" ? findingStatusLabel(r.values[f.key]) : displayValue(r.values[f.key], f.unit)}
                                     </button>
                                   ) : (
                                     <span
@@ -625,7 +628,7 @@ function ExplorerTable({
                                           : ""
                                       }
                                     >
-                                      {displayValue(r.values[f.key], f.unit)}
+                                      {f.key === "status" ? findingStatusLabel(r.values[f.key]) : displayValue(r.values[f.key], f.unit)}
                                     </span>
                                   )}
                                 </td>

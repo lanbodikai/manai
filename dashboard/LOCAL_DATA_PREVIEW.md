@@ -39,6 +39,8 @@ The Vite development middleware opens SQLite read-only, binds to loopback and se
 
 ## What is browsable
 
+- Cost optimization: `#optimization` presents a decision table with percentage-based exposure, proposed fixes, checkboxes, deduplicated selection totals and a backend modeling request button. [Request contract and limits](OPTIMIZATION_API.md). The real multi-fix optimizer is not yet implemented by A; errors never become simulated success.
+
 - Front page: recorded GPU-hours → estimated active GPU-hours → active GPU-hours in completed jobs; separate outcome chart whose bars open matching jobs.
 - Jobs: final state, first machine, GPU count, recorded hours and average activity. Search all fields, filter by outcome or physical machine/card, sort and page. Detail exposes all 65 prepared job fields, its physical cards and their complete source fields.
 - GPUs: one physical card identified by **Node + gpu_id**, never gpu_id alone. Detail lists up to 100 per-card job records, all their available fields, and a link to browse **all** jobs on that specific card.
