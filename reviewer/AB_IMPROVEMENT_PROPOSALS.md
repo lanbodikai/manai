@@ -1,0 +1,20 @@
+# Findings for A/B review — no shared files changed
+
+Baseline: `ce6a44e2a2eb2e66c42cf7372ff2628164f930c5`, active contract 0.3.
+Proposed 0.4 is tested only when explicitly enabled. These are adoption proposals,
+not edits or release gates imposed on A/B.
+
+| Finding / reproducible trigger | Expected result and limits | Proposed owner action and regression |
+|---|---|---|
+| Main's audit endpoint always returns 404; run the actual-bootstrap branch of `python -m eval.agent.http_smoke`. | C must return 404 and leave A alone. This confirms failure plumbing only, not positive integration. | A: publish immutable audit/evidence endpoints. Then repeat with a real audit, verify each cited ID and the five-file fingerprint. |
+| Active `contracts/examples/evidence-response.json` lacks observed `state_name` and `sm_util_max`. | Eligibility stays UNKNOWN even though recovery arithmetic can pass. Source-column names alone are not measurements. | A: include all predicate observations with units for job details. Regression: remove either observation and require UNKNOWN; a violating observed predicate must FAIL. |
+| A's synthetic 0.4 eight-case proposal exercises success, failure, extra validation, expensive CPU, unknown prices, unknown queue, incomplete price boundary and faster CPU. | C's independently written checks accept the authored outputs and reject altered values. These are arithmetic tests, not workload results. | A: retain the eight cases in calculator tests. B: preserve negative net value and negative completion changes; display null as unknown. |
+| Recorded GPU-hours can differ from GPU count × scheduler elapsed time; mutate the independent baseline test so H differs from g×T. | Use measured H for allocation accounting, and elapsed time for delay. Do not force equality or change cohort totals to a single-job estimate. | A: resolve baseline observations server-side. Regression: H≠gT must still use H; failed trial adds CPU cost without charging unchanged baseline GPU twice. |
+| The prior offline memory partition is reproducible against the pinned two prepared tables using `eval.agent.real_data_check`. | Broad zero-compute cohort remains intact; positive memory use is a dependency concern. This is historical exposure, not recoverable savings. Private aggregate receipts retain exact values. | A/B: offer memory-based pilot prioritization as a separate view; do not silently exclude the positive-memory subgroup. Reconcile zero/positive/unknown groups back to the broad cohort. |
+| A complete evidence page may omit eligible jobs, or contain two references to the same physical job. | Exact cohort checks require manifest-count agreement, unique physical identities, complete predicate data and untruncated pagination. | A: retain stable page totals and source identity. B: display coverage. Regression: alias one physical job under two IDs, remove a page, or cap evidence; never show a full-cohort approval. |
+| Official MCP currently exposes no matching A audit fingerprint; price-only mode retrieves reference metadata. Rules mode fetches bounded CPU findings without inventing a match. | MCP context stays uncorroborated. Synthetic detector attribution cannot prove a real hardware incident. | A/C: agree on a read-only provenance mapping before promoting a finding into a scoped citation. Regression: stale or unknown fingerprint remains UNKNOWN/409 rather than a match. |
+| Optional reviewer may time out, be unconfigured, or return malformed output. | Existing audits/claims must remain usable. Local C tests do not prove React resilience. | B: independently run R01–R05 with disabled, crashed, slow, malformed and unconfigured C. Use optional profile, lazy proxy resolution, 35s browser timeout; no base `depends_on` or provider key requirement. |
+
+If adopted, A owns arithmetic, cohorts and claims; B owns display, proxy and root
+Compose. The base must retain adopted improvements with C disabled. No automatic
+promotion, claim replacement, default-branch change or merge is performed by C.
