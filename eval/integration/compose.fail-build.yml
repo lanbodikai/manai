@@ -1,0 +1,6 @@
+services:
+  reviewer:
+    build:
+      context: .
+      dockerfile: eval/integration/Dockerfile.fail
+    image: manai-intentionally-failed-reviewer

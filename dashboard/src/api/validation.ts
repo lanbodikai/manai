@@ -2,7 +2,7 @@ import Ajv2020 from "ajv/dist/2020";
 import contract from "../../../contracts/openapi.json";
 import type { Schemas } from "./types";
 
-const ajv = new Ajv2020({ allErrors: true, strict: false });
+const ajv = new Ajv2020({ allErrors: true, strict: false, strictNumbers: true });
 ajv.addSchema({ $id: "manai-contract", components: contract.components });
 export class ApiError extends Error {
   constructor(
@@ -46,6 +46,10 @@ export function validateAuditRequest(value: unknown) {
       "Recovery must be ordered: low ≤ point ≤ high.",
       422,
     );
+  const pilot = request.scenario.cpu_pilot;
+  if (pilot && (pilot.mode === "replacement_success" && pilot.cpu_hours <= 0 ||
+      pilot.trial_cap_hours != null && pilot.cpu_hours > pilot.trial_cap_hours))
+    throw new ApiError("INVALID_SCENARIO", "Successful replacement needs positive CPU duration; duration must not exceed the assumed cap.", 422);
   return request;
 }
 export function assertAuditId<T extends { audit_id: string }>(

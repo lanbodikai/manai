@@ -1,0 +1,11 @@
+# Test-only alternate ports. Paths resolve relative to root docker-compose.yml.
+services:
+  api:
+    ports: !override ["127.0.0.1:18080:8000"]
+  dashboard:
+    ports: !override ["127.0.0.1:13011:3000"]
+networks:
+  default:
+    ipam:
+      config: !override
+        - subnet: 10.254.195.0/24

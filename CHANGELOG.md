@@ -1,5 +1,15 @@
 # Project changelog
 
+## A+B integration candidate — 2026-09-17
+
+- Reviewed/reproduced A v0.4 and merged PR #2 onto integration `db6f418`; preserved all B history through `e24c78a` and retargeted PR #4 to integration.
+- Added strict v0.4 UI, minimal CPU scenario inputs/results, conservative default recovery, explicit provenance/ceiling labels and production Compose packaging.
+- User additionally authorized connecting the existing read-only Data explorer and Decisions to the production dashboard. Reused B's route/calculation code server-side with a checksum-verified private snapshot; multi-fix calculations stay deferred.
+- Fixed the explorer pagination reset found in browser regression; preserved B's separate CFO planner and source views.
+- Tested real CPU/MCP/export flow and optional-reviewer isolation. Recorded C compatibility defects separately; no C merge or enablement.
+- Added reproducible acceptance scripts, local final-claims export, report and author handoffs. Historical bootstrap and proposal notes below are retained; current results supersede their status statements.
+
+
 ## v0.11 — reviewed CPU-pilot handoff — 2026-09-17
 
 - Reproduced all 12 prototype calculation tests and RD01–RD17 in the bootstrap runtime; recorded the host reader failure and scope limits.

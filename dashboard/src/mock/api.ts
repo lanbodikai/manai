@@ -1,5 +1,6 @@
 // MANAI_MOCK_ONLY: this module must never enter the live build.
 import { createDemoDatasetApi } from "./datasets";
+import { createMockOptimizationApi } from "./optimization";
 import auditFixture from "../../../contracts/examples/audit-response.json";
 import evidenceFixture from "../../../contracts/examples/evidence-response.json";
 import claimsFixture from "../../../contracts/examples/claims-response.json";
@@ -16,7 +17,10 @@ export type Fault =
   | "reviewer-unavailable"
   | "reviewer-timeout"
   | "reviewer-malformed";
-export const initialAudit = parse("Audit", auditFixture);
+export const initialAudit = parse("Audit", structuredClone(auditFixture));
+delete initialAudit.scenario.cpu_pilot;
+initialAudit.downside.cpu_pilot = null;
+initialAudit.downside.status = "unmeasured";
 export const overviewFixture: Overview = parse("Overview", {
   provenance: initialAudit.provenance,
   price_book_version: "synthetic-price-v1",
@@ -90,7 +94,7 @@ export function createMockApi(
       join_keys: { id_job: member.source_id },
       observations: record.observations.map((o) => ({
         ...o,
-        value: o.unit === "gpu_hours" ? (ref === "job:J1" ? 10 : 20) : o.value,
+        value: o.column === "gpu_hours" ? (ref === "job:J1" ? 10 : 20) : o.value,
       })),
     });
   }
@@ -152,11 +156,12 @@ export function createMockApi(
   }
   return {
     datasets: createDemoDatasetApi(options.delay),
+    optimization: createMockOptimizationApi(options.delay),
     async getHealth() {
       await wait();
       return parse("Health", {
         service: "ok",
-        contract_version: "0.3",
+        contract_version: "0.4",
         data_status: "ready",
         data_fingerprint: "synthetic-fixture-v1",
         agent_status: "unconfigured",
@@ -173,6 +178,8 @@ export function createMockApi(
     },
     async createAudit(input) {
       const body = validateAuditRequest(input);
+      if (body.scenario.cpu_pilot)
+        throw new ApiError("SYNTHETIC_PILOT_UNAVAILABLE", "This synthetic demo models cohort recovery only. Use the live service for CPU pilot results.", 422);
       await wait(options.auditDelay?.(body) ?? options.delay ?? 350);
       if (
         fault === "conflict" ||
