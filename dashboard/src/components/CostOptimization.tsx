@@ -7,6 +7,8 @@ import { number, usd } from "../format";
 import { datasetHref, useDatasetCatalog } from "./DataExplorer";
 import { CpuPilotPlanner } from "./CpuPilotPlanner";
 import { OptimizeDialog } from "./OptimizeDialog";
+import { DecisionOverview } from "./DecisionOverview";
+import type { PilotReview } from "../pilot-model";
 import { taskSummary } from "../optimization-options";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
@@ -22,10 +24,12 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   const [receipt, setReceipt] = useState<OptimizeReceipt | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pilotOpen, setPilotOpen] = useState(false);
-  const [activeOutcome, setActiveOutcome] = useState("Finished");
+  const [pilotReview, setPilotReview] = useState<PilotReview|null>(null);
+  const [reviewWhenReady, setReviewWhenReady] = useState(false);
   // Verified against the supplied API /v1/price-book (2026-Q3), 2026-09-17. Reference pricing, not an actual bill.
   const referencePrice = 2.5;
   const pending = useRef<OptimizeRequest | null>(null);
+  const dialogTrigger = useRef<HTMLElement|null>(null);
   const submitSequence = useRef(0);
   const selectionKey = selected.join(",");
   useEffect(() => () => { ++submitSequence.current; }, []);
@@ -50,13 +54,17 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   }, [api,catalog,selectionKey]);
   const visible = table?.dataset_version === catalog?.version ? table : null;
   const current = !!visible && sameFixes(visible.selection.fix_ids,selected) && !loading && !loadError;
+  useEffect(() => {
+    if(reviewWhenReady && current) {setConfirmOpen(true);setReviewWhenReady(false);}
+  },[reviewWhenReady,current]);
   const available = visible?.rows.filter(r => r.affected_jobs > 0).map(r => r.id) ?? [];
   const selectedRows = visible?.rows.filter(r => selected.includes(r.id)) ?? [];
   function choose(next: string[]) {
     if (sending) return;
     setSelected(next);
     setConfirmOpen(false);
-    if(!next.includes("cpu-placement")) setPilotOpen(false);
+    setReviewWhenReady(false);
+    if(!next.includes("cpu-placement")) {setPilotOpen(false);setPilotReview(null);}
     setReceipt(null);
     setActionError("");
     pending.current = null;
@@ -96,6 +104,30 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   ];
   const outcomes = outcomeGroups.map(group => ({...group,hours:(catalog?.summary?.outcomes ?? []).filter(item => group.states.length ? group.states.includes(item.outcome) : !outcomeGroups.some(g => g.states.includes(item.outcome))).reduce((sum,item) => sum+item.gpu_hours,0)}));
   const cpuRow = visible?.rows.find(row => row.id === "cpu-placement");
+  const review = selected.includes("cpu-placement") && pilotReview?.snapshot?.source.version === visible?.dataset_version ? pilotReview : null;
+  function openPilot() {
+    if(!selected.includes("cpu-placement")) choose([...selected,"cpu-placement"]);
+    setPilotOpen(true);
+    setTimeout(() => document.getElementById("cpu-pilot-planner")?.focus(),0);
+  }
+  function reviewPilot() {
+    const trigger=document.activeElement as HTMLElement|null;
+    if(!selected.includes("cpu-placement")) choose([...selected,"cpu-placement"]);
+    dialogTrigger.current=trigger;
+    setReviewWhenReady(true);
+  }
+  function downloadReview() {
+    if(!visible || !current) return;
+    const file={kind:"decision-review-example",status:"not-approved-not-executed",dataset_version:visible.dataset_version,synthetic:visible.synthetic,
+      scope:catalog?.window_label,reference_price:{usd_per_gpu_hour:referencePrice,version:"2026-Q3",basis:"reference pricing, not billing"},
+      selection:visible.selection,actions:selectedRows.map(row => ({...row,evidence_status:row.id==="cpu-placement" && review ? "scenario-modeled-not-measured" : "needs-testing",evidence_path:datasetHref("findings",{query:row.rule})})),
+      cpu_pilot:review?.snapshot ?? null,unsaved_cpu_assumptions:review?.dirty ?? false,
+      combined_net_savings:null,verified_cash_savings:null,
+      required_before_pilot:["Owner selects actual jobs and verifies equivalent outputs","Benchmark replacement cost and runtime","Agree stop limits and rollback capacity"],
+      caveats:["Recorded allocation value is not recoverable savings.","Selected exposure deduplicates job hours; intervention savings are not additive.","CPU scenario covers only its modeled pilot, not all selected actions.","Research harm remains unpriced; no next-quarter extrapolation.","Do not submit this planning export as claims.json."]};
+    const url=URL.createObjectURL(new Blob([JSON.stringify(file,null,2)],{type:"application/json"}));
+    const a=document.createElement("a");a.href=url;a.download="decision-review.example.json";a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
+  }
   return <div className="optimization-page">
     <header className="page-header">
       <div><span className="eyebrow">FROM FINDINGS TO A SMALLER GPU BILL</span>
@@ -107,8 +139,9 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
     {error && <div className="panel error-state" role="alert"><TriangleAlert /><h2>Could not load the decision table</h2><p>{error}</p><button className="secondary" onClick={reload} disabled={sending}><RefreshCw size={15} /> Reload data</button></div>}
     {!visible && !error && <div className="panel" role="status">Reading verified findings and job hours…</div>}
     {visible && <>
+      <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} onReview={reviewPilot} disabled={sending || loading || !!loadError}/>
       <section className="panel decision-panel" aria-label="Optimization tasks"><div className="decision-caption"><span>GPU time affected · reference cost, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
-        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "task" : "tasks"} selected` : "Select one or more tasks"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={() => setConfirmOpen(true)}>{modelAvailable ? "Optimize selected" : "Review selected"} <ArrowRight size={16}/></button></div></div>
+        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "task" : "tasks"} selected` : "Select one or more tasks"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>{modelAvailable ? "Optimize selected" : "Review selected"} <ArrowRight size={16}/></button></div></div>
         {sending && !confirmOpen && <p className="decision-footnote" role="status">Submitting your modeling request…</p>}
         {receipt && !confirmOpen && <div className="optimization-receipt" role="status"><CheckCircle2 size={19}/><p>Modeling request accepted. No workload change or savings has been verified.</p></div>}
         {actionError && !confirmOpen && <div className="optimization-error" role="alert">{actionError} Select Optimize selected to review and retry.</div>}
@@ -120,24 +153,16 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
               <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
-              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Compare CPU pilot" disabled={sending} onClick={() => { if(!selected.includes(row.id)) choose([...selected,row.id]); setPilotOpen(true); setTimeout(() => document.getElementById("cpu-pilot-planner")?.focus(),0); }}>Model <ArrowRight size={13}/></button>}</td>
+              <td><p className="decision-fix">{taskSummary[row.id]?.fix ?? row.fix}</p><span className="row-readiness">{!row.affected_jobs ? "No eligible jobs" : row.id==="cpu-placement" && review ? "Scenario modeled · not measured" : "Needs testing"}</span>{row.id === "cpu-placement" && <button className="text-button pilot-open" aria-label="Compare CPU pilot" disabled={sending || !row.affected_jobs} onClick={openPilot}>Model <ArrowRight size={13}/></button>}</td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><details className="row-source-details"><summary>Details</summary><p>{row.fix}</p><p>Owner: {row.owner}</p><p>{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</p><p>{number(row.excluded_cancelled_jobs)} cancelled jobs excluded</p></details></td>
             </tr>)}</tbody>
           </table>
         </div>
         <details className="decision-footnote"><summary>About the numbers</summary><p>Percentages use all recorded GPU-hours as the denominator. Task hours exclude cancellation and synthetic findings. Each selected job is counted once. Reference value uses $2.50/GPU-hour for the sample window; it is not a bill or savings estimate.</p></details>
       </section>
-      {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
-      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} />}
-      <details className="panel technical-decisions"><summary>View spending goal and GPU-time breakdown</summary><div className="optional-goal"><h2>What does a 20% cut mean?</h2><p>The hackathon brief asks for 20% lower spending: spend $80 for every $100 previously spent, while preserving research performance. This is an example, not the cluster’s bill. You can investigate opportunities without choosing a target first.</p></div>      <section className="panel allocation-panel" aria-labelledby="allocation-heading">
-        <div className="allocation-heading"><div><span className="eyebrow">1 · UNDERSTAND THE BASELINE</span><h2 id="allocation-heading">Where does our GPU time go?</h2><p>{catalog?.window_label} · Recorded allocation, not total cluster capacity</p></div><div><strong>{number(visible.total_gpu_hours)}</strong><span>GPU-hours in this sample</span></div></div>
-        {catalog?.summary ? <>
-          <div className="allocation-bar" aria-hidden="true">{outcomes.map(group => <span key={group.label} style={{width:`${visible.total_gpu_hours ? group.hours / visible.total_gpu_hours * 100 : 0}%`,background:group.color}} />)}</div>
-          <div className="allocation-legend" role="group" aria-label="Explore recorded time by outcome">{outcomes.map(group => <button key={group.label} aria-pressed={activeOutcome === group.label} onClick={() => setActiveOutcome(group.label)}><span className="allocation-dot" style={{background:group.color}} /><span>{group.label}</span><strong>{percent(visible.total_gpu_hours ? group.hours / visible.total_gpu_hours * 100 : 0)}</strong></button>)}</div>
-          <p className="allocation-note" aria-live="polite">{outcomes.find(group => group.label === activeOutcome)?.note}</p>
-        </> : <p>Outcome breakdown unavailable for this dataset.</p>}
-      </section>
-      </details>
+      {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}
+      {pilotOpen && selected.includes("cpu-placement") && cpuRow && <CpuPilotPlanner key={visible.dataset_version} source={{version:visible.dataset_version,synthetic:visible.synthetic,cohortHours:cpuRow.allocated_gpu_hours,totalHours:visible.total_gpu_hours,gpuPrice:referencePrice}} onReview={setPilotReview} />}
+      <details className="panel technical-decisions"><summary>About the optional 20% spending goal</summary><div className="optional-goal"><h2>What does a 20% cut mean?</h2><p>The hackathon brief asks for 20% lower spending: spend $80 for every $100 previously spent, while preserving research performance. This is an example, not the cluster’s bill. You can investigate opportunities without choosing a target first.</p><p>The pilot model compares against 20% of the historical sample’s reference value. It does not forecast next-quarter savings.</p></div></details>
     </>}
   </div>;
 }

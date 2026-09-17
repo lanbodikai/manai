@@ -48,3 +48,5 @@ export function modelPilot(source:PilotSource, input:PilotInputs) {
   return result;
 }
 export type PilotResult=ReturnType<typeof modelPilot>;
+export type PilotSnapshot={inputs:PilotInputs; source:PilotSource; result:PilotResult};
+export type PilotReview={snapshot:PilotSnapshot|null; dirty:boolean};
