@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 
 import pandas as pd
+from analysis.cpu_pilot import assess_cpu_pilot, memory_partition
 
 RULE = "rules::gpu-not-needed"
 DEFINITION = "COMPLETED; sm_util_avg == 0; sm_util_max == 0; gpu_hours > 1; required values present and valid"
@@ -134,7 +135,7 @@ def estimate_recovery(cohort, scenario):
 
 
 def assess_downside(cohort, scenario):
-    return {"status": "unmeasured", "money": None, "money_unit": None,
+    result = {"status": "unmeasured", "money": None, "money_unit": None, "cpu_pilot": None,
         "mechanisms": ["CPU execution could fail or run more slowly.",
                        "CPU queue pressure, retries and rollback could delay useful work."],
         "assumptions": ["Zero historical SM activity establishes rule eligibility only.",
@@ -146,6 +147,7 @@ def assess_downside(cohort, scenario):
                        "Rollback and automatic stop enforcement have not been tested."],
         "pilot_success_metrics": ["Task completion and output validity", "Runtime relative to original placement",
                                   "Queue delay", "Actual GPU allocation avoided"]}
+    return result
 
 
 def evidence_id(fingerprint, kind, source_id):
@@ -201,16 +203,32 @@ def make_evidence(cohort, impacts, findings, rule, provenance):
 
 def build_audit(audit_id, request, cohort, impacts, evidence, provenance):
     refs = sorted((d["evidence"] for d in evidence.values()), key=lambda r: (r["kind"], r["source_id"]))
-    return {"contract_version": "0.3", "audit_id": audit_id, "client_request_id": request["client_request_id"],
+    downside = assess_downside(cohort, request["scenario"])
+    pilot = request["scenario"].get("cpu_pilot")
+    if pilot is not None:
+        eid = pilot["baseline_evidence_id"]
+        detail = evidence.get(eid)
+        if detail is None or detail["evidence"]["kind"] != "job":
+            raise KeyError("CPU baseline is not an eligible job in this audit")
+        if detail["provenance"]["data_fingerprint"] != provenance["data_fingerprint"]:
+            raise RuntimeError("CPU baseline fingerprint differs")
+        job = next((j for j in cohort.jobs if str(j["id_job"]) == detail["evidence"]["source_id"]), None)
+        if job is None:
+            raise KeyError("CPU baseline is not eligible")
+        downside["cpu_pilot"] = assess_cpu_pilot(job, pilot, request["scenario"]["usd_per_gpu_hour"])
+        downside["status"] = "scenario"
+        downside["assumptions"].append("Single-job cost/delay is a hypothetical scenario, separate from cohort recovery. " + pilot["assumption_note"])
+    return {"contract_version": "0.4", "audit_id": audit_id, "client_request_id": request["client_request_id"],
         "recommendation_id": "cpu-placement-pilot", "source_recommendation_ids": [], "provenance": provenance,
         "scenario": request["scenario"], "eligibility": {"definition": DEFINITION, "unique_jobs": len(cohort.jobs),
         "eligible_gpu_hours": cohort.hours, "excluded_jobs": sum(cohort.excluded.values()),
         "overlapping_finding_references": impacts["overlapping_finding_references"],
-        "coverage_note": f"{cohort.total_jobs} unique source jobs; exclusions: {json.dumps(cohort.excluded, sort_keys=True)}"},
+        "coverage_note": f"{cohort.total_jobs} unique source jobs; exclusions: {json.dumps(cohort.excluded, sort_keys=True)}",
+        "memory_partition": memory_partition(cohort)},
         "recovery": estimate_recovery(cohort, request["scenario"]),
         "action": {"title": "Pilot CPU placement for eligible workloads", "owner_role": "Platform/SRE with workload owner",
                    "state": "proposed_pilot", "compatibility_verified": False},
-        "downside": assess_downside(cohort, request["scenario"]), "evidence_preview": refs[:5],
+        "downside": downside, "evidence_preview": refs[:5],
         "evidence_count": len(refs), "limitations": LIMITATIONS + ([] if cohort.jobs else ["No eligible jobs."])}
 
 

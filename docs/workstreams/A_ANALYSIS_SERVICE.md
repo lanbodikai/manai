@@ -1,6 +1,6 @@
 # Workstream A — analysis and audit service
 
-Active assignment: Builder A on codex/analysis-service. Shared split gate passed; historical wait wording is superseded. A1 implementation and recorded checks are ready for B review; see eval/analysis/RESULTS.md and docs/methodology.md. A2/MCP and B integration remain in progress. Active contract v0.3; v0.4 requires recorded B agreement.
+Active assignment: Builder A on codex/analysis-service. Shared split gate passed; historical wait wording is superseded. A1 (05c7fa0) and v0.3 A2/MCP (141ee7b) are published in draft PR #2. Winston confirmed B agreement to exact ce6a44e; active contract is now v0.4 with A-owned CPU-pilot implementation. See eval/analysis/RESULTS.md, docs/methodology.md and A_HANDOFF.md for current checks and remaining B integration.
 
 ## Mission and ownership
 

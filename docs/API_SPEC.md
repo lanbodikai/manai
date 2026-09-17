@@ -1,4 +1,6 @@
-# Frontend/backend API — draft v0.3
+# Frontend/backend API — adopted v0.4
+
+The exact ce6a44e CPU-pilot proposal is adopted after Winston confirmed B's agreement; the record is in PR #2. Active OpenAPI is 0.4.0 and audit/health report 0.4. Additions are the optional `Scenario.cpu_pilot`, required nullable `Downside.cpu_pilot` and optional memory partition, with formulas/errors defined in contracts/proposals/v0.4/README.md. Existing routes, error envelope, Explanation and official Claims are unchanged. The base semantics below remain applicable; historical statements that v0.3 is active or v0.4 awaits acceptance are superseded. B's v0.3 strict client must be regenerated before switching.
 
 Contract v0.3 is frozen for the split. Bootstrap implements real health/overview and explicit failure states only; audit/claims/chat/reviewer routes remain workstream deliverables. Canonical machine-readable shapes: [OpenAPI](../contracts/openapi.json). [Examples](../contracts/examples/manifest.json) are original synthetic fixtures, not organizer data or measured results. This contract revises the earlier route sketch in CONTRACT.md.
 

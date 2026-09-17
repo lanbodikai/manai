@@ -140,7 +140,18 @@ def render_supported_answer(intent, audit):
             "These are assumed scenario bounds, not calibrated probabilities or verified cash savings. "
             "MCP verifies supporting rule/finding evidence; it does not establish the conversion fractions.")
     d = audit["downside"]
-    return prefix + " ".join(d["mechanisms"] + d["assumptions"] + d["guardrails"]) + " Downside money is not quantified. These are proposed risks and checks, not observed intervention outcomes."
+    pilot = d.get("cpu_pilot")
+    if pilot is not None:
+        metric = lambda value: "unknown" if value is None else format(value, ".6f")
+        pilot_text = (f" Single-job {pilot['mode']} scenario: released {metric(pilot['released_gpu_hours'])} GPU-hours; "
+            f"added CPU reference cost {metric(pilot['added_cpu_reference_usd'])} USD; signed net reference value "
+            f"{metric(pilot['net_reference_value_usd'])} USD; completion change "
+            f"{metric(pilot['completion_change_hours_including_extra_queue'])} hours. "
+            "Failure assumes a full GPU rerun; additional validation retains GPU allocation with unknown completion impact. "
+            "These metrics are separate from cohort recovery; unknown cost/delay remains unknown. ")
+    else:
+        pilot_text = " Downside money is not quantified. "
+    return prefix + " ".join(d["mechanisms"] + d["assumptions"] + d["guardrails"]) + pilot_text + "These are proposed risks and checks, not observed intervention outcomes."
 
 
 async def answer_base_chat(snapshot, body, check_source, trace_dir, connector=connect_official, time_limit=TIME_LIMIT):
@@ -167,6 +178,13 @@ async def answer_base_chat(snapshot, body, check_source, trace_dir, connector=co
                 raise domain_error
             raise ServiceError(503, "UPSTREAM_UNAVAILABLE", "Official MCP runtime is unavailable.", True)
         status, answer = "ok", render_supported_answer(intent, audit)
+        pilot = audit["downside"].get("cpu_pilot")
+        if pilot is not None and intent == "downside":
+            baseline = pilot["baseline"]["evidence_id"]
+            if baseline not in snapshot.evidence:
+                raise ServiceError(502, "UPSTREAM_RESPONSE_INVALID", "CPU baseline evidence is missing from the audit.")
+            if baseline not in refs:
+                refs.append(baseline)
     result = {"audit_id": audit["audit_id"], "client_request_id": body["client_request_id"], "status": status,
         "answer": answer, "supporting_evidence_ids": refs, "tool_trace_ids": traces,
         "limitations": ["Template-based; no model/provider is used.", "Tool evidence does not prove CPU compatibility or realized savings."],

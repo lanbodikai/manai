@@ -38,3 +38,22 @@ A1 published commit: `05c7fa0`. A2 adds real official MCP chat and additional up
 M02 and M03 are verified within the template-based scope. M01/M04 now have live development-browser witnesses, not final Compose acceptance. Final D06 REPORT agreement, B cross-review, U05/P/R01/R05 packaging checks and optional G checks remain **PENDING/NOT RUN**. These witnesses do not declare the overall base or C enhancement complete.
 
 Observed B-owned follow-ups: the team recommendation is rendered as “Organizer judgment”; the main upper range should explicitly say eligibility ceiling. The v0.3 target/gap panel remains honestly unavailable. Full real-data browser artifacts remain under ignored `private-eval/ui/`.
+
+## Adopted v0.4 backend verification
+
+Winston confirmed B acceptance of exact ce6a44e. A recorded adoption before dependent work at https://github.com/lanbodikai/manai/pull/2#issuecomment-5719627799. Active schema is byte-equivalent to that proposal; active fixtures include the agreed examples plus existing error coverage and an evidence alias. Official Claims and Explanation shapes are unchanged. Historical v0.3/A1/A2 results above remain historical.
+
+- Analysis/API tests: **15/15 PASS**, including all eight agreed CPU cases, separate recorded allocation/scheduler duration, finite/baseline/cap validation, memory unknown partition, invalid baseline membership/fingerprint, immutable scenarios and unchanged recovery/claim values. Base-chat **4/4 PASS**, bootstrap **5/5 PASS**.
+- `docker exec manai-a-analysis python contracts/proposals/v0.4/validate.py`: **PASS**, exact active/proposed schema equality, six proposed full examples, eight synthetic CPU cases, invalid inputs, identity/partition and official claim schema.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_live`: **PASS** again on v0.4; same canonical fingerprint, independent cohort/card reconciliation and six sensitivity settings. D06 remains 0/0/1 with no empirical positive estimate.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_cpu_pilot`: **8/8 live API cases PASS**, independently reconciled memory partitions, server-resolved baseline observations, signed negative/earlier outcomes, null price/queue/boundary outcomes, unchanged cohort recovery/claims. Three live downside MCP answers passed (failure, unknown CPU price, additional validation), including baseline citations and canonical numbers.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_chat`: **4/4 supported questions PASS** on v0.4, ten actual MCP calls with resolving citations and unchanged claims. Observed answer times about 2.8–2.9 seconds; C absent.
+- `docker exec manai-a-analysis python -m eval.analysis.verify_mcp_cleanup`: **PASS**, explicit 504/502, no orphan MCP process.
+
+B still owns CPU-pilot controls/display, final Compose and REPORT/D06 agreement. The initial v0.3 browser witness cannot certify a v0.4 product; a review-copy schema/client regeneration and base journey rerun are tracked separately. No G/model, CPU workload, stop-enforcement or realized-savings result is claimed.
+
+Final packaging and browser checks:
+
+- `docker build -f service/Dockerfile -t manai-analysis-a04 .`: PASS. `docker run --rm manai-analysis-a04 python -m unittest discover -s tests/analysis -v` (15), corresponding `tests/base_chat` (4), and `tests/bootstrap` (5): **24/24 PASS from the built image**, without source bind mounts or model keys.
+- Regenerated only the schema/client in the ignored B review copy using `openapi-typescript`; B product source remains unchanged. Repeated `node eval/analysis/ui_smoke.cjs artifacts/b-review/dashboard/node_modules`: **PASS on API 0.4**, including live MCP/citation, displayed/exported 0/0/1 values and four optional-reviewer failure modes. This verifies the base flow; B's new CPU controls/display do not exist in this review copy and are not claimed tested.
+- `git diff --check` and protected-path inspection passed. No changes to B dashboard/root Compose, C code, official API/MCP/data tooling or dependency locks. Public changes contain executable tests, original fixtures, schemas and result summaries; real records/traces/screenshots/claims remain ignored.

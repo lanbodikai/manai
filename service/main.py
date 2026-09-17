@@ -39,7 +39,7 @@ async def lifespan(app):
         app.state.upstream = client
         yield
 
-app = FastAPI(title="manai analysis service", version="0.3.0", lifespan=lifespan)
+app = FastAPI(title="manai analysis service", version="0.4.0", lifespan=lifespan)
 
 def error(request, status, code, message, retryable=False):
     return JSONResponse(status_code=status, content={"error": {
@@ -74,7 +74,7 @@ async def http_error(request, exc):
 def health(request: Request):
     snapshot = request.app.state.source
     status = current_status(DATA, snapshot)
-    return {"service": "ok", "contract_version": "0.3", "data_status": status,
+    return {"service": "ok", "contract_version": "0.4", "data_status": status,
             "data_fingerprint": snapshot["fingerprint"] if status == "ready" else None,
             "agent_status": "unconfigured", "mode": "real"}
 

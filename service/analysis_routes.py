@@ -1,4 +1,4 @@
-"""v0.3 endpoints: no C service or provider dependency."""
+"""v0.4 endpoints: no C service or provider dependency."""
 import asyncio
 import json
 import uuid
@@ -136,8 +136,12 @@ async def create_audit(request: Request):
     context = await get_context(request)
     try:
         snapshot = request.app.state.audits.create(body, context)
+    except KeyError:
+        raise ServiceError(404, "EVIDENCE_NOT_FOUND", "CPU baseline must identify one eligible job in this audit's source.")
+    except RuntimeError:
+        raise ServiceError(409, "DATA_VERSION_MISMATCH", "CPU baseline and audit source fingerprints differ.")
     except (ValueError, OverflowError):
-        raise ServiceError(422, "INVALID_SCENARIO", "Fractions must be ordered within [0,1]; price and results must be finite.")
+        raise ServiceError(422, "INVALID_SCENARIO", "Check ordered fractions, positive price/baseline measurements, finite results and CPU trial cap.")
     require_data(request, snapshot=True)
     validate("Audit", snapshot.audit)
     return snapshot.audit

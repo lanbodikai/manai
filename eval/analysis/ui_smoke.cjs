@@ -82,7 +82,7 @@ const assert = require('node:assert/strict');
     await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
     assert.equal(requests.some(u => /\/src\/mock\//.test(u)), false);
     assert.deepEqual(errors, []);
-    const result = { result: 'PASS', frontend: 'unchanged B at 5a8d995', mode: 'real HTTP', audit_id: audit.audit_id,
+    const result = { result: 'PASS', frontend: 'B product code at 5a8d995; review schema/client matched to active contract', contract_version: audit.contract_version, mode: 'real HTTP', audit_id: audit.audit_id,
       M01: 'PASS live UI -> A -> official MCP with resolving citation', M04: 'PASS preview failure injection; base chat/export survive optional unavailable/malformed/wrong-audit/hang',
       C04: 'displayed audit matches downloaded claims', D06: '0/0/1 displayed/export agreement; final REPORT remains B-owned',
       failure_modes: failureResults, no_mock_modules: true, no_page_errors: true,

@@ -2,7 +2,7 @@
 
 ## Current mode
 
-WORKSTREAM A ACTIVE in this isolated checkout, explicitly assigned by Winston. Implement and publish A1 then A2 on codex/analysis-service targeting codex/integration; never merge or push to main. BASE gates passed. Active API v0.3; coordinate B agreement before v0.4 adoption. Preserve B/C ownership. See eval/analysis/RESULTS.md for actual checks, not historical readiness wording.
+WORKSTREAM A ACTIVE in this isolated checkout, explicitly assigned by Winston. Implement and publish A1 then A2 on codex/analysis-service targeting codex/integration; never merge or push to main. BASE gates passed. Winston confirmed B agreement to exact ce6a44e proposal; A accepted and recorded adoption in PR #2 before implementation. Active API is now v0.4 on this branch; B must regenerate its strict client before switching. Preserve B/C ownership. See eval/analysis/RESULTS.md for actual checks, not historical readiness wording.
 
 CPU-PILOT HANDOFF UPDATE. User authorized API/fixtures and A/B handoff, plus direct publication of the validated base update to main. The v0.4 proposal is staged under contracts/proposals/v0.4 for coordinated A/B adoption; active v0.3 remains unchanged. No calculator or other workstream implementation is authorized by merely reading this update. See docs/VERIFIER_HANDOFF_REVIEW.md.
 

@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "manai team API \u2014 planning contract",
-    "version": "0.3.0",
-    "description": "Draft contract. No server implemented. Example values are original synthetic test data, not MantisGrid results."
+    "title": "manai team API - CPU pilot proposal",
+    "version": "0.4.0",
+    "description": "PROPOSED, not active. A/B must agree this version before promotion to contracts/openapi.json. Runtime and B0 remain v0.3. No CPU pilot has run."
   },
   "servers": [
     {
@@ -858,6 +858,9 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2000
+          },
+          "cpu_pilot": {
+            "$ref": "#/components/schemas/CpuPilotInput"
           }
         },
         "required": [
@@ -1078,6 +1081,16 @@
               "reference_usd",
               null
             ]
+          },
+          "cpu_pilot": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CpuPilotResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -1087,7 +1100,8 @@
           "guardrails",
           "pilot_success_metrics",
           "money",
-          "money_unit"
+          "money_unit",
+          "cpu_pilot"
         ]
       },
       "Audit": {
@@ -1095,7 +1109,7 @@
         "additionalProperties": false,
         "properties": {
           "contract_version": {
-            "const": "0.3"
+            "const": "0.4"
           },
           "audit_id": {
             "type": "string"
@@ -1146,6 +1160,9 @@
               },
               "coverage_note": {
                 "type": "string"
+              },
+              "memory_partition": {
+                "$ref": "#/components/schemas/MemoryPartition"
               }
             },
             "required": [
@@ -1259,7 +1276,7 @@
             ]
           },
           "contract_version": {
-            "const": "0.3"
+            "const": "0.4"
           },
           "data_status": {
             "type": "string",
@@ -1669,6 +1686,267 @@
           "cancelled_is_waste",
           "cancelled_rationale",
           "notes"
+        ]
+      },
+      "CpuPilotInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "replacement_success",
+              "replacement_failure",
+              "additional_validation"
+            ]
+          },
+          "baseline_evidence_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Eligible job in this immutable audit; A resolves baseline measurements, never browser-supplied totals."
+          },
+          "cpu_vcpus": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cpu_vcpu_hour_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "extra_queue_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "trial_cap_hours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "baseline_host_costs_included": {
+            "type": "boolean",
+            "description": "Explicit pricing-boundary assumption. False suppresses net value until accounting is extended."
+          },
+          "assumption_note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "mode",
+          "baseline_evidence_id",
+          "cpu_vcpus",
+          "cpu_hours",
+          "cpu_vcpu_hour_usd",
+          "extra_queue_hours",
+          "trial_cap_hours",
+          "baseline_host_costs_included",
+          "assumption_note"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "replacement_success"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "cpu_hours": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CpuPilotBaseline": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gpu_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "elapsed_hours": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "recorded_gpu_hours": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "accounting_note": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence_id",
+          "gpu_count",
+          "elapsed_hours",
+          "recorded_gpu_hours",
+          "accounting_note"
+        ]
+      },
+      "CpuPilotResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scope": {
+            "const": "single_job"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "replacement_success",
+              "replacement_failure",
+              "additional_validation"
+            ]
+          },
+          "evidence_kind": {
+            "const": "scenario_estimate"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/CpuPilotBaseline"
+          },
+          "scenario_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "released_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "added_cpu_vcpu_hours": {
+            "type": "number",
+            "minimum": 0
+          },
+          "released_gpu_reference_usd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "added_cpu_reference_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "net_reference_value_usd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "run_time_change_hours_excluding_queue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "completion_change_hours_including_extra_queue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "compatibility_verified": {
+            "const": false
+          },
+          "cash_savings_verified": {
+            "const": false
+          },
+          "trial_stop_enforcement_tested": {
+            "const": false
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "scope",
+          "mode",
+          "evidence_kind",
+          "baseline",
+          "scenario_gpu_hours",
+          "released_gpu_hours",
+          "added_cpu_vcpu_hours",
+          "released_gpu_reference_usd",
+          "added_cpu_reference_usd",
+          "net_reference_value_usd",
+          "run_time_change_hours_excluding_queue",
+          "completion_change_hours_including_extra_queue",
+          "compatibility_verified",
+          "cash_savings_verified",
+          "trial_stop_enforcement_tested",
+          "limitations"
+        ]
+      },
+      "MemoryGroup": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "unique_jobs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "recorded_gpu_hours": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "unique_jobs",
+          "recorded_gpu_hours"
+        ]
+      },
+      "MemoryPartition": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "zero_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "positive_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "unknown_memory": {
+            "$ref": "#/components/schemas/MemoryGroup"
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "zero_memory",
+          "positive_memory",
+          "unknown_memory",
+          "basis"
         ]
       }
     }

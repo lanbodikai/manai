@@ -1,5 +1,7 @@
 # CPU pilot cost and delay — proposed API v0.4
 
+**Adopted on Workstream A after recorded A/B agreement.** Winston confirmed B accepted this exact ce6a44e proposal; A recorded acceptance in PR #2 before promotion. The active schema now matches this proposal. B must regenerate clients before switching. The original proposal rationale below is retained as history; its pending-adoption statements are superseded on this branch.
+
 **Reviewable proposal, not the active API.** The runtime and B0 continue using `contracts/openapi.json` v0.3. This directory contains the complete proposed OpenAPI and original synthetic fixtures. A/B agree this version before promoting it and regenerating clients. Publishing the proposal on main is not runtime adoption or a passed implementation gate.
 
 The user requested API/fixtures and an A/B handoff, not implementation of A's calculator in this update. The verified bootstrap remains intact. C stays optional.

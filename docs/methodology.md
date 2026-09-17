@@ -22,9 +22,17 @@ Canonical downside is qualitative under v0.3: potential CPU failure/slowdown, qu
 
 ## Identity and interfaces
 
-Active API is v0.3. Each creation returns a new opaque immutable snapshot; numeric values and evidence membership are deterministic for equal source/semantic inputs. Cache capacity is 128 snapshots, FIFO eviction, no persistence. Missing/evicted IDs return 404. Evidence content is stored as immutable serialized values shared within a source version; responses are freshly decoded. Cursors bind audit identity and stable ordering. Missing/changed source prevents old evidence/export from silently joining replacement data (409). New calculations require the expected fingerprint.
+Active API is v0.4 after recorded A/B agreement. Each creation returns a new opaque immutable snapshot; numeric values and evidence membership are deterministic for equal source/semantic inputs. Cache capacity is 128 snapshots, FIFO eviction, no persistence. Missing/evicted IDs return 404. Evidence content is stored as immutable serialized values shared within a source version; responses are freshly decoded. Cursors bind audit identity and stable ordering. Missing/changed source prevents old evidence/export from silently joining replacement data (409). New calculations require the expected fingerprint.
 
-The proposed v0.4 contract at ce6a44e remains gated on B's recorded acceptance. No proposed fields are inserted into v0.3. CPU cost/delay will be single-job accounting separate from cohort claims when adopted.
+Winston confirmed B acceptance of the exact v0.4 proposal at ce6a44e; A recorded adoption in PR #2 before implementation. Schema/examples are promoted together; no v0.4 fields are mislabeled v0.3. B's strict client must regenerate before switching.
+
+## CPU pilot calculation
+
+The A-owned pure calculator adapts the reviewed model (prototype SHA256 870f1f42983117dcbf7a00fae10c6d40d1980daa0d9b83213b99418affb16f79); the private real-data harness and its source-derived constants were not copied. A resolves one eligible baseline evidence reference using the audit fingerprint. GPU count, recorded allocation H and scheduler hours T come from source observations, never editable browser totals. Missing/nonpositive baseline values reject the pilot while prior audits remain intact.
+
+Success releases H and compares assumed CPU duration C with T. Failure releases zero, retains H for a full original GPU rerun and adds C runtime without double-charging the original GPU allocation. Additional validation releases zero and leaves completion impact unknown. Added vCPU-hours are v*C; CPU reference cost is v*C*pC when the CPU rate is known. Signed net reference value is released GPU value minus CPU cost only when the original GPU rate is explicitly assumed to include baseline host costs; otherwise unknown. Completion change adds the nullable extra-queue assumption only to a known runtime change. Negative values remain negative.
+
+Trial caps constrain scenario input; they do not enforce runtime stopping. Legacy downside money stays null. The single-job result is a scenario estimate, never deducted from or extrapolated into cohort recovery/claims. Memory zero/positive/unknown partitions reconcile to the unchanged cohort; unknown memory is not zero and no partition proves compatibility.
 
 ## Required MCP chatbot
 
