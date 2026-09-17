@@ -1,0 +1,18 @@
+# data
+pandas
+pyarrow
+numpy
+scipy
+matplotlib
+
+# API
+fastapi
+uvicorn[standard]
+pydantic
+slowapi
+
+# notebook and scripts
+jupyterlab
+requests
+jsonschema   # scripts/validate_submission.py
+mangum

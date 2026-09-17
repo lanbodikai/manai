@@ -1,6 +1,6 @@
 # Team start here — Track 2 / plan v0.9
 
-**This branch contains the agreed plan, API contract and synthetic examples. The application and official starter are not implemented/imported yet.** There is no working `docker compose up` here yet. Start with the shared bootstrap below; do not mistake planning fixtures for results.
+**Common base READY TO SPLIT:** verified implementation commit `7530865eeca4fe87daf91b5cc275af378bd42fb7`, branch `codex/integration`. All BASE gates passed. Read [BOOTSTRAP_STATUS.md](docs/BOOTSTRAP_STATUS.md) and [BOOTSTRAP_BOUNDARY.md](docs/BOOTSTRAP_BOUNDARY.md) first. README contains the current setup. Older bootstrap recipes below preserve the original workflow; do not repeat imports or recreate existing branches. The :3000 page is a temporary verification page, not B's final dashboard.
 
 Our thesis: audit a completed zero-GPU-compute cohort for a CPU-placement pilot, show a defensible recovery range and downside, and let a CFO/SRE inspect and question the supporting evidence. The pilot's operational savings are unproven. The target is 20%; we show our contribution and remaining gap honestly.
 

@@ -1,0 +1,95 @@
+# Default: official API :8000 + team service + temporary verification page :3000.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile.local
+    ports: ["8000:8000"]
+    volumes:
+      - ./api:/app/api:ro
+      - ./data:/app/data:ro
+    environment: [PYTHONUNBUFFERED=1]
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  # Run once after downloading the raw data:
+  #   docker compose run --rm prep
+  # It uses the same pinned image as the API, so the tables it writes are
+  # semantically identical on every machine (use the supplied checksum checker).
+  prep:
+    build:
+      context: .
+      dockerfile: api/Dockerfile.local
+    volumes:
+      - ./data:/app/data
+      - ./scripts:/app/scripts:ro
+    command: ["python", "scripts/prep_data.py"]
+    profiles: ["tools"]
+
+  # Run after prep:
+  #   docker compose run --rm generate
+  # Runs the generator in bin/ that matches this machine's chip, reading
+  # data/prepped/ and writing data/synthetic/. It is copied to /tmp first so it
+  # runs even if the file lost its executable bit (a repository downloaded as a ZIP).
+  generate:
+    build:
+      context: .
+      dockerfile: api/Dockerfile.local
+    volumes:
+      - ./data:/app/data
+      - ./bin:/app/bin:ro
+    command: ["sh", "-c",
+      "a=$$(uname -m); case $$a in x86_64|amd64) a=amd64;; aarch64|arm64) a=arm64;; esac; cp bin/mantisgrid-generate-linux-$$a /tmp/gen && chmod +x /tmp/gen && /tmp/gen data"]
+    profiles: ["tools"]
+
+  notebook:
+    profiles: ["notebook"]
+    build:
+      context: .
+      dockerfile: starter/Dockerfile
+    ports: ["8888:8888"]
+    volumes: ["./starter:/work"]
+    environment:
+      - MGAI_URL=http://api:8000
+    depends_on:
+      api: {condition: service_healthy}
+    command: >
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser
+      --allow-root --NotebookApp.token='' --NotebookApp.password=''
+
+  analysis:
+    build:
+      context: .
+      dockerfile: service/Dockerfile
+    environment:
+      MGAI_URL: http://api:8000
+    volumes:
+      - ./data:/app/data:ro
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: tools/bootstrap/page/Dockerfile
+    ports: ["3000:3000"]
+    environment:
+      ANALYSIS_URL: http://analysis:8001
+    depends_on:
+      analysis: {condition: service_healthy}
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${MANAI_SUBNET:-10.254.197.0/24}

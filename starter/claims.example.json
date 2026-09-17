@@ -1,0 +1,58 @@
+{
+ "team": "example \u2014 replace this",
+ "_comment": "Shape only. Every value here is invented \u2014 none of it is a hint.",
+ "recoverable_gpu_hours": {
+  "point": 99999,
+  "low": 70000,
+  "high": 130000,
+  "confidence": 0.6,
+  "basis": "Say how you got here. Which jobs you counted, what you excluded, and why. Judges read this field \u2014 it is scored on the reasoning, not on the number."
+ },
+ "recoverable_usd": {
+  "point": 249998,
+  "low": 175000,
+  "high": 325000,
+  "confidence": 0.6
+ },
+ "cancelled_is_waste": false,
+ "cancelled_rationale": "Defend whichever way you went. It swings the headline about 2x.",
+ "node_triage": [
+  {
+   "node": "rXXXXXXX-nXXXXXX",
+   "window": 0,
+   "cause": "user_code",
+   "reasoning": "Shape only -- this text is invented. Say what you joined and what the numbers were.",
+   "verdict": "no_action"
+  },
+  {
+   "node": "rYYYYYYY-nYYYYYY",
+   "window": 3,
+   "cause": "cannot_determine",
+   "reasoning": "Say what you ruled out and why nothing was left. This is a real answer, not a blank.",
+   "verdict": "monitor"
+  }
+ ],
+ "card_imbalance_gpu_hours": {
+  "point": 9999,
+  "low": 6000,
+  "high": 15000,
+  "confidence": 0.5,
+  "basis": "Say which table you used, at what grain, and where you put the threshold."
+ },
+ "card_imbalance_rationale": "Invented placeholder. Replace it.",
+ "card_imbalance_index_reasoning": "Optional. Only if you looked.",
+ "incident_root_cause": "<the resource you concluded was responsible>",
+ "incident_action_scope": "single_resource",
+ "incident_nodes_to_drain": 0,
+ "incident_degraded_gpu_hours": {
+  "point": 9999,
+  "low": 7000,
+  "high": 14000,
+  "confidence": 0.5
+ },
+ "incident_confidence": 0.8,
+ "hardware_attributable_failures": 999,
+ "hardware_attributable_confidence": 0.4,
+ "hardware_attributable_rationale": "Invented placeholder. Say what you counted and why.",
+ "notes": "Anything else you want a judge to know."
+}

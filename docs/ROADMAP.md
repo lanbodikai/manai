@@ -1,5 +1,6 @@
 # Engineering roadmap — discussion to three workstreams
 
+Current execution status overrides historical discussion below: see [BOOTSTRAP_STATUS.md](BOOTSTRAP_STATUS.md) and [BOOTSTRAP_BOUNDARY.md](BOOTSTRAP_BOUNDARY.md). Shared bootstrap is authorized and implemented; only recorded passing gates count.
 ## Phase 0 — current: converge and version
 
 Rounds 1 and 2 are complete. Finish Round 3 in QUESTIONS.md. Record explicit answers in DECISIONS.md. Revise thesis/cohort, stack and ownership without deleting earlier decisions. This document is not authorization to start implementation.

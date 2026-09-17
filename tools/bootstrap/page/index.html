@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>manai · Bootstrap verification</title>
+<style>body{font:16px/1.55 system-ui;background:#101820;color:#e7f0f4;max-width:1080px;margin:40px auto;padding:0 24px}h1{font-size:32px}small,.muted{color:#a6bbc5}.banner{border-left:4px solid #efba57;padding:14px;background:#26303a}section{border:1px solid #39515d;border-radius:12px;padding:22px;margin:18px 0;background:#17232c}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}button{background:#75dcca;border:0;padding:12px 20px;border-radius:7px;font-weight:700;cursor:pointer}button:focus-visible{outline:3px solid white}strong{color:#8ee4cf}.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}.cards section{margin:0}@media(max-width:650px){.cards{grid-template-columns:1fr}}.bad{color:#ffb6a2}</style>
+<p class="muted">MANAI / COMMON BASE / CONTRACT 0.3</p><h1>Bootstrap verification</h1><p class="banner">Not the finished dashboard. Real source overview below; the audit fixture is synthetic. Audit calculations, claims export and MCP chatbot behavior are still workstream deliverables.</p>
+<button id="refresh">Run checks again</button><p id="status" aria-live="polite">Checking…</p>
+<section><h2>Real API overview</h2><div id="overview">Loading…</div><details><summary>Response and source caveats</summary><pre id="overview-json"></pre></details></section>
+<div class="cards"><section><h2>Synthetic audit fixture</h2><p>Invented contract-test data. Not measured savings.</p><pre id="fixture"></pre></section><section><h2>Expected error path</h2><p>Unknown audit must return HTTP 404 and AUDIT_NOT_FOUND.</p><pre id="error"></pre></section></div>
+<section><h2>Service health</h2><pre id="health"></pre><p class="muted">An unconfigured agent is expected here. MCP connectivity is checked separately by the container probe; this page does not claim a live chatbot.</p></section>
+<script>
+const show=(id,value)=>document.getElementById(id).textContent=typeof value==='string'?value:JSON.stringify(value,null,2);
+async function run(){show('status','Checking…');try{
+const [health,overview,fixture,error]=await Promise.all(['/api/health','/api/overview','/bootstrap/fixture.json','/api/audits/bootstrap-missing'].map(async path=>{const r=await fetch(path);return {status:r.status,data:await r.json()}}));
+show('health',health.data);show('overview-json',overview.data);
+show('overview',overview.status===200?`${overview.data.job_count.toLocaleString()} sample jobs · ${overview.data.allocated_gpu_hours.toLocaleString()} allocated GPU-hours · $${overview.data.usd_per_gpu_hour}/GPU-hour reference rate`:JSON.stringify(overview.data));
+show('fixture',{synthetic:fixture.data.provenance.synthetic,audit_id:fixture.data.audit_id,recovery:fixture.data.recovery});show('error',error);
+const ok=health.data.data_status==='ready'&&overview.status===200&&fixture.data.provenance.synthetic===true&&error.status===404&&error.data.error.code==='AUDIT_NOT_FOUND';
+show('status',ok?'PASS — real overview, synthetic fixture and error path verified.':'NOT READY — inspect results below.');
+}catch(e){show('status','NOT READY — '+e.message)}}document.getElementById('refresh').onclick=run;run();
+</script></html>

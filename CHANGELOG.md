@@ -1,4 +1,18 @@
-# Plan changelog
+# Project changelog
+
+## Verified split handoff — 2026-09-17
+
+- BASE-01 through BASE-07 passed including independently regenerated data, exact default startup, five tests, real MCP calls and browser verification.
+- Published implementation baseline 7530865; recorded exact A/B/C branch/merge commands, frozen ownership, Git exclusions and honest remaining work.
+- C/Featherless remains optional; no provider key used.
+
+## Common-base bootstrap — 2026-09-17
+
+- Imported pinned Track 2 API/data tooling/MCP/notices with per-file provenance.
+- Added canonical-data validation, minimal health/overview service, real stdio MCP utility/probe and temporary :3000 verification page.
+- Preserved B dashboard and API v0.3 files; full audit/chat/reviewer implementation remains outside this baseline.
+- Added resolved team lock, ignored data/secrets/build outputs, setup script, boundary and actual completion evidence.
+
 
 ## v0.9 — 2026-09-17
 

@@ -1,5 +1,6 @@
 # Official starter import manifest — proposed
 
+Current execution status overrides historical discussion below: see [BOOTSTRAP_STATUS.md](BOOTSTRAP_STATUS.md) and [BOOTSTRAP_BOUNDARY.md](BOOTSTRAP_BOUNDARY.md). Shared bootstrap is authorized and implemented; only recorded passing gates count.
 Import only after execution is activated. Pin official commit `314cca0bba49e1bb137aa9094d1dac4cdf7e4490`; inspect later upstream changes before adopting them. Do not blindly pull main during the build.
 
 ## Layout
@@ -45,18 +46,18 @@ Mark these only after performing them. Reviewed does not mean imported or execut
 
 - [x] Official Track 2 docs and relevant starter code inspected at the pinned commit.
 - [x] Agreement, attribution/license paths, schema and validator identified.
-- [ ] Activation of starter import recorded in DECISIONS.md.
-- [ ] Import Track 2 code paths from the manifest without copying upstream .git or replacing our planning files.
-- [ ] Retain PARTICIPANT_AGREEMENT.md, LICENSE and ATTRIBUTION.md; link notices from the root README/attribution.
-- [ ] Preserve source notices verbatim and document any team modifications; do not imply that storing an agreement accepts it for the user.
-- [ ] Record upstream commit and imported file hashes in UPSTREAM_PROVENANCE.md.
-- [ ] Preserve claims schema and official validator path relationship.
-- [ ] Preserve data README/checksums while confirming raw/prepped/generated paths are ignored.
-- [ ] Verify generator hashes before execution; use the documented Docker path.
-- [ ] Download data only after activation; run prep, generate and canonical-data check.
-- [ ] Add the dashboard/service to a single root Compose project; keep the official API service.
-- [ ] Test API readiness and a complete fixture-backed page; record actual outcomes.
-- [ ] Freeze shared contract/fixtures and baseline commit before all three builders branch.
+- [x] Activation of starter import recorded in DECISIONS.md.
+- [x] Import Track 2 code paths from the manifest without copying upstream .git or replacing our planning files.
+- [x] Retain PARTICIPANT_AGREEMENT.md, LICENSE and ATTRIBUTION.md; link notices from the root README/attribution.
+- [x] Preserve source notices verbatim and document any team modifications; do not imply that storing an agreement accepts it for the user.
+- [x] Record upstream commit and imported file hashes in UPSTREAM_PROVENANCE.md.
+- [x] Preserve claims schema and official validator path relationship.
+- [x] Preserve data README/checksums while confirming raw/prepped/generated paths are ignored.
+- [x] Verify generator hashes before execution; use the documented Docker path.
+- [x] Download data only after activation; run prep, generate and canonical-data check.
+- [x] Add the dashboard/service to a single root Compose project; keep the official API service.
+- [x] Test API readiness and a complete fixture-backed page; record actual outcomes.
+- [x] Freeze shared contract/fixtures and baseline commit before all three builders branch.
 
 Copying official files supplies infrastructure and obligations; it does not complete our contribution or its evaluation.
 
@@ -67,3 +68,5 @@ Import the official `mcp_layer/` with API dependencies for A/B's minimum chatbot
 ## Team handoff update — v0.8
 
 User authorized publishing the plan/setup branch. See [TEAM_START_HERE.md](../TEAM_START_HERE.md) for bootstrap execution assignments, current phase, exact branch strategy and A/B/C ownership. No runtime bootstrap has yet been performed. Historical activation questions must not override an explicit subsequent session assignment.
+
+Checklist completed for the common bootstrap; the :3000 page is the explicitly scoped temporary verification page. Full B dashboard and A/C features remain outstanding. See BOOTSTRAP_STATUS.md for evidence.

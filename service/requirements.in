@@ -1,0 +1,2 @@
+-r ../requirements.lock.txt
+fastmcp==4.0.5
