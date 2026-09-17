@@ -2,6 +2,10 @@
 
 This is a **B-owned frontend proposal**, requested by the user. It does not change or claim adoption of team API v0.3 or the accepted v0.4 CPU-extension design. A's inspected branch `05c7fa0` implements deterministic audits, but exposes no multi-fix optimization route. A must agree and implement the action before live modeling can succeed. B has not modified the backend or shared contracts.
 
+## User-requested local dollar preview
+
+Tasks now show user-editable what-if gross reference-dollar ranges using source hours × price × recovery. Defaults ($2.50, 0–25%) are explicitly illustrative, not estimated recovery. Selected totals use unique-job hours. Outcomes show allocation reference cost only. CPU/replacement/implementation costs and performance harm are not included; actual net savings may be zero or negative. This local preview does not modify claims, the canonical API or the optimization request. Its assumptions are not submitted to A. The existing backend net-savings result remains unmodeled.
+
 ## User experience
 
 Open `http://127.0.0.1:3002/#optimization` in explicit local dataset mode. The page presents eight suggested investigations: CPU placement, idle sessions, low GPU activity, imbalance across GPUs, memory sizing, failed array tasks, timeouts and unsuccessful jobs with no GPU compute. Each has an owner role, percentage, source-hour/job counts, a proposed fix, a trade-off and a link to matching findings. Checkboxes select one or several fixes; the combined exposure counts each job once. The CFO view starts with a storage-style outcome bar and three task cards; five further tasks and the full decision table expand on demand. The mutually exclusive bar measures recorded allocation by job outcome, not savings. Legend buttons provide plain-language explanations; categories must reconcile to the sample total. Narrow layouts stack the content.
@@ -55,7 +59,7 @@ Suggested acceptance receipt:
 
 The request supplies selected actions, not client-calculated savings. A must recompute membership from its immutable source snapshot and reject unsupported fixes explicitly. Neither this route nor its UI grants permission to move workloads, terminate sessions or modify infrastructure. A should use the existing v0.3 recovery and v0.4 single-job CPU scenario contract when adding financial assumptions/results; other fixes currently have no agreed recovery estimator. Do not invent default recovery fractions or assume all exposed hours are recoverable.
 
-The frontend validates version/request/selection identity, accepts only `status=accepted`, rejects synthetic receipts in HTTP mode, and keeps **Potential savings: Not modeled** after acceptance. The follow-up financial-result API/UI is not specified or implemented in this change. Retries for an unchanged selection reuse the same `client_request_id`; A must implement idempotency and reject that ID with different inputs. The client does not automatically retry. A 15-second timeout reports an unknown request status rather than claiming cancellation. Unmounting or changing the selection prevents late responses from appearing as the current result.
+The frontend validates version/request/selection identity, accepts only `status=accepted`, rejects synthetic receipts in HTTP mode, and keeps **Backend net savings: Not modeled** after acceptance. The follow-up financial-result API/UI is not specified or implemented in this change. Retries for an unchanged selection reuse the same `client_request_id`; A must implement idempotency and reject that ID with different inputs. The client does not automatically retry. A 15-second timeout reports an unknown request status rather than claiming cancellation. Unmounting or changing the selection prevents late responses from appearing as the current result.
 
 ## Verification scope
 

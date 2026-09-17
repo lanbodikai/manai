@@ -3,7 +3,8 @@ import { ArrowRight, CheckCircle2, CircleHelp, RefreshCw, SlidersHorizontal, Tri
 import type { DashboardApi } from "../api/types";
 import { decisionPayload, sameFixes, type DecisionTable, type OptimizeReceipt, type OptimizeRequest } from "../api/optimization";
 import { errorMessage } from "../api/validation";
-import { number } from "../format";
+import { number, usd, range } from "../format";
+import { savingsPreview } from "../savings-preview";
 import { datasetHref, useDatasetCatalog } from "./DataExplorer";
 
 export const percent = (value: number) => value > 0 && value < 0.1 ? "<0.1%" : `${value.toFixed(1)}%`;
@@ -19,6 +20,11 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
   const [receipt, setReceipt] = useState<OptimizeReceipt | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [activeOutcome, setActiveOutcome] = useState("Finished");
+  const [price, setPrice] = useState("2.50");
+  const [recoveryLow, setRecoveryLow] = useState("0");
+  const [recoveryHigh, setRecoveryHigh] = useState("25");
+  const money = (hours:number) => savingsPreview(hours,price,recoveryLow,recoveryHigh);
+  const savingsLabel = (hours:number) => { const value=money(hours); return value ? range(value.low,value.high) : "Check assumptions"; };
   const pending = useRef<OptimizeRequest | null>(null);
   const submitSequence = useRef(0);
   const selectionKey = selected.join(",");
@@ -97,22 +103,28 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
       <a className="secondary" href={datasetHref("findings")}>Browse findings <ArrowRight size={15} /></a>
     </header>
     <div className="optimization-context"><CircleHelp size={18} />
-      <p><strong>Exposure is not savings.</strong> Percentages show the share of this sample’s recorded GPU time held by matching jobs. Only a backend model can estimate what a fix might recover.</p>
+      <p><strong>What-if dollars, not verified savings.</strong> Percentages use recorded GPU time. Dollar ranges apply your recovery assumptions; actual net savings may be zero or negative after CPU, implementation and performance costs.</p>
     </div>
     {error && <div className="panel error-state" role="alert"><TriangleAlert /><h2>Could not load the decision table</h2><p>{error}</p><button className="secondary" onClick={reload} disabled={sending}><RefreshCw size={15} /> Reload data</button></div>}
     {!visible && !error && <div className="panel" role="status">Reading verified findings and job hours…</div>}
     {visible && <>
+      <section className="panel savings-assumptions" aria-label="Savings assumptions">
+        <div><h2>What could we save?</h2><p>Illustrative defaults: $2.50/GPU-hour and 0–25% recovery. Change these to explore a scenario; recovery is not measured.</p></div>
+        <div className="savings-inputs"><label>Reference price ($/GPU-hour)<input type="number" min="0" step="0.01" value={price} onChange={e => setPrice(e.target.value)} /></label><label>Recovery low (%)<input type="number" min="0" max="100" value={recoveryLow} onChange={e => setRecoveryLow(e.target.value)} /></label><label>Recovery high (%)<input type="number" min="0" max="100" value={recoveryHigh} onChange={e => setRecoveryHigh(e.target.value)} /></label></div>
+        {!money(visible.total_gpu_hours) && <p role="alert">Enter a nonnegative price and recovery percentages with 0 ≤ low ≤ high ≤ 100.</p>}
+        <p>USD for this sample window, not per month. Gross reference value before costs—not a forecast or cash-savings audit. These local assumptions are not sent to the pending backend model.</p>
+      </section>
       <section className="panel allocation-panel" aria-labelledby="allocation-heading">
         <div className="allocation-heading"><div><span className="eyebrow">1 · UNDERSTAND THE BASELINE</span><h2 id="allocation-heading">Where does our GPU time go?</h2><p>{catalog?.window_label} · Recorded allocation, not total cluster capacity</p></div><div><strong>{number(visible.total_gpu_hours)}</strong><span>GPU-hours in this sample</span></div></div>
         {catalog?.summary ? <>
           <div className="allocation-bar" aria-hidden="true">{outcomes.map(group => <span key={group.label} style={{width:`${visible.total_gpu_hours ? group.hours / visible.total_gpu_hours * 100 : 0}%`,background:group.color}} />)}</div>
           <div className="allocation-legend" role="group" aria-label="Explore recorded time by outcome">{outcomes.map(group => <button key={group.label} aria-pressed={activeOutcome === group.label} onClick={() => setActiveOutcome(group.label)}><span className="allocation-dot" style={{background:group.color}} /><span>{group.label}</span><strong>{percent(visible.total_gpu_hours ? group.hours / visible.total_gpu_hours * 100 : 0)}</strong></button>)}</div>
-          <p className="allocation-note" aria-live="polite">{outcomes.find(group => group.label === activeOutcome)?.note}</p>
+          <p className="allocation-note" aria-live="polite">{outcomes.find(group => group.label === activeOutcome)?.note}<br /><strong>{activeOutcome} reference cost: {money(outcomes.find(group => group.label === activeOutcome)?.hours ?? 0) ? usd(money(outcomes.find(group => group.label === activeOutcome)?.hours ?? 0)!.value) : "Check assumptions"}</strong> · Allocation cost, not recoverable savings.</p>
         </> : <p>Outcome breakdown unavailable for this dataset.</p>}
       </section>
       <section className="optimization-stats" aria-label="Optimization context">
         <div className="panel selected-stat"><span className="eyebrow">SELECTED FOR REVIEW</span><strong aria-live="polite">{current ? percent(visible.selection.share_pct) : "Updating…"}</strong><p>{current ? `${number(visible.selection.unique_jobs)} unique jobs · ${number(visible.selection.gpu_hours)} GPU-hours` : "Checking overlapping jobs"}<br />Each job counted once across your selection</p></div>
-        <div className="panel"><span className="eyebrow">POTENTIAL SAVINGS</span><strong className="unmodeled">Not modeled</strong><p>Recovery, CPU cost and performance impact<br />need a backend scenario, not a sum of findings.</p></div>
+        <div className="panel"><span className="eyebrow">SELECTED POTENTIAL SAVINGS · WHAT-IF</span><strong className="unmodeled" aria-live="polite">{current ? savingsLabel(visible.selection.gpu_hours) : "Updating…"}</strong><p>Gross reference value across unique selected jobs.<br />Backend net savings: <span>Not modeled</span>.</p></div>
       </section>
       <section className="panel decision-panel" aria-labelledby="decision-heading">
         <div className="decision-heading"><div><span className="eyebrow">2 · CHOOSE WHAT TO TEST</span><h2 id="decision-heading">Start with a small, reversible change</h2><p>Three investigations to consider first—not a ranking of proven savings.</p></div>
@@ -121,6 +133,7 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
         <div className="decision-tasks">{shownRows?.map(row => <article key={row.id} className={`decision-task ${selected.includes(row.id) ? "task-selected" : ""}`} aria-label={row.title}>
           <input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} />
           <div className="task-content"><div className="task-heading"><h3>{row.title}</h3><div className="task-exposure"><strong>{percent(row.allocated_share_pct)}</strong><span>of recorded GPU time</span></div></div><p>{row.fix}</p><span className="decision-owner">Owner: {row.owner} · {number(row.affected_jobs)} eligible jobs</span>{!row.affected_jobs && <p>No eligible jobs in this sample.</p>}
+          <div className="task-savings"><span>Potential savings · what-if</span><strong>{savingsLabel(row.allocated_gpu_hours)}</strong><span>Gross reference value · {recoveryLow}–{recoveryHigh}% assumed recovery</span></div>
           <details><summary>Risk and safeguards</summary><p>{row.risk}</p><p>{row.excluded_cancelled_jobs} cancelled jobs excluded from this opportunity.</p></details>
           <a className="text-button" href={datasetHref("findings",{query:row.rule})}>View {number(row.finding_count)} supporting findings <ArrowRight size={13} /></a></div>
         </article>)}</div>
@@ -143,7 +156,7 @@ export function CostOptimization({ api }: { api: DashboardApi }) {
             <tbody>{visible.rows.map(row => <tr key={row.id} className={selected.includes(row.id) ? "decision-selected" : ""}>
               <td><input type="checkbox" aria-label={`Select ${row.title} in detailed table`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-owner">{row.owner}</span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
-              <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div><span className="decision-hours">{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</span></td>
+              <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div><span className="decision-hours">{number(row.allocated_gpu_hours)} GPU-hours · {number(row.affected_jobs)} jobs</span><div className="task-savings"><span>What-if savings</span><strong>{savingsLabel(row.allocated_gpu_hours)}</strong><span>Gross reference value</span></div></td>
               <td><p className="decision-fix">{row.fix}</p><details><summary>What could go wrong?</summary><p>{row.risk}</p></details></td>
               <td><a className="text-button" href={datasetHref("findings",{query:row.rule})}>{number(row.finding_count)} findings <ArrowRight size={13} /></a><span className="small muted">{row.excluded_cancelled_jobs ? `${number(row.excluded_cancelled_jobs)} cancelled jobs excluded` : "Source evidence"}</span></td>
             </tr>)}</tbody>
