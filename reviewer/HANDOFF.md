@@ -9,9 +9,12 @@ No C merge into a shared branch or model-provider call was performed.
 
 - Existing branch: `codex/evidence-review-service`.
 - Existing PR: https://github.com/lanbodikai/manai/pull/3 → `codex/integration`.
-- Current pinned main (merged PR #7): `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb`.
+- Tested runtime baseline (merged PR #7): `610f89d8d2b4b9c1aa07b7e2c12087ec4849adeb`.
 - Current integration target: `982b40795a097624507eefc5d17dc266baf1f0f0`;
-  its tree equals the published main tree. PR target remains `codex/integration`.
+  its runtime tree equals main. PR target remains `codex/integration`.
+- Latest main publication notes: `7197d03cd4b98813583e8eac86cd723417acfbb8`,
+  merged without conflicts at `cae5647efa36d6452543868e97fc91fa56fa0ec3`.
+  Only six A/B documentation files changed; tested runtime files are identical.
 - Original pinned integration baseline: `db6f418f2cf4fb761eb560870814331b323eefd0`.
 - A implementation exercised over sockets: `adfcd883edebfd8b7100179ab545cc4000fca479`.
 - Baseline merge into C: `261254e`; contract adoption: `7fb356b`; reviewer fixes:

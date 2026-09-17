@@ -9,7 +9,11 @@ existing C branch without conflicts (`c5a9f5d`). Tested C/harness: `a32af3e`;
 A runtime: `adfcd883`. Later handoff edits are documentation only. No A/B runtime
 compatibility edits were needed; the diff against main contains only C-owned
 reviewer, tests and evaluation files. History and PR #3 are preserved, with the
-agreed `codex/integration` target (same base tree as merged main).
+agreed `codex/integration` target (same runtime tree as main).
+
+Final fetch also synchronized documentation-only main `7197d03` via clean merge
+`cae5647`. This imports the lead's publication/handoff notes without changing the
+tested runtime. Independent human review/U05 remain deferred on the base.
 
 Checks actually run after synchronizing main:
 - 99 reviewer tests and 5 active contract tests passed.

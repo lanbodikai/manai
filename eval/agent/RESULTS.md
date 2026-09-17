@@ -44,7 +44,13 @@ Actual executables: `/private/tmp/manai-c-isolated/bin/python` and
 Receipts are private/ignored. Both socket runs preserve `insufficient_evidence`
 for unknown MCP-to-audit lineage; passing transport/calculation checks does not
 prove whole-source coverage or measured savings. PR #3 remains draft, targeting
-`codex/integration` (same base tree as PR #7 main).
+`codex/integration` (same runtime tree as main).
+
+Final fetch found documentation-only main `7197d03cd4b98813583e8eac86cd723417acfbb8`.
+It merged cleanly at `cae5647efa36d6452543868e97fc91fa56fa0ec3`; the six imported
+publication/handoff files change no tested runtime or contract. Tests were not
+repeated for documentation alone. Independent human review and U05 remain
+deferred as stated in the newly published main handoff.
 
 Fresh environment check (`pr7-environment.json`): no Docker executable or Docker
 app, no listener on local ports 3000/8000/8001/8002/18001, and generated resources,
