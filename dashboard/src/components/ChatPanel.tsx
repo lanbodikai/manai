@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { MessageSquare, Sparkles, ArrowUpRight } from "lucide-react";
+import { MessageSquare, Sparkles, ArrowUpRight, ArrowUp, SquarePen, BookOpen, LoaderCircle } from "lucide-react";
+import "../chat.css";
 import type { Audit, DashboardApi, Explanation } from "../api/types";
 import {
   ApiError,
@@ -176,23 +177,92 @@ function QuestionPanel({
     </div>
   );
 }
-export function ChatPanel(props: {
+type ChatProps = {
   api: DashboardApi;
   audit: Audit;
   mock: boolean;
   onEvidence: (id: string) => void;
-}) {
-  return (
-    <section className="panel" id="ask">
-      <div className="section-heading">
-        <div>
-          <span className="eyebrow">UNDERSTAND THE DECISION</span>
-          <h2>Ask about this pilot</h2>
-        </div>
-        <MessageSquare size={20} />
+};
+type Turn = { id: string; question: string; answer?: Explanation; error?: string };
+
+function Conversation({ api, audit, mock, onEvidence }: ChatProps) {
+  const [draft, setDraft] = useState("");
+  const [turns, setTurns] = useState<Turn[]>([]);
+  const [busy, setBusy] = useState(false);
+  const sequence = useRef(0);
+  const pending = useRef(false);
+  const input = useRef<HTMLTextAreaElement>(null);
+  const end = useRef<HTMLDivElement>(null);
+  useEffect(() => () => { ++sequence.current; }, []);
+  useEffect(() => { if (turns.length) end.current?.scrollIntoView?.({block:"nearest"}); }, [turns, busy]);
+
+  async function send(text: string, retryId?: string) {
+    const question = text.trim();
+    if (!question || question.length > 2000 || pending.current) return;
+    pending.current = true;
+    const seq = ++sequence.current;
+    const id = retryId ?? crypto.randomUUID();
+    setBusy(true);
+    if (retryId) setTurns(previous => previous.map(turn => turn.id === id ? { id, question } : turn));
+    else { setTurns(previous => [...previous, { id, question }]); setDraft(""); }
+    try {
+      const request = {client_request_id:crypto.randomUUID(), question};
+      const answer = assertRequestId(assertAuditId(await api.askBaseChat(audit.audit_id, request), audit.audit_id), request.client_request_id);
+      if (seq === sequence.current) setTurns(previous => previous.map(turn => turn.id === id ? {...turn, answer} : turn));
+    } catch (error) {
+      if (seq === sequence.current) setTurns(previous => previous.map(turn => turn.id === id ? {...turn, error:errorMessage(error)} : turn));
+    } finally {
+      if (seq === sequence.current) { pending.current = false; setBusy(false); input.current?.focus(); }
+    }
+  }
+  return <div className={`pilot-conversation ${turns.length ? "has-messages" : "is-empty"}`}>
+    <header className="conversation-toolbar">
+      <span>Pilot assistant <span className="conversation-mode">{mock ? "Synthetic demo" : "MCP"}</span></span>
+      <button type="button" className="icon-button" aria-label="New chat" title="New chat" onClick={() => {
+        ++sequence.current; pending.current = false; setBusy(false); setTurns([]); setDraft(""); input.current?.focus();
+      }}><SquarePen size={19}/></button>
+    </header>
+    <div className="conversation-body">
+      {!turns.length ? <div className="conversation-welcome"><h2>What would you like to know?</h2><p>Explore the CPU pilot with your data.</p></div> :
+        <div className="conversation-messages" role="log" aria-label="Pilot conversation" aria-live="polite" aria-relevant="additions text">
+          {turns.map(turn => <article className="conversation-turn" key={turn.id}>
+            <div className="user-message"><span className="sr-only">You: </span>{turn.question}</div>
+            <div className="assistant-message">
+              <span className="assistant-avatar" aria-hidden="true"><Sparkles size={17}/></span>
+              <div className="assistant-content"><span className="sr-only">Pilot assistant: </span>
+                {turn.answer ? <>
+                  {mock && <span className="conversation-answer-label">Synthetic example</span>}
+                  {turn.answer.status !== "ok" && <span className="conversation-answer-label">Insufficient evidence</span>}
+                  <p className="assistant-text">{turn.answer.answer}</p>
+                  <div className="conversation-sources">{turn.answer.supporting_evidence_ids.map((id,index) => <button type="button" key={id} title={id} aria-label={mock ? id : `Open source ${index+1}`} onClick={() => onEvidence(id)}><BookOpen size={13}/>{`Source ${index+1}`}</button>)}</div>
+                  <details className="conversation-method"><summary>Sources and limitations</summary><p>{mock ? "Synthetic example; no live tools were used." : "Template-based answers from live MCP evidence. Each question is checked independently."}</p><p>{turn.answer.usage.tool_calls} tool calls</p>{turn.answer.limitations.map(limit => <p key={limit}>{limit}</p>)}</details>
+                </> : turn.error ? <div className="conversation-error" role="alert"><p>{turn.error}</p><button type="button" className="text-button" disabled={busy} onClick={() => void send(turn.question, turn.id)}>Retry question</button></div> : <div className="conversation-loading" role="status"><LoaderCircle size={16} aria-hidden="true"/>Checking evidence…</div>}
+              </div>
+            </div>
+          </article>)}
+          <div ref={end}/>
+        </div>}
+      <div className="conversation-compose-area">
+        <form className="conversation-composer" onSubmit={event => {event.preventDefault(); void send(draft);}}>
+          <label className="sr-only" htmlFor="pilot-message">Base chat question</label>
+          <textarea id="pilot-message" ref={input} rows={1} maxLength={2000} placeholder="Ask about this pilot" value={draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => {
+            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {event.preventDefault(); void send(draft);}
+          }}/>
+          <button type="submit" className="conversation-send" aria-label="Ask base chatbot" disabled={busy || !draft.trim()}>{busy ? <LoaderCircle size={19}/> : <ArrowUp size={20}/>}</button>
+        </form>
+        {!turns.length && <div className="conversation-suggestions">{["Why this pilot?", "Which jobs are eligible?", "What are the recovery assumptions?", "What could go wrong?"].map(question => <button key={question} type="button" onClick={() => void send(question)}>{question}</button>)}</div>}
+        <p className="conversation-note">{mock ? "Synthetic demo · example responses" : "Answers grounded in pilot evidence · template-based"}</p>
       </div>
-      <QuestionPanel {...props} advanced={false} />
-      <details className="reviewer-disclosure">
+    </div>
+  </div>;
+}
+
+export function ChatPanel(props: ChatProps) {
+  return (
+    <section className="chat-workspace" id="ask">
+      <h1 className="sr-only">Ask about this pilot</h1>
+      <Conversation {...props}/>
+      <details className="reviewer-disclosure chat-reviewer">
         <summary>Open optional advanced reviewer</summary>
         <QuestionPanel {...props} advanced />
       </details>
