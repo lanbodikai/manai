@@ -1,8 +1,8 @@
 // MANAI_MOCK_ONLY: this module must never enter the live build.
 import { createDemoDatasetApi } from "./datasets";
 import { createMockOptimizationApi } from "./optimization";
-import auditFixture from "../../../contracts/examples/audit-response.json";
-import evidenceFixture from "../../../contracts/examples/evidence-response.json";
+import auditFixture from "../../../contracts/examples/audit-without-pilot.json";
+import evidenceFixture from "../../../contracts/examples/baseline-evidence.json";
 import claimsFixture from "../../../contracts/examples/claims-response.json";
 import type { Audit, DashboardApi, Schemas, Overview } from "../api/types";
 import { ApiError, parse, validateAuditRequest } from "../api/validation";

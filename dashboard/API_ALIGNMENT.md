@@ -1,15 +1,17 @@
-# API v0.3 and CPU extension v0.4 — B alignment review
+> Merge review update: A/B have already adopted active v0.4 on main. The merged frontend reads `contracts/openapi.json` and `contracts/examples/`, with successful-duration/cap validation and main's live CPU controls preserved. The proposal paths and deployment-pending descriptions below record the earlier B review; they are not the current runtime configuration. See `docs/MAIN_BASELINE_HANDOFF.md` and the PR #8 acceptance record.
+
+# API v0.4 frontend integration — B alignment review
 
 Reviewed 17 September 2026 against `5a8d995a624dcd188101de802f75263a512bcc48`, following the user's request to check alignment and acknowledge both versions as official where possible.
 
 ## Decision and official references
 
-**Alignment is realistic. B acknowledges v0.3 as the official current team contract and v0.4 as the accepted official CPU-extension specification for implementation.** This is B's acceptance at the user's request, not a claim that A has signed off or that either version's complete service has passed acceptance.
+**The dashboard now uses v0.4 types and runtime validation.** A still owns deployment of the matching service; until it is available, the interface reports a visible compatibility or connection state rather than accepting a v0.3 response as partial data.
 
 | Reference | Status and use |
 | --- | --- |
-| [v0.3 OpenAPI](../contracts/openapi.json) | Current runtime/client contract. Bootstrap implements health/overview; full audit/chat integration remains unfinished. |
-| [v0.4 OpenAPI](../contracts/proposals/v0.4/openapi.json) and [CPU specification](../contracts/proposals/v0.4/README.md) | Accepted CPU-extension design from B's perspective. Coordinated runtime activation is pending; its existing proposal path is preserved. |
+| [v0.3 OpenAPI](../contracts/openapi.json) | Legacy dashboard contract. A v0.3 health response is rejected with a clear compatibility error. |
+| [v0.4 OpenAPI](../contracts/proposals/v0.4/openapi.json) and [CPU specification](../contracts/proposals/v0.4/README.md) | Active dashboard contract. Generated types, Ajv validation, mock fixtures and CPU result display use this version. |
 
 These are **manai team contracts**, not official MantisGrid product APIs. The shared proposal documents still require coordinated A/B adoption; this review supplies B's acknowledgment, without inventing A's agreement or changing the active shared schema. The temporary `preview-1` dataset explorer is separate and is not made official by this decision.
 
@@ -26,9 +28,9 @@ For example, the invented fixture's successful replacement releases 20 GPU-hours
 
 ## Compatibility and adoption requirements
 
-1. **Coordinate the version switch.** This is not a drop-in wire-compatible addition. Closed v0.3 schemas reject the new fields and version marker; v0.4 rejects an unmodified v0.3 audit. Current generated TypeScript and Ajv validation use v0.3, and `service/main.py` reports v0.3. Do not emit v0.4 payloads labeled v0.3, strip extension fields silently, or mix schema versions within an audit.
+1. **Deploy the matching service.** This is not wire-compatible with v0.3. The dashboard now requires v0.4 and can proxy to `MANAI_V04_URL` (default `http://127.0.0.1:8001`), or call `VITE_MANAI_API_URL` directly when CORS is configured. Do not emit v0.4 payloads labeled v0.3, strip extension fields silently, or mix schema versions within an audit.
 2. **A supplies canonical calculation and semantic validation.** Validate finite inputs and outputs, positive successful CPU duration, `cpu_hours <= trial_cap_hours` when known, current source fingerprint, eligible evidence membership, baseline observations and memory reconciliation. Resolve the selected stable source reference again when creating the new audit; selecting it from an older audit does not grant membership in the new one.
-3. **B updates types, validation and presentation together.** Explicitly enable finite-number validation (`strictNumbers: true` or equivalent guards). Select the appropriate supported schema using explicit version handling; an unsupported version is a visible error. Preserve older audits with their own version or return an explicit incompatibility, never reinterpret them. Keep mock, local dataset and HTTP modes distinct.
+3. **Frontend safeguards are active.** Types, `strictNumbers`, request validation, v0.4 mock fixtures and CPU-pilot presentation move together. An unsupported version is a visible error; mock, local dataset and HTTP modes remain distinct.
 4. **Preserve snapshot identity.** CPU inputs belong in immutable audit identity. Late scenario/evidence/chat replies cannot replace the displayed audit. Changing only CPU trial assumptions must not alter cohort recovery/claims. Reuse the existing audit-scoped evidence, chat and export routes.
 5. **Show assumptions and limits plainly.** The UI needs selected-job evidence, outcome mode, vCPUs, assumed CPU runtime, nullable CPU price/extra wait/cap and host-cost boundary. Render the resulting cost and delay beside the existing qualitative risks. Blank means unknown where null is allowed; zero means an explicitly entered zero. Keep pending edits separate from calculated results.
 6. **Verify the integration before activation.** A supplies its implementation commit, versioned health response, real immutable audit and resolvable baseline evidence. B verifies the no-pilot flow and all three modes, signed/null outputs, rejected inputs, stale responses, export invariance and C failure isolation. Shared promotion is coordinated with A; it is not performed by this review.
@@ -41,10 +43,10 @@ For example, the invented fixture's successful replacement releases 20 GPU-hours
 | Existing v0.4 `validate.py` | PASS: six complete fixtures, eight pilot cases, references, invalid-input examples, arithmetic, identity, memory partition and unchanged official claims. This verifies fixtures, not a calculator service. |
 | Ajv 2020 validation using the dashboard's installed dependency | PASS: all six v0.3 and six v0.4 manifest fixtures. |
 | Cross-version request/audit probes | PASS: old request accepted by v0.4; CPU request rejected by v0.3; audits rejected by the opposite version. |
-| Positive-infinity input probe | **GAP FOUND:** current `strict: false` configuration accepts positive infinity for `cpu_hours`. An initial assertion expecting rejection failed. Explicit `strictNumbers: true` rejects it. NaN and negative infinity were rejected in the tested field. This review does not change the running validator. |
-| Trial cap probe | **SERVICE VALIDATION REQUIRED:** a 12-hour CPU input with a 1-hour cap passes JSON Schema. The specification already requires A to reject this relationship; schema validation alone is insufficient. |
-| Active implementation inspection | v0.3 types/validator and bootstrap-only service confirmed; no CPU calculator or v0.4 frontend support found in this checkout. |
-| Live v0.4 service, real audit, MCP, Docker, CPU workload experiment and UI adoption | **NOT RUN.** Neither schema acceptance nor synthetic arithmetic demonstrates CPU compatibility, operational savings or live integration. |
+| Positive-infinity input probe | **RESOLVED IN FRONTEND:** `strictNumbers: true` is explicit in Ajv validation. |
+| Trial cap probe | **FRONTEND GUARDED:** `cpu_hours > trial_cap_hours` is rejected before request submission. A must enforce the same relationship canonically. |
+| Dashboard implementation | Generated types, validation, mock fixtures, v0.4 connection check and CPU-pilot result presentation are implemented and covered by frontend tests. |
+| Live v0.4 service, real audit, MCP, Docker and CPU workload experiment | **NOT RUN.** The live service must still be deployed on the configured v0.4 URL; neither synthetic coverage nor schema validation demonstrates CPU compatibility, operational savings or live integration. |
 
 The plain `python` command resolved to a Windows Store alias, and `py` lacked `jsonschema`. The successful validator command used bundled Python with `jsonschema==4.26.0` (matching the backend lock) installed only in ignored `dashboard/.work/contract-review-python`:
 
@@ -54,4 +56,4 @@ $env:PYTHONPATH = "$PWD/dashboard/.work/contract-review-python"
 & 'C:/Users/lanbo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' contracts/proposals/v0.4/validate.py
 ```
 
-The Node/Ajv checks were read-only inline probes using the existing dashboard dependency. No source records, shared schemas, service code, generated types, runtime behavior or dependency lockfiles were changed. This is builder self-review. Next owner: A confirms adoption and implements the canonical result; B then integrates the version and UI. C can consume the same result independently.
+The Node/Ajv checks use the existing dashboard dependency. No source records, shared schemas or service code were changed. This is builder self-review. Next owner: A deploys the canonical v0.4 service; C can consume the same result independently.
