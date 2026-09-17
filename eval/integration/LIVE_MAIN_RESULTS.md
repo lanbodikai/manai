@@ -18,3 +18,8 @@ These cover U01–U04 behaviors in the simulation flow, not independent timed U0
 or actual workload outcomes. Browser/provider checks from the release remain
 documented in FEATHERLESS_WRAPUP.md. Initial failed receipt was preserved privately.
 User feedback on review readability and evidence coverage is a separate follow-up.
+
+Follow-up: removed disabled-row styling when a simulation is available and labeled
+those rows "Simulation available". Live browser verified all eight rows have full
+opacity, Model deep links work, and the seven unimplemented action selectors stay
+disabled. Rebuilt only the dashboard; 14/14 decision tests and build/typecheck pass.
