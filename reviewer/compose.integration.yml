@@ -1,0 +1,18 @@
+# Optional overlay for the isolated integration branch. Root base stays unchanged.
+# Enable: REVIEWER_URL=http://reviewer:8002 docker compose -f docker-compose.yml \
+#   -f reviewer/compose.integration.yml --profile reviewer up -d --build --wait
+services:
+  reviewer:
+    profiles: [reviewer]
+    build:
+      context: .
+      dockerfile: reviewer/Dockerfile
+    environment:
+      ANALYSIS_URL: http://analysis:8001
+      REVIEWER_MODE: deterministic
+      REVIEWER_MCP_CONTEXT: price_only
+    depends_on:
+      analysis: {condition: service_healthy}
+  dashboard:
+    environment:
+      REVIEWER_URL: ${REVIEWER_URL:-}
