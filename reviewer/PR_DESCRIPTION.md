@@ -42,7 +42,7 @@ and the final socket test passed. No hidden runtime retry was added.
 
 ## Remaining draft gates
 
-Main's A audit endpoint is still a 404 bootstrap; positive real A→C review and
+The tested baseline (`ce6a44e`) has a 404 bootstrap audit endpoint; positive real A→C review and
 comparison with A's completed deterministic summary remain untested. Live model
 evaluation has 24 NOT RUN entries because provider configuration/spend approval
 were unavailable. Full five-file data/MCP finding validation, Docker build and
