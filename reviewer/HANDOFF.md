@@ -1,3 +1,8 @@
+> Current work moved to a fresh branch from PR #8 main: `codex/c-main-integration`.
+> See [INTEGRATION_STOP.md](INTEGRATION_STOP.md) for the tested full-flow simulation,
+> mobile fix and 15-minute integration-host stopping point. The PR #3 notes below
+> describe the preserved original C branch, not authorization to merge main.
+
 # C Contract 0.4 review and integration handoff — 2026-09-17
 
 ## State and exact revisions

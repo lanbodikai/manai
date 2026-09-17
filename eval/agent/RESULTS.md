@@ -1,3 +1,54 @@
+# Fresh-main isolated full-flow integration — 2026-09-17
+
+Branch `codex/c-main-integration` starts from PR #8 main `a7087eb` and imports
+C `846ee97` through merge `5325858`. Main and PR #3 were left untouched.
+Tested files were committed as CSS fix `ff82dbf` and simulation/overlay
+`91edaa74e7b1f44e41d01f6c900cc78240939dd9`. A/contract/runtime unchanged.
+
+**PASS:** 123 Python tests (15 A + 4 base chat + 5 contract + 99 C), 56 dashboard
+tests, production build/typecheck/mock exclusion, 24 deterministic evaluations,
+and 4 existing browser regressions. Full simulation passed all four phases:
+unconfigured C, full nine-review CPU journey, stopped C, and fault peer with
+503/malformed/wrong-audit/actual proxy deadline. Real MCP calls serve both base
+chat and C; no model/provider calls. Evidence resolves and claims/audits remain
+unchanged after reviews and C faults. Synthetic claims/schema/live-URL checker
+passes with 3/10 categories and the expected no-confidence warning.
+
+The full flow uses invented on-disk source and actual source checksum/readiness,
+API, A, C, MCP, proxy and React implementations. A test-only wrapper changes
+provenance labels; it does not bypass readiness or replace calculations. The
+Data explorer snapshot was not prepared or claimed tested. Docker, official
+organizer-data and complete Compose R01–R05 remain pending. Optional-profile
+configuration was checked statically only.
+
+Initial runs 1–3 stopped on the same actual mobile overflow (483px content in
+390px viewport); logs/diagnostic screenshots retained. Four CSS lines let long
+answer identifiers wrap and preserve paragraphs. Full run 4 passes at 390px.
+Private receipt: `reviewer/.private/full-flow-4/receipt.json`; its pre-commit head
+is `5325858`, with the tested additions subsequently committed unchanged above.
+The desktop/mobile result was also visually inspected.
+
+Additional commands beyond PR #8 commands below:
+
+```sh
+python -m unittest discover -s tests/analysis -p 'test_*.py'
+python -m unittest discover -s tests/base_chat -p 'test_*.py'
+python -m eval.agent.run --mode deterministic --output reviewer/.private/integration-deterministic.json
+# In dashboard, with Node 22 on PATH:
+PLAYWRIGHT_CHANNEL=chrome MANAI_TEST_MOCK_PORT=19300 MANAI_TEST_HTTP_PORT=19301 CI=1 npm run test:browser -- --grep 'reviewer|live entry'
+# From repository root after production build:
+python -m eval.agent.full_flow --node /path/to/node22 --output-dir reviewer/.private/full-flow-4
+python -m compileall -q eval/agent reviewer
+python -m pip check
+git diff --check
+```
+
+The supplied runner cleans up only processes it started and retains private
+receipts. No other checkout was changed. See `reviewer/INTEGRATION_STOP.md` for
+exact revisions, reproducible startup and the requested 15-minute stopping point.
+
+---
+
 # PR #8 merged-main compatibility — 2026-09-17
 
 Latest tested main: `a7087ebc1a6d08e10f43eb0b32e4c3ff432df5b9` (PR #8).
