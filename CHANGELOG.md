@@ -1,5 +1,13 @@
 # Plan changelog
 
+## v0.3 — 2026-09-17
+
+- Recorded approved A/B responsibilities and B as merge coordinator.
+- Kept individual session identities, provider availability and phase activation open.
+- Documented Docker CLI presence but unverified engine access from this restricted session.
+- Checked local Markdown links; all resolve. This is document validation, not implementation testing.
+- Planning-only state preserved; no upstream code/data imported or remote changes published.
+
 ## v0.2 — 2026-09-17
 
 - Recorded Round 2 decisions: completed zero-compute cohort, Python API + React/TypeScript, dashboard-first MCP agent.

@@ -1,6 +1,6 @@
 # Workstream B — dashboard, packaging and integration
 
-Plan v0.2 / Contract v0.1. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.3 / Contract v0.1. Owner: Builder B, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
 
 ## Mission
 
@@ -8,7 +8,7 @@ Ship the complete decision journey and required package while Builder A supplies
 
 ## Owned paths
 
-`dashboard/`, `tests/ui/`, `tests/integration/`, root `docker-compose.yml`, team Dockerfiles, README.md implementation sections, REPORT.md, demo assets and CI configuration if needed. Proposed bootstrap integrator for upstream import; preserve A/shared contracts. Do not alter official source semantics for a nicer chart.
+`dashboard/`, `tests/ui/`, `tests/integration/`, root `docker-compose.yml`, team Dockerfiles, README.md implementation sections, REPORT.md, demo assets and CI configuration if needed. Confirmed merge coordinator and proposed bootstrap integrator for upstream import; preserve A/shared contracts. Do not alter official source semantics for a nicer chart.
 
 ## Components and functions
 

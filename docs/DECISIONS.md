@@ -1,4 +1,4 @@
-# Decision and evidence ledger — v0.2
+# Decision and evidence ledger — v0.3
 
 Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED = editable design; OPEN = unresolved; DEFERRED = outside current scope.
 
@@ -13,7 +13,7 @@ Statuses: CONFIRMED = official source; DECIDED = explicit user choice; PROPOSED 
 | D05 | DECIDED | Completed zero-compute jobs as first cohort; CPU-placement pilot is the proposed action, compatibility remains unverified. |
 | D06 | DECIDED | Official Python API plus React/TypeScript dashboard. |
 | D07 | DECIDED | Dashboard first; bounded MCP agent explains/challenges evidence. |
-| D08 | PROPOSED | Builder A: analysis + agent; Builder B: product + packaging/integration; merger choice pending Round 3. |
+| D08 | DECIDED | Builder A: analysis/service/MCP agent; Builder B: React dashboard/packaging/integration; B coordinates merges. Individual session identities remain unassigned. |
 | D09 | DECIDED | Include a specific checklist for importing official Track 2 code plus agreement/license/attribution. Import execution is not yet activated. |
 
 ## Official requirements
@@ -44,3 +44,7 @@ Reference snapshot: MantisGridAI/hackathon-2026-official at `314cca0bba49e1bb137
 ## Deferred
 
 Track 1; live remediation; training a router; optimizing all 24 rules; identifying people; forecasting annual cash savings; multiple frontends; reproduction of external papers. A later explicit decision may change these, but do not drift silently.
+
+## Local environment observation
+
+Docker CLI is present. A read-only check from the restricted session could not access Docker configuration and found no docker_engine pipe. This does not establish readiness on the actual demo machine; engine access remains UNVERIFIED. No application/data/evaluation checks were run. Clarify the active machine/provider and execution phase before setup.

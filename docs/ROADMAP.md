@@ -6,7 +6,7 @@ Rounds 1 and 2 are complete. Finish Round 3 in QUESTIONS.md. Record explicit ans
 
 ## Phase 1 — shared bootstrap before splitting
 
-Once activated, designate a bootstrap integrator (proposed Builder B; A reviews data assumptions):
+Once activated, use Builder B as merge coordinator and proposed bootstrap integrator (A reviews data assumptions):
 
 1. Import the minimal pinned starter using UPSTREAM.md; preserve notices and root judging layout.
 2. Get official data/preprocessing/generator/check-data/API working. Validate Docker on the intended demo machine. If blocked for 15 minutes, request concrete technical help and narrow packaging work; do not silently waive the container requirement.

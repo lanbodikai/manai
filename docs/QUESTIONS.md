@@ -1,4 +1,4 @@
-# Discussion queue — v0.2
+# Discussion queue — v0.3
 
 Answer decision questions before starting the dependent work. Data questions are answered by inspection, not by asking the user to guess.
 
@@ -16,7 +16,7 @@ Answer decision questions before starting the dependent work. Data questions are
 
 ## Round 3 — settle before split
 
-4. Who is Builder A, who is Builder B, and who is final merger/demo presenter?
+4. **Answered in part:** A = analysis/service/MCP; B = React/product/packaging/integration; B coordinates merges. Still identify the two sessions and final presenter.
 5. What is the current remaining time and is Docker working on the integration machine? If not, which teammate can host the required final container smoke test?
 6. What model/provider credentials are available for Track 2 agent calls? Never paste keys in this document. Are there event-specific Track 2 constraints to preserve?
 7. Approve the Contract v0.1 shape, A/B ownership and evaluation gates, or specify changes.

@@ -1,6 +1,6 @@
 # Workstream A — analysis, evidence and agent
 
-Plan v0.2 / Contract v0.1. Owner: Builder A, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
+Plan v0.3 / Contract v0.1. Owner: Builder A, person/session TBD. Status: NOT STARTED; activate only after ROADMAP split gate.
 
 ## Mission
 
