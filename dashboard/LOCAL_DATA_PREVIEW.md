@@ -18,17 +18,34 @@ npm run dev:local
 
 `--official-root` is an existing Track 2 checkout containing `scripts/prep_data.py`, `scripts/checksum_data.py`, `data/checksums.txt` and the two downloaded CSVs under `data/raw/`. It may be a different path on a teammate's machine. On Linux/macOS use `.venv/bin/python`. Stop the local preview before rebuilding its cache, then restart it.
 
-The preparation tool calls the **unmodified official prep functions** using the supplied numeric dependency versions. Output goes only to ignored `dashboard/.local-data/`. It checks both prepared tables with the official semantic digest function and refuses to publish a cache if either differs. It creates a private SQLite browsing cache. It does not modify the official checkout or run the organizer's generator. Optional findings are imported only if `data/synthetic/findings.json` exists and passes its official digest; otherwise their count is unknown and the page explicitly reports unavailable.
+The preparation tool calls the **unmodified official prep functions** using the supplied numeric dependency versions. Output goes only to ignored `dashboard/.local-data/`. It checks both prepared tables with the official semantic digest function and refuses to publish a cache if either differs. It creates a private SQLite browsing cache. It does not modify the official checkout or run the organizer's generator. When `data/synthetic/findings.json` exists, the importer requires matching checksums for that file, `resources.parquet`, and `edges.parquet` before loading findings. Otherwise their count is unknown and the page explicitly reports unavailable. Job/machine links follow the official resource-ID mapping and preserve existing metadata; no machine is inferred from the final placement of a requeued job.
+
+## Generate and load official findings
+
+Start Docker Desktop and wait for `docker info` to succeed. In the official checkout containing the downloaded `data/raw/` files (this machine: `C:/Users/lanbo/mantisgrid`):
+
+```powershell
+docker compose run --rm prep
+docker compose run --rm generate
+docker compose run --rm prep python scripts/checksum_data.py
+docker compose up -d api
+```
+
+All five checks must print `ok`. The official API serves `POST http://127.0.0.1:8000/v1/events/findings` with a JSON body such as `{"limit":20,"offset":0,"detector_id":"rules::gpu-never-computed"}`. These are read-only retrieval requests. Stop the dashboard preview, rerun `tools/prepare_preview.py --official-root ...` using the Python environment above, then restart `npm run dev:local`. Open `http://127.0.0.1:3002/#data/findings`.
+
+The dashboard browses a verified local snapshot, not a continuously refreshed API stream. Rebuild it when source files change. The complete generator output stays local; do not commit it. No model key is required.
 
 The Vite development middleware opens SQLite read-only, binds to loopback and serves bounded JSON pages. No raw data is placed in `public/`, embedded in a production bundle, or committed. Node 22 currently prints an experimental SQLite warning for this explicit local mode. The database is a disposable browsing cache, not a production persistence decision.
 
 ## What is browsable
 
+- Cost optimization: `#optimization` presents a decision table with percentage-based exposure, proposed fixes, checkboxes, deduplicated selection totals and a backend modeling request button. [Request contract and limits](OPTIMIZATION_API.md). The real multi-fix optimizer is not yet implemented by A; errors never become simulated success.
+
 - Front page: recorded GPU-hours → estimated active GPU-hours → active GPU-hours in completed jobs; separate outcome chart whose bars open matching jobs.
 - Jobs: final state, first machine, GPU count, recorded hours and average activity. Search all fields, filter by outcome or physical machine/card, sort and page. Detail exposes all 65 prepared job fields, its physical cards and their complete source fields.
 - GPUs: one physical card identified by **Node + gpu_id**, never gpu_id alone. Detail lists up to 100 per-card job records, all their available fields, and a link to browse **all** jobs on that specific card.
 - Machines: per-card placement attribution and workload exposure. Job filters use the GPU table's actual `Node`, not just `primary_node`, so wide/requeued workloads remain discoverable.
-- Findings: available only when the generated file is supplied; per-record synthetic labeling remains explicit. Unavailable findings do not block jobs/cards/machines.
+- Findings: search/filter/page the official rule matches, inspect reported GPU-hour impact with its kind and scope, and follow connected jobs/machines. Source-derived judgments and synthetic findings have distinct labels. Unavailable findings do not block jobs/cards/machines. Reported impact is not an audited recoverable amount or cash savings.
 
 Search and sorting run against the entire matching dataset in SQLite. The browser receives 20 records per page, maximum API limit 100. Nulls display as **Not recorded**. Snapshot versions are attached to every request; mismatch returns 409. POST/write requests return 405. SQL search uses bound parameters, treats wildcard characters literally, and allows sorting only by displayed fields.
 
@@ -56,8 +73,8 @@ For development, `/api/*` proxies to `http://127.0.0.1:8001` or the process envi
 
 ## Actual verification
 
-The local run produced 74,849 jobs, 96,893 GPU-job records, 450 physical cards and 225 machines. Both jobs/GPU semantic checksums passed. No generated findings file was available. This is **two-file browsing verification**, not the five-file bootstrap/D01 gate.
+The initial local run produced 74,849 jobs, 96,893 GPU-job records, 450 physical cards and 225 machines. On 17 September 2026 the user authorized Docker generation: prep/generate/check-data succeeded, with **all five canonical files `ok`**. The generated output contains **11,979 findings, 77,399 resources and 198,601 edges**. **121 findings are explicitly synthetic**. The refreshed cache contains all findings; all **32,414 connected job/machine links** resolved in a read-only database check. This establishes local source-file agreement and browsing integrity, not financial correctness, CPU compatibility or MCP readiness.
 
-Run `npm test`, `npm run build`, `npm run test:browser`, and—with a prepared local cache—`npm run test:local`. The last command exercises real-data HTTP and browser behavior: charts, outcome drilldown, full fields, physical GPU history, paging, narrow layout, missing findings, read-only routes, snapshot rejection and literal search. It saves real-data screenshots only under ignored `.local-data/evidence/`. Synthetic screenshots remain under `evidence/`.
+Run `npm test`, `npm run build`, `npm run test:browser`, and—with a prepared local cache, generated findings and the official API running—`npm run test:local`. The local tests use `MGAI_URL` if set, otherwise `http://127.0.0.1:8000`. They exercise charts, outcome drilldown, full fields, physical GPU history, findings-to-job navigation, synthetic labels, paging, narrow layout, read-only routes, snapshot rejection and literal search. They also compare findings against the official API across three rule families. They save real-data screenshots only under ignored `.local-data/evidence/`. Synthetic screenshots remain under `evidence/`.
 
 Real audit/recovery claims, live MCP, production dataset routes, Docker integration and final submission checks remain separate work.

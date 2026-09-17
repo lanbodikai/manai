@@ -1,0 +1,30 @@
+{
+  "feature_version": "0.1",
+  "audit_id": "synthetic-pilot-audit",
+  "audit_client_request_id": "synthetic-audit-request",
+  "data_fingerprint": "original-synthetic-pilot-v1",
+  "source_version": "original-synthetic-fixture-v1",
+  "synthetic": true,
+  "simulation_only": true,
+  "items": [
+    {
+      "evidence_id": "synthetic-pilot-job-1",
+      "source_job_id": "INVENTED-PILOT-J1",
+      "synthetic": true,
+      "state_name": "COMPLETED",
+      "sm_util_avg": 0,
+      "sm_util_max": 0,
+      "max_gpu_mem_used": 0,
+      "gpu_count": 2,
+      "elapsed_hours": 10,
+      "recorded_gpu_hours": 20,
+      "usd_per_gpu_hour": 2.5,
+      "original_reference_cost_usd": 50,
+      "missing_fields": []
+    }
+  ],
+  "total": 1,
+  "limitations": [
+    "ORIGINAL SYNTHETIC EXAMPLE ONLY: not copied from organizer data."
+  ]
+}

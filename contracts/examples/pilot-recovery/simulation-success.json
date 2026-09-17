@@ -1,0 +1,168 @@
+{
+  "feature_version": "0.1",
+  "audit_id": "synthetic-pilot-audit",
+  "audit_client_request_id": "synthetic-audit-request",
+  "data_fingerprint": "original-synthetic-pilot-v1",
+  "source_version": "original-synthetic-fixture-v1",
+  "synthetic": true,
+  "simulation_id": "synthetic-simulation-success",
+  "client_request_id": "synthetic-pilot-request",
+  "simulation_only": true,
+  "execution_performed": false,
+  "independent_alternative": true,
+  "history_persisted": false,
+  "compatibility_verified": false,
+  "cash_savings_verified": false,
+  "live_stop_enforcement_verified": false,
+  "inputs": {
+    "client_request_id": "synthetic-pilot-request",
+    "baseline_evidence_id": "synthetic-pilot-job-1",
+    "proposal": "Original invented example: test an isolated CPU replacement.",
+    "correctness_check": "Assume identical fixture output within its declared tolerance.",
+    "cpu_vcpus": 4,
+    "cpu_hours": 12,
+    "cpu_vcpu_hour_usd": 0.1,
+    "max_runtime_hours": 15,
+    "max_trial_spend_usd": 20,
+    "setup_cost_usd": 2,
+    "extra_queue_hours": 2,
+    "baseline_host_costs_included": true,
+    "outcome": "success",
+    "failure_reason": "",
+    "recovery_note": "Assume original GPU configuration and full rerun capacity are available; no checkpoint reused."
+  },
+  "baseline": {
+    "evidence_id": "synthetic-pilot-job-1",
+    "source_job_id": "INVENTED-PILOT-J1",
+    "synthetic": true,
+    "state_name": "COMPLETED",
+    "sm_util_avg": 0,
+    "sm_util_max": 0,
+    "max_gpu_mem_used": 0,
+    "gpu_count": 2,
+    "elapsed_hours": 10,
+    "recorded_gpu_hours": 20,
+    "usd_per_gpu_hour": 2.5,
+    "original_reference_cost_usd": 50,
+    "missing_fields": []
+  },
+  "status": "success",
+  "effective_outcome": "success",
+  "stop_reason": null,
+  "failure_details": {
+    "requested_failure_reason": "",
+    "effective_failure_reason": null,
+    "selected_outcome_changed": false
+  },
+  "costs": {
+    "currency": "USD",
+    "kind": "reference_estimate",
+    "original_cost_usd": 50,
+    "cpu_trial_cost_usd": 4.800000000000001,
+    "setup_cost_usd": 2,
+    "trial_cost_usd": 6.800000000000001,
+    "recovery_cost_usd": 0,
+    "cost_so_far_usd": 6.800000000000001,
+    "total_cost_to_complete_usd": 6.800000000000001,
+    "net_benefit_usd": 43.2
+  },
+  "timing": {
+    "requested_cpu_hours": 12,
+    "effective_cpu_hours": 12,
+    "baseline_elapsed_hours": 10,
+    "extra_queue_hours": 2,
+    "run_time_change_hours_excluding_queue": 2,
+    "completion_change_hours": 4.0,
+    "total_elapsed_hours_including_queue": 14.0
+  },
+  "capacity": {
+    "released_gpu_hours": 20,
+    "remaining_gpu_hours": 0,
+    "added_cpu_vcpu_hours": 48
+  },
+  "limits": {
+    "max_runtime_hours": 15,
+    "max_trial_spend_usd": 20,
+    "requested_setup_cost_usd": 2,
+    "runtime_limit_reached": false,
+    "spend_limit_status": "within_limit",
+    "cap_enforcement": "simulation_only",
+    "trial_started": true,
+    "spend_limit_excludes_recovery": true
+  },
+  "recovery": {
+    "status": "not_required",
+    "strategy": "none",
+    "checkpoint_verified": false,
+    "available_assumed": true,
+    "note": "Assume original GPU configuration and full rerun capacity are available; no checkpoint reused.",
+    "recovery_gpu_hours": 0
+  },
+  "timeline": [
+    {
+      "step": "baseline",
+      "status": "captured",
+      "detail": "Frozen historical job evidence; no runnable configuration or verified checkpoint is supplied."
+    },
+    {
+      "step": "trial",
+      "status": "assumed_success",
+      "detail": "Simulated CPU duration: 12 hours. Correctness criterion: Assume identical fixture output within its declared tolerance."
+    },
+    {
+      "step": "recovery",
+      "status": "not_required",
+      "detail": "No rerun needed under the assumed successful replacement."
+    },
+    {
+      "step": "result",
+      "status": "estimated",
+      "detail": "Reference costs compare two independent ways of completing the same work; this is not a measured intervention."
+    }
+  ],
+  "canonical_calculator_reused": true,
+  "calculator_proof": [
+    {
+      "quantity": "Original reference cost",
+      "formula": "recorded baseline GPU-hours \u00d7 audit GPU-hour reference rate",
+      "value": 50,
+      "unit": "reference USD"
+    },
+    {
+      "quantity": "CPU trial cost",
+      "formula": "effective simulated CPU hours \u00d7 vCPUs \u00d7 CPU-hour reference rate; zero if blocked before startup",
+      "value": 4.800000000000001,
+      "unit": "reference USD"
+    },
+    {
+      "quantity": "Trial cost",
+      "formula": "CPU trial cost + incurred setup cost",
+      "value": 6.800000000000001,
+      "unit": "reference USD"
+    },
+    {
+      "quantity": "Total cost to complete",
+      "formula": "trial cost + full original GPU rerun cost when recovered; unknown when recovery is unavailable",
+      "value": 6.800000000000001,
+      "unit": "reference USD"
+    },
+    {
+      "quantity": "Net benefit",
+      "formula": "original reference cost \u2212 total cost to complete; unknown if pricing boundary is incomplete",
+      "value": 43.2,
+      "unit": "reference USD"
+    }
+  ],
+  "possible_causes": [],
+  "limitations": [
+    "SYNTHETIC BASELINE: this example is not real workload telemetry.",
+    "Simulation only: no workload was started, stopped, validated or recovered.",
+    "Each result is one independent alternative, not an accumulated retry history.",
+    "Historical telemetry does not include executable configuration, inputs, reference outputs or verified checkpoints.",
+    "Correctness and recovery completion are assumed outcomes, not results established by this calculator.",
+    "Runtime and spending limits operate inside this simulation only; no live enforcement has been tested.",
+    "Dollars are reference estimates, not verified cash savings. Migration, storage, contention and business-delay costs are excluded.",
+    "The trial spending limit includes setup and CPU execution, but excludes recovery spending.",
+    "The response is a standalone snapshot; the server does not persist simulation history."
+  ]
+}

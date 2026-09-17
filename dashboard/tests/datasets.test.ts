@@ -17,6 +17,16 @@ const base: DatasetQuery = {
   limit: 20,
 };
 describe("dataset browser boundary", () => {
+  it("rejects an outcome breakdown that duplicates labels or does not reconcile to recorded time", async () => {
+    const catalog=await createDemoDatasetApi(0).catalog();
+    expect(catalogPayload(catalog)).toEqual(catalog);
+    const wrongTotal=structuredClone(catalog);
+    wrongTotal.summary!.outcomes[0].gpu_hours+=1;
+    expect(() => catalogPayload(wrongTotal)).toThrow();
+    const duplicate=structuredClone(catalog);
+    duplicate.summary!.outcomes[1].outcome=duplicate.summary!.outcomes[0].outcome;
+    expect(() => catalogPayload(duplicate)).toThrow();
+  });
   it("reconciles original jobs and card activity, paginates without duplicates, and keeps GPU identities separate", async () => {
     const api = createDemoDatasetApi(0),
       catalog = await api.catalog();

@@ -60,7 +60,7 @@ export const collectionInfo: Record<
     label: "Findings",
     singular: "finding",
     description:
-      "Rule matches to investigate, with explicit lifecycle and source labels.",
+      "Rule matches to investigate. Historical means aged out, not fixed; Needs review means active within this historical sample.",
     grain:
       "One row per finding. Findings can overlap; their hours must not be added as savings.",
     fields: [
@@ -70,6 +70,7 @@ export const collectionInfo: Record<
       { key: "id_job", label: "Job" },
       { key: "impact_gpu_hours", label: "Reported impact", unit: "h" },
       { key: "impact_kind", label: "Impact type" },
+      { key: "impact_scope", label: "Scope" },
     ],
   },
 };
@@ -87,3 +88,4 @@ export function displayValue(value: Scalar | undefined, unit?: string) {
         : value;
   return `${formatted}${unit ? ` ${unit}` : ""}`;
 }
+export const findingStatusLabel = (value: Scalar | undefined) => value === "RESOLVED" ? "Historical" : value === "ACTION_REQUIRED" ? "Needs review" : displayValue(value);

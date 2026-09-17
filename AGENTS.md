@@ -2,6 +2,8 @@
 
 ## Current mode
 
+PILOT & RECOVERY FEATURE. The user explicitly authorized this isolated `codex/pilot-recovery` branch to build on current A+B, add and test three simulated outcomes, and publish a PR. Scope includes additive A calculations/routes, B panel and required dashboard startup integration. Preserve existing A audits/cohorts/claims and B screens; C remains optional. Shared source branches and main must not be rewritten or merged without separate lead authorization. See `docs/PILOT_RECOVERY_HANDOFF.md`. This assignment supersedes historical planning-only restrictions within this feature.
+
 WORKSTREAM A ACTIVE in this isolated checkout, explicitly assigned by Winston. Implement and publish A1 then A2 on codex/analysis-service targeting codex/integration; never merge or push to main. BASE gates passed. Winston confirmed B agreement to exact ce6a44e proposal; A accepted and recorded adoption in PR #2 before implementation. Active API is now v0.4 on this branch; B must regenerate its strict client before switching. Preserve B/C ownership. See eval/analysis/RESULTS.md for actual checks, not historical readiness wording.
 
 CPU-PILOT HANDOFF UPDATE. User authorized API/fixtures and A/B handoff, plus direct publication of the validated base update to main. The v0.4 proposal is staged under contracts/proposals/v0.4 for coordinated A/B adoption; active v0.3 remains unchanged. No calculator or other workstream implementation is authorized by merely reading this update. See docs/VERIFIER_HANDOFF_REVIEW.md.

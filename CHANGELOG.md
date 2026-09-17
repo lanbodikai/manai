@@ -1,3 +1,7 @@
+# Pilot & Recovery feature revision
+
+Added a user-authorized simulation workflow as an A+B feature, preserving the accepted v0.4 audit semantics and C independence. Integration includes the latest pending B planner without replacing it. See docs/PILOT_RECOVERY_HANDOFF.md and eval/pilot_recovery/RESULTS.md for exact checks and remaining operational requirements.
+
 # Project changelog
 
 ## v0.11 — reviewed CPU-pilot handoff — 2026-09-17

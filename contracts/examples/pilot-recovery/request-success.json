@@ -1,0 +1,17 @@
+{
+  "client_request_id": "synthetic-pilot-request",
+  "baseline_evidence_id": "synthetic-pilot-job-1",
+  "proposal": "Original invented example: test an isolated CPU replacement.",
+  "correctness_check": "Assume identical fixture output within its declared tolerance.",
+  "cpu_vcpus": 4,
+  "cpu_hours": 12,
+  "cpu_vcpu_hour_usd": 0.1,
+  "max_runtime_hours": 15,
+  "max_trial_spend_usd": 20,
+  "setup_cost_usd": 2,
+  "extra_queue_hours": 2,
+  "baseline_host_costs_included": true,
+  "outcome": "success",
+  "failure_reason": "",
+  "recovery_note": "Assume original GPU configuration and full rerun capacity are available; no checkpoint reused."
+}
