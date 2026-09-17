@@ -1,3 +1,20 @@
+# Real-data execution preflight — 2026-09-17 20:35 UTC
+
+**BLOCKED: integration-host access is unavailable from this Mac task.**
+Network fetch confirms candidate `003ad777bb5ac275368bfc9e4a491b5fed29e11c`
+and main `a7087ebc1a6d08e10f43eb0b32e4c3ff432df5b9`; the main-version gate
+passes. No Docker CLI/app/socket, configured Docker host or SSH alias is present.
+The organizer-data host connection and dataset path are needed to continue.
+
+The private 13012/18081/10.254.194.0/24 overlay passes static YAML assertions;
+remote collision checks, Docker build/start, real audit/browser/MCP/citation/
+claims checks and C restart are **NOT RUN**. No audit IDs or screenshots exist.
+No deployment, provider call or change to main/production/PR #3 was made.
+Full blocked handoff: `reviewer/REAL_HOST_HANDOFF.md`. Previous synthetic results
+below remain synthetic; they were not rerun as a substitute for this host pass.
+
+---
+
 # Fresh-main isolated full-flow integration — 2026-09-17
 
 Branch `codex/c-main-integration` starts from PR #8 main `a7087eb` and imports

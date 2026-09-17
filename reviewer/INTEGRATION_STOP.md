@@ -1,3 +1,6 @@
+> Real-host execution was attempted after this simulation handoff. It is blocked
+> at host access, with no deployment started. See [REAL_HOST_HANDOFF.md](REAL_HOST_HANDOFF.md).
+
 # Isolated website integration: 15-minute stopping point
 
 ## Current result
