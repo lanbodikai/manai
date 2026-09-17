@@ -59,6 +59,8 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   },[reviewWhenReady,current]);
   const available = visible?.rows.filter(r => r.affected_jobs > 0).map(r => r.id) ?? [];
   const selectedRows = visible?.rows.filter(r => selected.includes(r.id)) ?? [];
+  const actionableRows = visible?.rows.filter((row) => row.affected_jobs > 0) ?? [];
+  const inactiveRows = visible?.rows.filter((row) => row.affected_jobs === 0) ?? [];
   function choose(next: string[]) {
     if (sending) return;
     setSelected(next);
@@ -130,26 +132,39 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
   }
   return <div className="optimization-page">
     <header className="page-header">
-      <div><span className="eyebrow">FROM FINDINGS TO A SMALLER GPU BILL</span>
-        <h1>Optimization opportunities</h1>
-        <p>Select tasks. Review risks. Proceed.</p>
+      <div><span className="eyebrow">CFO DECISION REVIEW</span>
+        <h1>Prioritize a guarded pilot</h1>
+        <p>Investigate the evidence, model the downside, then authorize a measured test.</p>
       </div>
-      <a className="secondary" href={datasetHref("findings")}>Browse findings <ArrowRight size={15} /></a>
+      <a className="secondary" href={datasetHref("findings")}>Inspect source evidence <ArrowRight size={15} /></a>
     </header>
     {error && <div className="panel error-state" role="alert"><TriangleAlert /><h2>Could not load the decision table</h2><p>{error}</p><button className="secondary" onClick={reload} disabled={sending}><RefreshCw size={15} /> Reload data</button></div>}
     {!visible && !error && <div className="panel" role="status">Reading verified findings and job hours…</div>}
     {visible && <>
+      <section className="panel decision-brief" aria-labelledby="decision-brief-title">
+        <div>
+          <span className="eyebrow">CURRENT RECOMMENDATION</span>
+          <h2 id="decision-brief-title">Do not change workloads yet.</h2>
+          <p>Authorize only a small, owner-reviewed pilot after the evidence, cost boundary, and rollback plan are checked.</p>
+        </div>
+        <ol>
+          <li><strong>1. Investigate</strong><span>Confirm the source records and eligible job scope.</span></li>
+          <li><strong>2. Model</strong><span>Price the named pilot and its downside.</span></li>
+          <li><strong>3. Authorize</strong><span>Set an owner, stop limits, and a rollback path.</span></li>
+        </ol>
+      </section>
       <DecisionOverview totalHours={visible.total_gpu_hours} price={referencePrice} windowLabel={catalog?.window_label ?? "Historical sample"} outcomes={outcomes} hasOutcomes={!!catalog?.summary} cpu={cpuRow} review={review} onModel={openPilot} onReview={reviewPilot} disabled={sending || loading || !!loadError}/>
-      <section className="panel decision-panel" aria-label="Optimization tasks"><div className="decision-caption"><span>GPU time affected · reference cost, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
-        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "task" : "tasks"} selected` : "Select one or more tasks"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>{modelAvailable ? "Optimize selected" : "Review selected"} <ArrowRight size={16}/></button></div></div>
-        {sending && !confirmOpen && <p className="decision-footnote" role="status">Submitting your modeling request…</p>}
+      <section className="panel decision-panel" aria-label="Actions ready for review"><div className="decision-caption"><span>Actionable cohorts · reference value, not savings</span><span className="badge">{visible.synthetic ? "Synthetic example" : "Verified local source"}</span></div>
+        <div className="decision-toolbar"><span aria-live="polite">{selected.length ? `${selected.length} ${selected.length===1 ? "action" : "actions"} selected` : "Select an action to review"}</span><div><button className="text-button" disabled={!selected.length || sending} onClick={() => choose([])}>Clear selection</button><button className="primary" disabled={!selected.length || !current || sending} onClick={e => {dialogTrigger.current=e.currentTarget;setConfirmOpen(true);}}>Review selected actions <ArrowRight size={16}/></button></div></div>
+        {sending && !confirmOpen && <p className="decision-footnote" role="status">Sending your modeling request…</p>}
         {receipt && !confirmOpen && <div className="optimization-receipt" role="status"><CheckCircle2 size={19}/><p>Modeling request accepted. No workload change or savings has been verified.</p></div>}
-        {actionError && !confirmOpen && <div className="optimization-error" role="alert">{actionError} Select Optimize selected to review and retry.</div>}
+        {actionError && !confirmOpen && <div className="optimization-error" role="alert">{actionError} Review the selected actions before retrying.</div>}
+        {!actionableRows.length && <div className="empty decision-empty"><TriangleAlert size={18}/><span>No source-backed action is ready in this snapshot. Inspect the evidence or retry after the dataset refreshes.</span></div>}
         <div className="decision-scroll" role="region" aria-label="Cost optimization decision table" tabIndex={0}>
           <table className="decision-table">
-            <caption className="sr-only">Select suggested fixes. GPU-time percentages use the full sample allocation as their denominator; row percentages overlap and must not be added.</caption>
+            <caption className="sr-only">Select actions backed by an eligible cohort. GPU-time percentages use the full sample allocation as their denominator; row percentages overlap and must not be added.</caption>
             <thead><tr><th><input type="checkbox" aria-label="Select all available fixes" checked={!!available.length && available.every(id => selected.includes(id))} ref={el => { if(el) el.indeterminate = selected.length > 0 && !available.every(id => selected.includes(id)); }} disabled={!available.length || sending} onChange={e => choose(e.target.checked ? available : [])} /></th><th>Task</th><th>GPU time affected</th><th>Potential fix</th><th>Evidence</th></tr></thead>
-            <tbody>{visible.rows.map(row => <tr key={row.id} className={selected.includes(row.id) ? "decision-selected" : ""}>
+            <tbody>{actionableRows.map(row => <tr key={row.id} className={selected.includes(row.id) ? "decision-selected" : ""}>
               <td><input type="checkbox" aria-label={`Select ${row.title}`} checked={selected.includes(row.id)} disabled={!row.affected_jobs || sending} onChange={e => choose(e.target.checked ? [...selected,row.id] : selected.filter(id => id !== row.id))} /></td>
               <th scope="row"><span className="decision-title">{row.title}</span><span className="decision-row-cost">{usd(row.allocated_gpu_hours * referencePrice)} <small>reference value</small></span>{row.id === "cpu-placement" && <span className="decision-pilot">Our first pilot</span>}{!row.affected_jobs && <span className="small muted">No eligible jobs in this sample</span>}</th>
               <td><strong className="decision-percentage">{percent(row.allocated_share_pct)}</strong><div className="decision-meter" aria-hidden="true"><span style={{width:`${row.allocated_share_pct}%`}} /></div></td>
@@ -158,6 +173,7 @@ export function CostOptimization({ api, modelAvailable = true }: { api: Dashboar
             </tr>)}</tbody>
           </table>
         </div>
+        {!!inactiveRows.length && <details className="inactive-opportunities"><summary>{inactiveRows.length} checks have no eligible cohort in this snapshot</summary><div>{inactiveRows.map((row) => <article key={row.id}><strong>{row.title}</strong><span>No eligible jobs in this source window.</span><a href={datasetHref("findings",{query:row.rule})}>Inspect findings <ArrowRight size={13}/></a></article>)}</div></details>}
         <details className="decision-footnote"><summary>About the numbers</summary><p>Percentages use all recorded GPU-hours as the denominator. Task hours exclude cancellation and synthetic findings. Each selected job is counted once. Reference value uses $2.50/GPU-hour for the sample window; it is not a bill or savings estimate.</p></details>
       </section>
       {confirmOpen && <OptimizeDialog modelAvailable={modelAvailable} rows={selectedRows} share={visible.selection.share_pct} hours={visible.selection.gpu_hours} jobs={visible.selection.unique_jobs} overlap={visible.selection.overlapping_gpu_hours} sending={sending} error={actionError} receipt={receipt} ready={current} review={review} restoreFocus={dialogTrigger.current} onDownload={downloadReview} onProceed={optimize} onReturn={() => setConfirmOpen(false)} />}

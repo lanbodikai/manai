@@ -2,6 +2,8 @@
 
 ## Current mode
 
+MAIN BASELINE MERGED. Winston approved publishing validated A+B snapshot 5c4fd83 through integration to main (runtime merge 610f89d), explicitly deferring independent cross-review and U05. Those checks remain pending, not passed. New B revisions target main separately. C must first merge/read the new main and validate compatibility; C remains disabled by default. See docs/MAIN_BASELINE_HANDOFF.md. This status supersedes earlier candidate-only wording below.
+
 A+B INTEGRATION CANDIDATE. This session is authorized to finish and publish A/B integration, including the existing read-only Data explorer and Decisions in the production dashboard. Preserve B history and keep multi-fix backend modeling deferred. C stays disabled. See docs/AB_INTEGRATION_HANDOFF.md and eval/integration/RESULTS.md for current checks and remaining release gates. Earlier narrower assignments below are historical.
 
 INTEGRATION EXECUTION AUTHORIZED. Winston approved this session to review/publish the shared A+B baseline, finish B's v0.4 CPU-pilot UI and Compose integration, validate C separately, and prepare the final release for review. Preserve B's explorer history; defer the proposed multi-fix modeling backend. A is merged into integration at db6f418. Final main publication remains subject to the concrete release review. This authorization supersedes historical no-implementation/no-merge notes within this bounded scope.

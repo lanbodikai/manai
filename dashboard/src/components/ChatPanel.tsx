@@ -134,9 +134,14 @@ function QuestionPanel({
         </p>
       )}
       {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
+        <div className="error" role="alert">
+          <span>{error}</span>
+          {!!question.trim() && (
+            <button className="text-button" onClick={() => void ask(question)}>
+              Retry question
+            </button>
+          )}
+        </div>
       )}
       {answer && (
         <div className="answer" role="status">
