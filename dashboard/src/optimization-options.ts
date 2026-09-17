@@ -11,3 +11,13 @@ export const optimizationOptions = [
   { id: "startup-failures", rule: "rules::gpu-never-computed", title: "Unsuccessful jobs with no GPU compute", owner: "Workload owner", fix: "Investigate startup, environment and input failures before another GPU run.", risk: "These jobs did not prove CPU compatibility. Diagnose the failure before changing placement." },
 ] as const;
 export const fixIds: readonly string[] = optimizationOptions.map(o => o.id);
+export const taskSummary:Record<string,{fix:string;risk:string}> = {
+  "cpu-placement":{fix:"Test standard processors",risk:"Slower or unsuccessful jobs"},
+  "idle-sessions":{fix:"Warn owners, then release idle sessions",risk:"Useful work could be interrupted"},
+  "low-utilization":{fix:"Test a smaller allocation",risk:"Lower throughput or result quality"},
+  "gpu-imbalance":{fix:"Balance work across GPUs",risk:"Memory pressure or slower runs"},
+  "memory-sizing":{fix:"Test a smaller GPU",risk:"Out-of-memory failures"},
+  "failed-arrays":{fix:"Validate one task before retrying",risk:"The underlying fault may remain"},
+  "timeouts":{fix:"Save progress before time limits",risk:"Other jobs may wait longer"},
+  "startup-failures":{fix:"Fix startup errors before rerunning",risk:"Changing processors may not fix it"},
+};

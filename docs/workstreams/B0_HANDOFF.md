@@ -1,5 +1,13 @@
 # B0 handoff — fixture UI, bootstrap pending
 
+## Latest update — shorter task table and optimization confirmation
+
+On baseline **e24c78a**, the user requested removal of both selection/savings summary cards, a top Optimize selected button, Proceed/Return confirmation, and less visible text. The table now shows task names, reference value (not savings), exposure percentages, short fixes and evidence links. Owner, hours/jobs and source caveats remain in Details; accounting and the optional spending goal remain collapsed. Risk explanations appear only in the selected-task popup, with safeguards available on demand. The CPU Model shortcut still opens the separate local planner.
+
+Optimize selected opens the dialog without an API request. Proceed submits the existing version-bound model_only request; Return and Escape close without submitting. Request errors preserve selection, and retries preserve request identity. The popup focuses Return, traps keyboard focus, restores trigger focus and fills the viewport on narrow screens. Accepted receipts do not claim workload changes or savings. POST /api/optimizations is still a B-owned proposal awaiting A implementation.
+
+Actual checks: **npm test 51/51 PASS**; **npm run build PASS**, including TypeScript and live-bundle mock exclusion (existing chunk-size warning); **npm run test:local -- tests/local/optimization.spec.ts tests/local/pilot.spec.ts 4/4 PASS (7.2s)**; **git diff --check PASS**. Tests cover selected-only risks, no POST before Proceed, Return/Escape, keyboard trapping/restoration, actual unavailable backend behavior, synthetic receipt handling and the existing CPU planner/export. Desktop table and desktop/mobile popup screenshots were inspected and remain ignored/local. Builder self-review only. Full unrelated browser suite was not rerun. Live multi-fix financial modeling, actual interventions, cash savings, MCP acceptance and whole-application Compose integration remain **NOT RUN** for this change. Next owner: A agrees and implements the modeling endpoint; B connects its verified results. Changes are confined to dashboard/ and this handoff.
+
 ## Latest update — task table as the main Decisions view
 
 User supplied a screenshot of the existing detailed table and requested it as the main decision UI, then clarified that the CFO should be able to optimize without first specifying a percentage cut. On baseline 1ac9071, B promoted all eight rows into the primary view, removed duplicate task cards/show-more navigation, and retained checkbox selection, source percentages/meters, owner, potential fix, expandable risk and evidence links. Reference cost remains beside each task, explicitly not savings. Selection percentages describe affected recorded GPU time, not achievable cuts.
