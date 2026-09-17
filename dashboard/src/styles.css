@@ -729,6 +729,12 @@ p {
 .testing-execute:hover { background:#eaf0ff; }
 .testing-execute:focus-visible { outline:3px solid white; outline-offset:4px; }
 .testing-card .testing-feedback { min-height:28px; margin-top:12px; color:#dce5ff; font-size:11px; line-height:1.4; }
+.pilot-evidence-section { margin-bottom:20px; }
+.pilot-chat-page { max-width:1040px; margin:0 auto; }
+.pilot-chat-page .question-panel { margin-top:24px; }
+.pilot-chat-page .answer { line-height:1.75; }
+.chat-method { margin-top:16px; font-size:12px; }
+.chat-method summary { cursor:pointer; }
 .bottom-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;

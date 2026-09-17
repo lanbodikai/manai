@@ -7,12 +7,10 @@ import {
   Boxes,
   CircleHelp,
   Database,
-  FileSearch,
   FlaskConical,
   LayoutDashboard,
   MessageSquare,
   ShieldCheck,
-  SlidersHorizontal,
   TriangleAlert,
   Wallet,
 } from "lucide-react";
@@ -28,7 +26,6 @@ import {
 import type { Audit, Overview, Runtime, Scenario, Schemas } from "./api/types";
 import { assertRequestId, errorMessage } from "./api/validation";
 import { number, range, usd } from "./format";
-import { ScenarioForm } from "./components/ScenarioForm";
 import { CpuPilot } from "./components/CpuPilot";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
@@ -113,13 +110,18 @@ export function App({ runtime }: { runtime: Runtime }) {
           setError("Data is not ready. Check the analysis service and retry.");
           return;
         }
-        if (runtime.initialScenario && h.data_fingerprint) {
+        if (h.data_fingerprint) {
           setCalculating(true);
           const request = {
             client_request_id: crypto.randomUUID(),
             expected_data_fingerprint: h.data_fingerprint,
             recommendation_id: "cpu-placement-pilot" as const,
-            scenario: runtime.initialScenario,
+            scenario: runtime.initialScenario ?? {
+              recovery_fraction: { low: 0, point: 0, high: 1 },
+              usd_per_gpu_hour: o.usd_per_gpu_hour,
+              cancelled_policy: "exclude" as const, interval_kind: "scenario" as const,
+              assumption_note: "No empirical CPU recoverability: zero low/point; high is the physical eligibility ceiling, not a forecast.",
+            },
           };
           try {
             const a = assertRequestId(
@@ -208,8 +210,6 @@ export function App({ runtime }: { runtime: Runtime }) {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "optimization", label: "Decisions", icon: Wallet },
     { id: "data", label: "Data explorer", icon: Database },
-    { id: "scenario", label: "Scenario", icon: SlidersHorizontal },
-    { id: "evidence", label: "Evidence", icon: FileSearch },
     { id: "ask", label: "Ask about this pilot", icon: MessageSquare },
   ];
   return (
@@ -293,16 +293,23 @@ export function App({ runtime }: { runtime: Runtime }) {
             <span>No live monitoring, savings audit or MCP</span>
           </div>
         )}
-        {hash === "#optimization" && datasetAvailable ? (
+        {hash === "#ask" ? (
+          <div className="pilot-chat-page">
+            {local ? <section className="panel"><h1>Assistant unavailable in local preview</h1><p>Open the live dashboard to ask about the audited pilot.</p><a className="secondary" href="#overview">Return to overview</a></section> :
+              loading || calculating ? <section className="panel" role="status">Preparing the pilot evidence…</section> :
+              error || calcError || !audit ? <section className="panel error-state" role="alert">
+                <h1>Could not prepare the pilot assistant</h1><p>{error || calcError || "Pilot evidence is unavailable."}</p>
+                <button className="primary" onClick={() => setReload(x => x + 1)}>Retry connection</button>
+              </section> : <ChatPanel key={audit.audit_id} api={api} audit={audit} mock={mock} onEvidence={id => setDrawer({ evidence:id })} />}
+          </div>
+        ) : hash === "#optimization" && datasetAvailable ? (
           <CostOptimization
             api={api}
             modelAvailable={runtime.mode !== "http"}
             onOpenAuditedPilot={() => {
-              // An audit is created from the canonical recovery scenario first.
-              // A then exposes the evidence-linked, single-job CPU form below it.
-              window.location.hash = "#scenario";
+              window.location.hash = "#cpu-pilot";
               window.setTimeout(() => {
-                document.getElementById("scenario")?.scrollIntoView({ block: "start", behavior: "smooth" });
+                document.getElementById("cpu-pilot")?.scrollIntoView({ block: "start", behavior: "smooth" });
               }, 0);
             }}
           />
@@ -469,10 +476,10 @@ export function App({ runtime }: { runtime: Runtime }) {
                           Not modeled
                         </strong>
                         <p className="muted">
-                          Set recovery assumptions below to explore this pilot.
+                          Pilot evidence is being prepared. Open the assistant to check its status.
                         </p>
-                        <a className="text-button" href="#scenario">
-                          Model a scenario <ArrowRight size={16} />
+                        <a className="text-button" href="#ask">
+                          Ask about this pilot <ArrowRight size={16} />
                         </a>
                       </>
                     )}
@@ -637,19 +644,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                   </section>
                   <TestingCard />
                 </div>
-                <div className="bottom-grid">
-                  <ScenarioForm
-                    initial={runtime.initialScenario ?? {
-                      recovery_fraction: { low: 0, point: 0, high: 1 },
-                      usd_per_gpu_hour: overview.usd_per_gpu_hour,
-                      cancelled_policy: "exclude", interval_kind: "scenario",
-                      assumption_note: "No empirical CPU recoverability: zero low/point; high is the physical eligibility ceiling, not a forecast.",
-                    }}
-                    audit={audit}
-                    price={overview.usd_per_gpu_hour}
-                    busy={calculating}
-                    onSubmit={(s) => void model(s)}
-                  />
+                <div className="pilot-evidence-section">
                   <section className="panel evidence-preview" id="evidence">
                     <div className="section-heading">
                       <div>
@@ -728,7 +723,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                       </>
                     ) : (
                       <p className="empty">
-                        Model a scenario to open its evidence trail.
+                        Pilot evidence is unavailable. Open the assistant to retry.
                       </p>
                     )}
                   </section>
@@ -743,13 +738,6 @@ export function App({ runtime }: { runtime: Runtime }) {
                   <>
                     <CpuPilot key={`pilot-${audit.audit_id}`} api={api} audit={audit} busy={calculating}
                       onSubmit={(s) => void model(s)} onEvidence={(id) => setDrawer({ evidence: id })} />
-                    <ChatPanel
-                      key={audit.audit_id}
-                      api={api}
-                      audit={audit}
-                      mock={mock}
-                      onEvidence={(id) => setDrawer({ evidence: id })}
-                    />
                     <section className="export-bar">
                       <div>
                         <h2>Keep the numbers and evidence together.</h2>

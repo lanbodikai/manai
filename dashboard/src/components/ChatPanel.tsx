@@ -60,9 +60,9 @@ function QuestionPanel({
     <div className={advanced ? "question-panel advanced" : "question-panel"}>
       <h3>
         {advanced ? <Sparkles size={18} /> : <MessageSquare size={18} />}
-        {advanced ? "Advanced reviewer" : "MCP evidence chatbot"}
+        {advanced ? "Advanced reviewer" : "Pilot assistant"}
         <span className="badge">
-          {advanced ? "Optional" : "Template-based"}
+          {advanced ? "Optional" : "MCP · evidence-backed"}
         </span>
       </h3>
       <p className="small muted">
@@ -70,7 +70,7 @@ function QuestionPanel({
           ? "Example responses only. No live data, model or MCP calls."
           : advanced
             ? "An optional deeper review. The rest of the dashboard works independently."
-            : "Bounded questions, backed by the base MCP service."}
+            : "Ask why CPU placement is worth testing, which jobs qualify, or what could go wrong."}
       </p>
       {!advanced && (
         <div className="question-chips">
@@ -80,7 +80,7 @@ function QuestionPanel({
             "What are the recovery assumptions?",
             "What could go wrong?",
           ].map((q) => (
-            <button key={q} onClick={() => void ask(q)}>
+            <button key={q} disabled={busy} onClick={() => void ask(q)}>
               {q}
             </button>
           ))}
@@ -123,6 +123,7 @@ function QuestionPanel({
         <button
           className="secondary"
           type="submit"
+          disabled={busy || !question.trim()}
           aria-label={advanced ? "Ask advanced reviewer" : "Ask base chatbot"}
         >
           <ArrowUpRight size={18} />
@@ -153,6 +154,7 @@ function QuestionPanel({
                 : "INSUFFICIENT EVIDENCE"}
           </span>
           <p>{answer.answer}</p>
+          {!mock && <details className="chat-method"><summary>How this answer was checked</summary><p className="small muted">Template-based reasoning over live MCP evidence. No language model is used by the base assistant.</p><p className="small muted">{answer.usage.tool_calls} tool calls · Audit {audit.audit_id}</p></details>}
           <div className="citations">
             {answer.supporting_evidence_ids.map((id) => (
               <button

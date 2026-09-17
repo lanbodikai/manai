@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { readFile, mkdir } from "node:fs/promises";
 
-test("desktop dollar to source, keyboard modal, scenario and matching claims", async ({
+test("desktop dollar to source, keyboard modal, assistant and matching claims", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -36,30 +36,27 @@ test("desktop dollar to source, keyboard modal, scenario and matching claims", a
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(recovery).toBeFocused();
-  await page.getByLabel("Low recovery (%)").fill("0");
-  await page.getByLabel("Point recovery (%)").fill("50");
-  await page.getByLabel("High recovery (%)").fill("100");
-  await page.getByLabel("Reference $ / GPU-hour").fill("4");
-  await expect(page.getByText(/Pending changes/)).toBeVisible();
-  await expect(recovery).toHaveText("$15–$45");
-  await page.getByRole("button", { name: "Model scenario" }).click();
-  await expect(recovery).toHaveText("$0–$120");
+  await expect(page.getByLabel("Low recovery (%)")).toHaveCount(0);
+  await page.getByRole("link", {name:"Ask about this pilot", exact:true}).click();
+  await page.getByRole("button", {name:"Why this pilot?"}).click();
+  await expect(page.getByText(/Synthetic example: 30 eligible/)).toBeVisible();
+  await page.getByRole("link", {name:"Overview",exact:true}).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download synthetic claims" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("synthetic-claims.example.json");
   const claims = JSON.parse(await readFile((await download.path())!, "utf8"));
   expect(claims.recoverable_gpu_hours).toMatchObject({
-    low: 0,
-    point: 15,
-    high: 30,
+    low: 6,
+    point: 12,
+    high: 18,
   });
   expect(claims.recoverable_usd).toMatchObject({
-    low: 0,
-    point: 60,
-    high: 120,
+    low: 15,
+    point: 30,
+    high: 45,
   });
-  expect(claims.notes).toContain("demo-audit-2");
+  expect(claims.notes).toContain("demo-audit-1");
   expect(errors).toEqual([]);
 });
 
@@ -69,7 +66,7 @@ test("narrow viewport keeps required content and source drawer usable", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(
-    page.getByRole("link", { name: "Scenario", exact: true }),
+    page.getByRole("link", { name: "Ask about this pilot", exact: true }),
   ).toBeVisible();
   const recovery = page.getByRole("button", {
     name: "Inspect recovery value and evidence",
@@ -107,6 +104,7 @@ for (const state of [
     page,
   }) => {
     await page.goto(`/?demo=${state}`);
+    await page.getByRole("link", {name:"Ask about this pilot",exact:true}).click();
     await page.getByText("Open optional advanced reviewer").click();
     await page.getByLabel("Advanced review question").fill("Why this pilot?");
     await page.getByRole("button", { name: "Ask advanced reviewer" }).click();
@@ -115,11 +113,11 @@ for (const state of [
     await expect(
       page.getByText(/Synthetic example: 30 eligible/),
     ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Download synthetic claims" }),
-    ).toBeEnabled();
     await page.getByRole("button", { name: "job:J1", exact: true }).click();
     await expect(page.getByText("Source and joins")).toBeVisible();
+    await page.getByRole("button", {name:"Close evidence"}).click();
+    await page.getByRole("link", {name:"Overview",exact:true}).click();
+    await expect(page.getByRole("button", { name: "Download synthetic claims" })).toBeEnabled();
   });
 }
 

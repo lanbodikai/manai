@@ -29,7 +29,7 @@ export function OptimizeDialog({modelAvailable = true,rows,share,hours,jobs,over
   }} onCancel={e => {e.preventDefault();onReturn();}}>
     <header><div><span className="eyebrow">DECISION REVIEW</span><h2 id="optimize-dialog-title">Review {rows.length} selected {rows.length===1 ? "action" : "actions"}</h2></div><button className="icon-button" aria-label="Return to decisions" onClick={onReturn}><X size={20}/></button></header>
     <div className="optimize-dialog-body">
-      <p id="optimize-dialog-description">{modelAvailable ? "Sending this request asks the backend to model the selected actions. It never changes workloads." : "Read-only review. Multi-fix modeling is not yet available. Use Scenario for the audited CPU pilot."}</p>
+      <p id="optimize-dialog-description">{modelAvailable ? "Sending this request asks the backend to model the selected actions. It never changes workloads." : "Read-only review. Multi-fix modeling is not yet available. Open the audited CPU pilot from the decision table."}</p>
       <p className="optimize-scope"><strong>{share>0 && share<.1 ? "<0.1" : share.toFixed(1)}%</strong> of recorded GPU time affected · not savings</p>
       <section className="review-financials" aria-label="Decision financial review">
         <div><span>Net benefit · {rows.length>1 ? "combined plan" : "selected task"}</span><strong>{rows.length===1 && rows[0]?.id==="cpu-placement" && review?.snapshot ? range(review.snapshot.result.scenarios[0].net,review.snapshot.result.scenarios[2].net) : "Estimate pending"}</strong></div>

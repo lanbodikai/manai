@@ -13,11 +13,19 @@ import cpuAuditFixture from "../../contracts/examples/audit-response.json";
 import { parse } from "../src/api/validation";
 
 function runtime(fault: Fault = "none"): Runtime {
+  window.history.replaceState(null, "", "/");
   return {
     api: createMockApi({ delay: 0, fault }),
     mode: "mock",
     initialScenario: initialAudit.scenario,
   };
+}
+
+async function navigate(hash: string) {
+  await act(async () => {
+    window.history.replaceState(null, "", hash);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
 }
 
 describe("CFO journey", () => {
@@ -81,62 +89,34 @@ describe("CFO journey", () => {
     expect(screen.getByText("Scenario estimate · not verified")).toBeVisible();
     expect(screen.getByRole("button", { name: "Inspect selected job" })).toBeEnabled();
   });
-  it("ignores delayed superseded results and keeps pending inputs separate", async () => {
+  it("prepares the canonical audit without the removed scenario panel or sidebar tabs", async () => {
     const rt = runtime();
-    rt.api = createMockApi({
-      delay: 0,
-      auditDelay: (r) => (r.scenario.recovery_fraction.high === 0.8 ? 120 : 0),
-    });
+    rt.initialScenario = undefined;
     render(<App runtime={rt} />);
-    await screen.findByRole("button", {
+    const recovery = await screen.findByRole("button", {
       name: "Inspect recovery value and evidence",
     });
-    fireEvent.change(screen.getByLabelText("Low recovery (%)"), {
-      target: { value: "10" },
-    });
-    fireEvent.change(screen.getByLabelText("High recovery (%)"), {
-      target: { value: "80" },
-    });
-    expect(screen.getByText(/Pending changes/)).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "Model scenario" }));
-    fireEvent.change(screen.getByLabelText("Low recovery (%)"), {
-      target: { value: "30" },
-    });
-    fireEvent.change(screen.getByLabelText("High recovery (%)"), {
-      target: { value: "90" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Model scenario" }));
-    await waitFor(() =>
-      expect(
-        screen.getByRole("button", {
-          name: "Inspect recovery value and evidence",
-        }),
-      ).toHaveTextContent("$22.5–$67.5"),
-    );
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 170));
-    });
-    expect(
-      screen.getByRole("button", {
-        name: "Inspect recovery value and evidence",
-      }),
-    ).toHaveTextContent("$22.5–$67.5");
+    expect(recovery).toHaveTextContent("$0–$75");
+    expect(screen.queryByLabelText("Low recovery (%)")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", {name:"Scenario"})).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", {name:"Evidence"})).not.toBeInTheDocument();
+    await navigate("#ask");
+    expect(screen.getByRole("heading", {name:"Ask about this pilot"})).toBeVisible();
+    expect(screen.queryByRole("heading", {name:"GPU spending overview"})).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name:"Why this pilot?"}));
+    expect(await screen.findByText(/Synthetic example: 30 eligible/)).toBeVisible();
   });
-  it("shows validation without clearing an existing calculation", async () => {
-    render(<App runtime={runtime()} />);
-    await screen.findByRole("button", {
-      name: "Inspect recovery value and evidence",
-    });
-    fireEvent.change(screen.getByLabelText("Low recovery (%)"), {
-      target: { value: "99" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Model scenario" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("INVALID_SCENARIO");
-    expect(
-      screen.getByRole("button", {
-        name: "Inspect recovery value and evidence",
-      }),
-    ).toHaveTextContent("$15–$45");
+  it("allows a failed assistant audit to be retried without fake answers", async () => {
+    const rt = runtime();
+    const create = rt.api.createAudit;
+    let attempts = 0;
+    rt.api.createAudit = request => ++attempts === 1 ? Promise.reject(new Error("Audit unavailable")) : create(request);
+    window.history.replaceState(null, "", "#ask");
+    render(<App runtime={rt} />);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Audit unavailable");
+    expect(screen.queryByRole("button", {name:"Why this pilot?"})).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name:"Retry connection"}));
+    expect(await screen.findByRole("button", {name:"Why this pilot?"})).toBeEnabled();
   });
   it.each([
     "reviewer-unavailable",
@@ -149,6 +129,7 @@ describe("CFO journey", () => {
       await screen.findByRole("button", {
         name: "Inspect recovery value and evidence",
       });
+      await navigate("#ask");
       fireEvent.click(screen.getByText("Open optional advanced reviewer"));
       fireEvent.change(screen.getByLabelText("Advanced review question"), {
         target: { value: "Why this pilot?" },
@@ -163,6 +144,7 @@ describe("CFO journey", () => {
       expect(
         await screen.findByText(/Synthetic example: 30 eligible/),
       ).toBeVisible();
+      await navigate("#overview");
       expect(
         screen.getByRole("button", { name: "Download synthetic claims" }),
       ).toBeEnabled();
