@@ -1,6 +1,6 @@
 # Workstream A — analysis and audit service
 
-Plan v0.6 / Contract v0.3. Owner: Builder A/session TBD. NOT STARTED; wait for activation and shared split gate.
+Active assignment: Builder A on codex/analysis-service. Shared split gate passed; historical wait wording is superseded. A1 implementation and recorded checks are ready for B review; see eval/analysis/RESULTS.md and docs/methodology.md. A2/MCP and B integration remain in progress. Active contract v0.3; v0.4 requires recorded B agreement.
 
 ## Mission and ownership
 
