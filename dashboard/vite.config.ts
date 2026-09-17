@@ -16,7 +16,7 @@ export default defineConfig(async ({ mode }) => ({
         for (const chunk of Object.values(bundle)) {
           if (chunk.type !== "chunk") continue;
           const leaked = Object.keys(chunk.modules).find((id) =>
-            /\/(src\/mock|contracts\/examples)\//.test(
+            /\/(?:src\/mock\/|contracts\/examples\/|tools\/decision-summary\.ts)/.test(
               id.replaceAll("\\", "/"),
             ),
           );

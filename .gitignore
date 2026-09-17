@@ -18,6 +18,7 @@ data/*
 *.zip
 *.parquet
 private-eval/
+/claims.json
 work/
 
 # Bootstrap local artifacts and test output

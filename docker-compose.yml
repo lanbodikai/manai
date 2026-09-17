@@ -1,4 +1,4 @@
-# Default: official API :8000 + team service + temporary verification page :3000.
+# Default: official API :8000 + analysis/MCP + production dashboard :3000.
 services:
   api:
     build:
@@ -7,7 +7,7 @@ services:
     ports: ["8000:8000"]
     volumes:
       - ./api:/app/api:ro
-      - ./data:/app/data:ro
+      - ${MANAI_DATA_DIR:-./data}:/app/data:ro
     environment: [PYTHONUNBUFFERED=1]
     healthcheck:
       test: ["CMD", "python", "-c",
@@ -68,7 +68,7 @@ services:
     environment:
       MGAI_URL: http://api:8000
     volumes:
-      - ./data:/app/data:ro
+      - ${MANAI_DATA_DIR:-./data}:/app/data:ro
     depends_on:
       api: {condition: service_healthy}
     healthcheck:
@@ -81,12 +81,35 @@ services:
   dashboard:
     build:
       context: .
-      dockerfile: tools/bootstrap/page/Dockerfile
+      dockerfile: dashboard/Dockerfile
     ports: ["3000:3000"]
     environment:
       ANALYSIS_URL: http://analysis:8001
+      DATASET_DB: /cache/preview.sqlite
+    volumes:
+      - dataset-cache:/cache:ro
     depends_on:
       analysis: {condition: service_healthy}
+      dataset-prep: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/datasets/catalog').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  # One-shot, verified read-only browsing snapshot; never included in the image.
+  dataset-prep:
+    build:
+      context: .
+      dockerfile: api/Dockerfile.local
+    volumes:
+      - ${MANAI_DATA_DIR:-./data}:/app/data:ro
+      - ./dashboard/tools/prepare_preview.py:/app/prepare_preview.py:ro
+      - dataset-cache:/cache
+    command: ["python", "prepare_preview.py", "--official-root", "/app", "--output-dir", "/cache"]
+
+volumes:
+  dataset-cache:
 
 networks:
   default:
