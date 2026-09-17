@@ -34,6 +34,7 @@ import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { ChatPanel } from "./components/ChatPanel";
 import { CostOptimization } from "./components/CostOptimization";
 import { CpuPilotSummary } from "./components/CpuPilotSummary";
+import { TestingCard } from "./components/TestingCard";
 import {
   DataExplorer,
   DatasetHome,
@@ -634,62 +635,7 @@ export function App({ runtime }: { runtime: Runtime }) {
                       Cancelled work is not automatically wasted.
                     </p>
                   </section>
-                  <section className="target-panel">
-                    <span className="target-tag">THE 20% QUESTION</span>
-                    <h2>
-                      How far does
-                      <br />
-                      this pilot get us?
-                    </h2>
-                    {presentation ? (
-                      <>
-                        <p>A small contribution. An honest gap.</p>
-                        <div className="target-figure">
-                          <strong>
-                            {number(presentation.contributionLow)}–
-                            {number(presentation.contributionHigh)}%
-                          </strong>
-                          <span>of the same sample’s reference value</span>
-                        </div>
-                        <div
-                          className="target-track"
-                          aria-label={`${number(presentation.contributionLow)} to ${number(presentation.contributionHigh)} percent contribution against 20 percent target`}
-                        >
-                          <span
-                            style={{
-                              width: `${Math.min(100, (presentation.contributionHigh / 20) * 100)}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="target-labels">
-                          <span>Pilot contribution</span>
-                          <strong>20% target</strong>
-                        </div>
-                        <div className="target-gap">
-                          <span>Remaining gap</span>
-                          <strong>
-                            {range(presentation.gapLow, presentation.gapHigh)}
-                          </strong>
-                        </div>
-                        <p className="small">
-                          Synthetic same-window illustration at{" "}
-                          {usd(audit!.scenario.usd_per_gpu_hour)}/GPU-hour. Not
-                          a next-quarter forecast.
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p>
-                          The target is 20%. A verified contribution and
-                          matching baseline are not yet available.
-                        </p>
-                        <p className="small">
-                          Awaiting canonical target and gap values from the
-                          analysis service.
-                        </p>
-                      </>
-                    )}
-                  </section>
+                  <TestingCard />
                 </div>
                 <div className="bottom-grid">
                   <ScenarioForm
