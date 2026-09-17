@@ -111,3 +111,29 @@ Observed result: 27 passed, zero failed, nine unknown, 8145/8145 records.
 This is accounting verification, not measured savings. Local changes remain
 uncommitted/unpublished; next owner is release coordination for repository
 publication. Running dashboard is port 13121, not the older port-3000 release.
+
+## Minimal release on main
+
+Implementation commit: 8cd6a1a (built and run from isolated release checkout).
+Root claims.json exported from the canonical 0/0/1 scenario and passes official
+schema validation with HTTP 200 at :3000. Only aggregate claims are published;
+source/derived tables and private receipts remain excluded. The validator warns
+about absent confidence; no empirical confidence is invented.
+
+`docker compose -p manai-release up -d --build --wait`: production build passed;
+initial startup encountered a subnet collision with another local stack. Restart
+with MANAI_SUBNET=10.254.188.0/24 and the existing provisioned MANAI_DATA_DIR passed:
+API, analysis and dashboard healthy, dataset preparation completed. This verifies
+an isolated clean source checkout using existing data, not a fresh VM/data download.
+Final image tests: analysis 34/34 PASS; base chat 4/4 PASS.
+
+The legacy browser.cjs failed on an obsolete Low recovery label. The current
+`node eval/integration/release.cjs http://127.0.0.1:3000` equivalent ran via tmp
+using the installed Playwright library and passed: real MCP with no key, 8145/8145
+records, zero failures, all eight rows and 3/5 mechanism labels, desktop/mobile,
+and base MCP chat. Local receipt: private-eval/base-release-1789682214585.
+
+README includes the one-line `docker compose up --build` startup command after
+organizer data setup. Default branch was codex/planning when checked; GitHub denied
+this account's request to set main as default (HTTP 404). Repository owner must
+select main in settings. Release publication targets main as requested.

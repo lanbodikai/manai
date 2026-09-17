@@ -13,6 +13,8 @@ Track 2: a bounded CPU-placement pilot with traceable evidence, explicit assumpt
 
 ## Run
 
+**Start the app:** after the data setup below, run `docker compose up --build` from the repository root, then open http://localhost:3000. No model key is required.
+
 Use Git and Docker Desktop/Engine with Linux containers. No host Node/Python or model key is required to run the product. Check out `main` for the validated baseline. New B revisions are reviewed separately against main.
 
 Provision the organizer data using [data setup](data/README.md). On Windows, `powershell -ExecutionPolicy Bypass -File tools/bootstrap/setup.ps1` downloads/prepares/generates and verifies it. This is data provisioning; app startup is one command:
