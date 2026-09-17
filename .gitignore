@@ -1,0 +1,21 @@
+# Local secrets and runtime state
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.DS_Store
+.ipynb_checkpoints/
+
+# Organizer source and derived data remain local
+data/*
+!data/README.md
+!data/checksums.txt
+*.zip
+*.parquet
+private-eval/
+work/
