@@ -1,4 +1,4 @@
-# manai — planning draft v0.6
+# manai — planning draft v0.7
 
 Status: DISCUSSION DRAFT. Track, thesis, first cohort, stack and agent role approved; implementation has not started.
 
@@ -41,3 +41,7 @@ The A+B product must work without C. The reviewer is an optional, profile-isolat
 ## Slide alignment
 
 See [requirement-to-deliverable matrix](docs/REQUIREMENTS.md). Plan v0.6 makes the minimum MCP chatbot part of A+B; C adds richer review. A static summary alone does not meet our slide-aligned completion gate. Contract v0.3 adds the independent `/api/audits/{audit_id}/chat` endpoint. No implementation has started.
+
+## Official Track 2 cross-check
+
+[Review and corrections](docs/TRACK2_REVIEW.md): exact cohort confirmed; split gate includes live API/MCP verification; final range basis is a required check; base chat versus optional reviewer wording reconciled. Plan v0.7; API contract stays v0.3. Documentation only, runtime checks remain NOT RUN.

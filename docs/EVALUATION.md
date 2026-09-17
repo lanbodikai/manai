@@ -73,3 +73,7 @@ B owns these tests; C assists with failure injection if available. Final readine
 - M04: C crash, hang and malformed answers leave the base chatbot usable. MCP runtime failure is separately visible and makes the chatbot requirement NOT READY, even if dashboard works. Run with B-owned stubs if C is unfinished.
 
 These are required for slide-aligned base completion. A owns MCP/client correctness; B owns UI, container and resilience proof. C's more extensive G evaluation remains optional only because the required narrower chatbot is already included.
+
+## D06 — final claim basis (required for A2/final base)
+
+For each final low/point/high recovery estimate, document the eligibility ceiling, conversion assumptions and their evidence or judgment basis. A reviewer must trace each value to the stated calculation. Include a zero-recovery sensitivity case and explicitly justify any positive lower bound; if not defensible, revise it. UI defaults and synthetic fixture fractions are not evidence. Verify claims, report and final displayed audit agree. Scenario bounds must not be labeled statistically calibrated. Status: NOT RUN.

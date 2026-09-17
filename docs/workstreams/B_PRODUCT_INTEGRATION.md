@@ -49,3 +49,7 @@ Commit, running URL, startup command, checks actually run, current data mode, ag
 ## Optional-service acceptance
 
 B owns R01–R05 resilience tests. Default Compose excludes reviewer build/startup via profile. Minimal live MCP chatbot, deterministic summary, all evidence paths, scenario calculations and export work with C stopped and no model key. C can be integrated later without changing these base guarantees. Mark base complete independently of C; explicitly report agent status and its optional profile command.
+
+## Official-doc review amendment — v0.7
+
+Read ../TRACK2_REVIEW.md. One-command judging begins after official data provisioning, but requires no second application/MCP-start command or model login. Verify root artifacts and, after publishing authorization, the public default branch and English README AI disclosure. A local commit alone is not submitted. Template-based chat is our design interpretation of the slide, not documented organizer approval; label it accurately.

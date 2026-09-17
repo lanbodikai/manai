@@ -54,3 +54,7 @@ Docker CLI is present. A read-only check from the restricted session could not a
 ## D12 — slide alignment (user requirement; implementation design proposed)
 
 User requires alignment with the quoted Track 2 slide, including its explicit MCP chatbot/agent deliverable. A+B therefore include a minimal template-based chatbot making real MCP calls; C adds richer review. This reconciles D07/D10/D11 without dropping a required feature. Static summaries do not satisfy chatbot acceptance. The 20% cut is a business target, not a result we may assert; show audited contribution and unmet gap with a matching denominator. See REQUIREMENTS.md.
+
+## Official documentation review — v0.7
+
+See [TRACK2_REVIEW.md](TRACK2_REVIEW.md). The actual claims schema explicitly permits scenario intervals and says recoverable_gpu_hours is assessed on reasoning and interval honesty, not one correct numeric answer. Keep scenario modeling, justify its assumptions (D06), and avoid implying that our chosen recovery estimate has a hidden numeric ground truth. The selected CPU-placement remedy already appears in the official rules. The repo calls chat an example; the stronger slide wording motivates our required base chatbot, whose template-based design remains our interpretation.

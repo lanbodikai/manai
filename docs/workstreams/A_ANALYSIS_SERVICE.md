@@ -29,3 +29,7 @@ Branch `codex/analysis-service` from the common baseline, separate worktree. Pub
 ## Failure conditions
 
 Missing eligibility measurements, canonical-data mismatch, unreproducible totals, mixed units, recovery bounds outside eligible allocation, unresolved licensing/publication constraint. Report precise blockers and continue synthetic tests; no fabricated data or unsupported savings.
+
+## Official-doc review amendment — v0.7
+
+Read ../TRACK2_REVIEW.md. A2 also requires D06 (defensible final range basis). CPU placement is already the official gpu-not-needed remedy; our added contribution is the audit and decision evidence. Confirm exact column/tool types against the running official /docs and MCP schemas. Use metadata join keys. No required interface change beyond API v0.3.

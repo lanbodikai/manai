@@ -32,3 +32,7 @@ Help the CFO decide which part of a proposed GPU-spend cut is defensible: audit 
 4. Enable C only after its grounding tests pass. Reserve 30 minutes for integration/demo and 20 for submission; recalculate actual remaining time before starting.
 
 Priority: base dashboard + honest ranged claims + required MCP chat + report are P0. Richer C review is P1. Extra cohorts/charts/model comparisons are P2. Missing C cannot block P0, but missing actual MCP usage means the slide-aligned package is incomplete.
+
+## Cross-check clarification — v0.7
+
+[Official-doc review](TRACK2_REVIEW.md) distinguishes source requirements from our design. The repository calls chat an example; our mandatory base chatbot follows the stronger slide wording. Template-based chat has not received organizer approval. The selected CPU-placement recommendation is already described in the official rules. Our value is its audit and story. Final claim bounds require D06; arbitrary scenario sliders alone do not satisfy it.

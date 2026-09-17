@@ -1,5 +1,13 @@
 # Plan changelog
 
+## v0.7 — 2026-09-17
+
+- Cross-checked Track 2 docs, setup, rules, schema and judging workflow.
+- Added source-backed review, live MCP split gate and D06 final-range basis requirement.
+- Corrected saved A/B/C handoffs to place minimum MCP chat in A/B.
+- Clarified template chat is a proposed interpretation; CPU-placement remedy is already upstream.
+- Local Markdown links checked; runtime tests remain NOT RUN.
+
 ## v0.6 — 2026-09-17
 
 - Reconciled C independence with the slide: real minimal MCP chatbot is mandatory in A/B; C supplies optional richer review.
