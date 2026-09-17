@@ -2,6 +2,8 @@
 
 React + TypeScript + Vite, Recharts, Lucide and plain CSS. This frontend is runnable before the shared bootstrap. All demo records are invented. No real data, savings, MCP execution or submission readiness is established here.
 
+**Real dataset browser added:** use the separate [local preview instructions](LOCAL_DATA_PREVIEW.md) to browse prepared source records and real front-page charts on :3002. This explicitly selected development mode does not mix real records with mock savings. The original B0 instructions/results below describe synthetic mode.
+
 ## Start the demo
 
 Use Node **22.12 or newer within Node 22** and npm. Verified with Node 22.16.0 / npm 11.5.2 on Windows. From the repository checkout:

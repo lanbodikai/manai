@@ -1,4 +1,5 @@
 import type { components } from "./generated";
+import type { DatasetApi } from "./dataset";
 export type Schemas = components["schemas"];
 export type Audit = Schemas["Audit"];
 export type Scenario = Schemas["Scenario"];
@@ -7,6 +8,8 @@ export type EvidenceDetail = Schemas["EvidenceDetail"];
 export type Explanation = Schemas["Explanation"];
 export type PageInput = { limit?: number; cursor?: string };
 export interface DashboardApi {
+  /** Optional frontend preview capability; not a frozen v0.3 route extension. */
+  datasets?: DatasetApi;
   getHealth(): Promise<Schemas["Health"]>;
   getOverview(): Promise<Overview>;
   listRecommendations(): Promise<Schemas["Recommendations"]>;
@@ -37,7 +40,7 @@ export interface DemoPresentation {
 }
 export interface Runtime {
   api: DashboardApi;
-  mode: "mock" | "http";
+  mode: "mock" | "http" | "local";
   initialScenario?: Scenario;
   demoPresentation?: (overview: Overview, audit: Audit) => DemoPresentation;
 }

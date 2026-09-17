@@ -19,6 +19,21 @@ function runtime(fault: Fault = "none"): Runtime {
 }
 
 describe("CFO journey", () => {
+  it("preserves the source overview while unfinished recommendations are unavailable", async () => {
+    const rt = runtime();
+    rt.initialScenario = undefined;
+    rt.api.listRecommendations = async () => {
+      throw new Error("Bootstrap recommendations are not implemented.");
+    };
+    render(<App runtime={rt} />);
+    expect(await screen.findByText("Where the money goes")).toBeVisible();
+    expect(
+      await screen.findByText(/Pilot recommendations are not available yet/),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("heading", { name: "Source data unavailable" }),
+    ).not.toBeInTheDocument();
+  });
   it("shows mandatory labeling and opens the dollar-to-source path", async () => {
     render(<App runtime={runtime()} />);
     expect(

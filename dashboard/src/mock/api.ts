@@ -1,4 +1,5 @@
 // MANAI_MOCK_ONLY: this module must never enter the live build.
+import { createDemoDatasetApi } from "./datasets";
 import auditFixture from "../../../contracts/examples/audit-response.json";
 import evidenceFixture from "../../../contracts/examples/evidence-response.json";
 import claimsFixture from "../../../contracts/examples/claims-response.json";
@@ -150,6 +151,7 @@ export function createMockApi(
     });
   }
   return {
+    datasets: createDemoDatasetApi(options.delay),
     async getHealth() {
       await wait();
       return parse("Health", {
